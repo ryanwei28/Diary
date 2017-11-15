@@ -1,0 +1,209 @@
+-----------------------------------------------------------------------------------------
+--
+-- leaveMessage.lua
+--
+-----------------------------------------------------------------------------------------
+
+local sqlite3 = require "sqlite3"
+local scene = composer.newScene()
+local date = os.date( "*t" ) 
+local init 
+local sceneGroup
+local title
+local back
+local pickerWheel
+local onValueSelected
+local onValueSelected2
+local values
+local values2
+local v1
+local v2
+local touchlistener
+local text1
+local text2 
+local text3 
+local bg1 
+local bg2
+
+-- -----------------------------------------------------------------------------------
+-- Code outside of the scene event functions below will only be executed ONCE unless
+-- the scene is removed entirely (not recycled) via "composer.removeScene()"
+-- -----------------------------------------------------------------------------------
+init = function ( _parent )
+    title = display.newText( _parent, "週期設定", X, Y*0.2, font , 50 )
+
+    bg1 = display.newRect( _parent, X, Y*0.55 , W*0.9, H*0.25 )
+    bg1.id = "bg1"
+    bg1:setFillColor( 0.85 , 0.41 , 0.74 )
+    bg1:addEventListener( "touch", touchlistener )
+    bg2 = display.newRect( _parent, X, Y*1, W*0.9 , H*0.15 )
+    bg2.id = "bg2"
+    bg2:setFillColor( 0.2 )
+    bg2:addEventListener( "touch", touchlistener )
+
+    back = display.newCircle( _parent, X*0.2, Y*0.2, 50 )
+    back:addEventListener( "tap", listener )
+
+    text1 = display.newText( _parent, "採用固定周期", X*0.37, Y*0.55, font,40 )
+    text1.anchorX = 0
+    text2 = display.newText( _parent, "採用平均週期", X*0.37, Y*1, font,40 )
+    text2.anchorX = 0
+    text3 = display.newText( _parent, "每次行經日數", X*0.27, Y*1.5, font,40 )
+    text3.anchorX = 0
+
+    local columnData = 
+    { 
+        { 
+            align = "center",
+            width =  W*0.3,
+            labelPadding = 20,
+            startIndex = 2,
+            labels = { "2天", "3天", "4天", "5天" , "6天", "7天", "8天", "9天", "10天", }
+        },
+    }
+ 
+    -- Create the widget
+    pickerWheel = widget.newPickerWheel(
+    {
+        x = X*1.6 ,
+        y = Y*0.55 ,
+        columns = columnData,
+        style = "resizable",
+        width = W*0.3,
+        rowHeight = 65,
+        fontSize = 50,
+        onValueSelected = onValueSelected,
+    })
+ 
+    _parent:insert(pickerWheel)
+    
+    local columnData2 = 
+    { 
+        { 
+            align = "center",
+            width =  W*0.3,
+            labelPadding = 20,
+            startIndex = 2,
+            labels = { "2天", "3天", "4天", "5天" , "6天", "7天", "8天", "9天", "10天", }
+        },
+    }
+ 
+    -- Create the widget
+    pickerWheel2 = widget.newPickerWheel(
+    {
+        x = X*1.6 ,
+        y = Y*1.5 ,
+        columns = columnData2,
+        style = "resizable",
+        width = W*0.3,
+        rowHeight = 65,
+        fontSize = 50,
+        onValueSelected = onValueSelected2,
+    })
+ 
+    _parent:insert(pickerWheel2)
+    
+    -- local xxx = display.newCircle( _parent, X, Y*1.7, 30 )
+    -- xxx:addEventListener( "tap", xxxlistener )
+end
+
+listener = function ( e )
+    composer.showOverlay( "setup" )
+end
+
+onValueSelected = function (  )
+
+    timer.performWithDelay( 1, function (  )
+        values = pickerWheel:getValues()
+        v1 = string.sub(  values[1].value , 1 , -4 )
+        database:exec([[UPDATE Setting SET Cycle = ']]..v1..[[' WHERE id = 1 ;]])
+        print( v1 )
+    end  )
+   
+end
+
+onValueSelected2 = function (  )
+
+    timer.performWithDelay( 1, function (  )
+        values2 = pickerWheel2:getValues()
+        v2 = string.sub(  values2[1].value , 1 , -4 )
+        database:exec([[UPDATE Setting SET During = ']]..v2..[[' WHERE id = 1 ;]])
+        print( v2 )
+    end  )
+   
+end
+    
+touchlistener = function ( e )
+    if e.phase == "ended" then
+        if e.target.id == "bg1" then
+            bg1:setFillColor( 0.85 , 0.41 , 0.74 )
+            bg2:setFillColor( 0.2 )
+        elseif e.target.id == "bg2" then
+            bg1:setFillColor( 0.2 )
+            bg2:setFillColor( 0.85 , 0.41 , 0.74 )
+        end
+    end
+end
+      
+
+
+-- -----------------------------------------------------------------------------------
+-- Scene event functions
+-- -----------------------------------------------------------------------------------
+ 
+-- create()
+function scene:create( event )
+    sceneGroup = self.view
+    init(sceneGroup)
+end
+ 
+-- show()
+function scene:show( event )
+ 
+    local sceneGroup = self.view
+    local phase = event.phase
+ 
+    if ( phase == "will" ) then
+        -- Code here runs when the scene is still off screen (but is about to come on screen)
+      
+    elseif ( phase == "did" ) then
+        -- Code here runs when the scene is entirely on screen
+ 
+    end
+end
+ 
+-- hide()
+function scene:hide( event )
+ 
+    local sceneGroup = self.view
+    local phase = event.phase
+ 
+    if ( phase == "will" ) then
+        -- Code here runs when the scene is on screen (but is about to go off screen)
+        
+        composer.recycleOnSceneChange = true
+    elseif ( phase == "did" ) then
+        -- Code here runs immediately after the scene goes entirely off screen
+ 
+    end
+end
+ 
+-- destroy()
+function scene:destroy( event )
+ 
+    local sceneGroup = self.view
+    -- Code here runs prior to the removal of scene's view
+ 
+end
+ 
+ 
+-- -----------------------------------------------------------------------------------
+-- Scene event function listeners
+-- -----------------------------------------------------------------------------------
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
+-- -----------------------------------------------------------------------------------
+ 
+return scene
