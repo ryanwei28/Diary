@@ -20,10 +20,10 @@ local rowTable = {}
 local scrollView
 local lineTable = {}
 
- local sY = 2017
-    local sD = 01 
-    local sM = 10
-    local sDate = sY.."/"..sM.."/"..sD 
+local sY = 2017
+local sD = 01 
+local sM = 10
+local sDate = sY.."/"..sM.."/"..sD 
 local statisticCount
 local daysTable = { 31 ,28 ,31 ,30 ,31 ,30 ,31 ,31 ,30 ,31 ,30 ,31 ,31 ,28}
 

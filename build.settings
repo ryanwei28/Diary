@@ -29,7 +29,7 @@ settings =
 	--
 	iphone =
 	{
-		xcassets = "Images.xcassets",
+		--xcassets = "Images.xcassets",
 		plist =
 		{
 			UIStatusBarHidden = false,
