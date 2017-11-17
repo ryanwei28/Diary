@@ -516,7 +516,7 @@ creatMonthlyCalendar = function (  )
                         end
 
                         if row.Weight ~= "" then
-                            local ee = display.newText( mGroup, "▲" , X*0.24 + (firstW + j  ) * 72-X*1.35, 310+ i * 100, font , 30 )
+                            local ee = display.newText( mGroup, "▲" , X*0.24 + (firstW + j  ) * 72-X*1.35, 310 + (i + 1) * 100, font , 30 )
                             ee:setFillColor( 0.15 , 0.12 , 0.91 )
                         end
                     end

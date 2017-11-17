@@ -54,6 +54,9 @@ local sD
 local daysTable
 local switch = "temperature"
 local vGroup
+local noDataText
+local labelTable 
+local labelTable2 
 -- print( "2017/10/31" < "2017/11/01" )
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -72,6 +75,7 @@ init = function ( _parent )
     -- end
 
     -- printPlot()
+    printTemperaturePlot()
         createBtn()
     -- end
 
@@ -93,28 +97,19 @@ printWeightPlot = function (  )
     sM = tonumber( string.format( "%02d", os.date("%m" , s) ))
     sD = tonumber( string.format( "%02d" , os.date("%d" , s) ))
     preDate = sY.."/"..string.format( "%02d", sM).."/"..string.format( "%02d",sD)
-
     regularPreDate = tostring(preDate)
-
     dateTable = {}
-
     lineTable = {}
-
     vTable = {}
-
     wNum = 0 
-
     wTable = {}
-
     pointTable = {}
-
     wPointTable = {}
-
     wPointNum = 0
-
     connectLineTable = {}
-
     a = 0
+    labelTable = {}
+    labelTable2 = {}
 
     for row in database:nrows([[SELECT * FROM Diary ORDER BY Weight ASC ;]]) do
         if row.Weight ~= "" then
@@ -175,12 +170,21 @@ printWeightPlot = function (  )
         for i = 1 , #wPointTable do 
             if wPointTable[i] ~= "" then
                 a = a + 1
-                pointTable[i] = display.newCircle( sceneGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -3 )-small)/(big-small)*Y*1.1), 20 )
+                pointTable[i] = display.newCircle( sceneGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -3 )-small)/(big-small)*Y*1.1), 12 )
+                pointTable[i]:setFillColor( 0/255, 154/255, 219/255 )
+                labelTable[i] = display.newRect( sceneGroup, pointTable[i].x , pointTable[i].y + Y*0.06, W*0.09, H*0.026 )
+                labelTable[i]:setFillColor( 0.72 , 0.45 , 0.62 )
+                labelTable2[i] = display.newText( sceneGroup , string.sub( wPointTable[i], 1 , -3 ) , pointTable[i].x, pointTable[i].y + Y*0.06, font , 35 )
+                labelTable2[i]:setFillColor( 0.1 )
                 scrollView:insert(pointTable[i])
+                scrollView:insert(labelTable[i])
+                scrollView:insert(labelTable2[i])
 
                 if a >= 2 then
                     --連線
                     connectLineTable[i] = display.newLine( sceneGroup, pointTable[prePointNum].x, pointTable[prePointNum].y, pointTable[i].x, pointTable[i].y  )
+                    connectLineTable[i]:setStrokeColor( 0/255, 154/255, 219/255 , 0.5 )
+                    connectLineTable[i].strokeWidth = 5
                     scrollView:insert(connectLineTable[i])
                     print( prePointNum )
                     
@@ -189,7 +193,16 @@ printWeightPlot = function (  )
             end
         end
 
-        
+        scrollView:scrollTo( "right", { time=0 } )
+        -- scrollView:scrollToPosition
+        -- {
+        --     x = -10000,
+        --     y = 0,
+        --     time = 800,
+        --     onComplete = onScrollComplete
+        -- }
+    else 
+        noDataText = display.newText( vGroup, "尚無資料", X, Y , font , 60 )
     end
 end
 
@@ -232,6 +245,8 @@ printTemperaturePlot = function (  )
 
     a = 0
 
+    labelTable = {}
+    labelTable2 = {}
 
     for row in database:nrows([[SELECT * FROM Diary ORDER BY Temperature ASC ;]]) do
         if row.Temperature ~= "" then
@@ -292,7 +307,7 @@ printTemperaturePlot = function (  )
 
         for row in database:nrows([[SELECT * FROM Diary WHERE Date >= ']]..regularPreDate..[[' AND Date <= ']]..today..[[' ORDER BY Date ASC ;]]) do
             wPointNum = wPointNum + 1
-            wPointTable[wPointNum] = row.Weight
+            wPointTable[wPointNum] = row.Temperature
         end
 
         print( regularPreDate )
@@ -300,12 +315,24 @@ printTemperaturePlot = function (  )
         for i = 1 , #wPointTable do 
             if wPointTable[i] ~= "" then
                 a = a + 1
-                pointTable[i] = display.newCircle( sceneGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -3 )-small)/(big-small)*Y*1.1), 20 )
-                scrollView:insert(pointTable[i])
+                -- pointTable[i] = display.newCircle( sceneGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -5 )-small)/(big-small)*Y*1.1), 12 )
+                -- pointTable[i]:setFillColor( 0/255, 154/255, 219/255 )
+                -- scrollView:insert(pointTable[i])
 
+                  pointTable[i] = display.newCircle( sceneGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -5 )-small)/(big-small)*Y*1.1), 12 )
+                pointTable[i]:setFillColor( 0/255, 154/255, 219/255 )
+                labelTable[i] = display.newRect( sceneGroup, pointTable[i].x , pointTable[i].y + Y*0.06, W*0.12, H*0.026 )
+                labelTable[i]:setFillColor( 0.72 , 0.45 , 0.62 )
+                labelTable2[i] = display.newText( sceneGroup , string.sub( wPointTable[i], 1 , -5 ) , pointTable[i].x, pointTable[i].y + Y*0.06, font , 35 )
+                labelTable2[i]:setFillColor( 0.1 )
+                scrollView:insert(pointTable[i])
+                scrollView:insert(labelTable[i])
+                scrollView:insert(labelTable2[i])
                 if a >= 2 then
                     --連線
                     connectLineTable[i] = display.newLine( sceneGroup, pointTable[prePointNum].x, pointTable[prePointNum].y, pointTable[i].x, pointTable[i].y  )
+                    connectLineTable[i]:setStrokeColor( 0/255, 154/255, 219/255 )
+                    connectLineTable[i].strokeWidth = 5
                     scrollView:insert(connectLineTable[i])
                     print( prePointNum )
                     
@@ -314,7 +341,9 @@ printTemperaturePlot = function (  )
             end
         end
 
-        
+        scrollView:scrollTo( "right", { time=0 } )
+    else
+        noDataText = display.newText( vGroup, "尚無資料", X, Y , font , 60 )
     end
 end
 

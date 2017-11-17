@@ -75,14 +75,17 @@ init = function ( _parent )
 end
 
 listener = function ( e )
+    native.setKeyboardFocus( nil )
     composer.showOverlay( "setup" )
 end
 
 setBtnEvent = function ( e )
     if e.phase == "ended" then 
         if e.target.id == "cancelBtn" then
+            native.setKeyboardFocus( nil )
             composer.showOverlay( "setup" )
         elseif e.target.id == "confirmBtn" then
+            native.setKeyboardFocus( nil )
             database:exec([[UPDATE Setting SET Height =']]..tallText..[[' WHERE id =1;]])
             composer.showOverlay( "setup" )
         end
@@ -93,7 +96,7 @@ textListener = function( event )
     if ( event.phase == "began" ) then
      
     elseif ( event.phase == "ended" or event.phase == "submitted" ) then
-    
+        native.setKeyboardFocus( nil )
     elseif ( event.phase == "editing" ) then
         tallText = event.text 
     end     

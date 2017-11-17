@@ -42,6 +42,7 @@ init = function ( _parent )
 end
 
 listener = function ( e )
+    native.setKeyboardFocus( nil )
     composer.showOverlay( "edit" )
 end
 
@@ -49,7 +50,7 @@ textListener = function( event )
     if ( event.phase == "began" ) then
      
     elseif ( event.phase == "ended" or event.phase == "submitted" ) then
-        
+        native.setKeyboardFocus( nil )
     elseif ( event.phase == "editing" ) then
         -- msgText = event.text 
         noteContent = event.text
@@ -86,6 +87,7 @@ saveBtnEvent = function ( e )
 
         saveBtn:removeSelf( )
         saveBtn = nil
+        native.setKeyboardFocus( nil )
         back = display.newCircle( sceneGroup, X*0.2, Y*0.2, 50 )
         back:addEventListener( "tap", listener )
     end

@@ -322,24 +322,31 @@ end
 
 createBtn = function (  )
     createBtnEvent = function ( e )
+        local today = tonumber(os.date( "%Y" ))..string.format("%02d", tonumber(os.date( "%m" )))..string.format("%02d", tonumber(os.date( "%d" ))) 
+        local choseDay = string.sub( dbDate, 1 ,4 )..string.sub( dbDate, 6 ,7 )..string.sub( dbDate, 9 ,10 )
+        
         if ( "ended" == e.phase ) then
-            if e.target.id == "close" then 
-                createPickerWheelBtn("close")
-                createPickerWheel("close")
-                createMask()
-            elseif e.target.id == "temperature" then 
-                createPickerWheelBtn("temperature")
-                createPickerWheel("temperature")
-                createMask()
-            elseif e.target.id == "weight" then 
-                createPickerWheelBtn("weight")
-                createPickerWheel("weight")
-                createMask()
-             elseif e.target.id == "notes" then 
-                composer.setVariable( "dbDate", dbDate )
-                composer.showOverlay( "notes" )
-            end
-        end    
+            if today < choseDay then
+                T.alert("future")
+            else
+                if e.target.id == "close" then 
+                    createPickerWheelBtn("close")
+                    createPickerWheel("close")
+                    createMask()
+                elseif e.target.id == "temperature" then 
+                    createPickerWheelBtn("temperature")
+                    createPickerWheel("temperature")
+                    createMask()
+                elseif e.target.id == "weight" then 
+                    createPickerWheelBtn("weight")
+                    createPickerWheel("weight")
+                    createMask()
+                 elseif e.target.id == "notes" then 
+                    composer.setVariable( "dbDate", dbDate )
+                    composer.showOverlay( "notes" )
+                end
+            end    
+        end
     end
 
     local closeBtn = widget.newButton({ 

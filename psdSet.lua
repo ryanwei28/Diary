@@ -54,6 +54,7 @@ init = function ( _parent )
 end
 
 listener = function ( e )
+    native.setKeyboardFocus( nil )
     composer.showOverlay( "setup" )
 end
 
@@ -62,7 +63,7 @@ textListener = function( event )
     if ( event.phase == "began" ) then
      
     elseif ( event.phase == "ended" or event.phase == "submitted" ) then
-        
+        native.setKeyboardFocus( nil )
     elseif ( event.phase == "editing" ) then
         psd = event.text
     end
@@ -84,6 +85,7 @@ addBtn = function (  )
                     if psdChk == psd then
                         database:exec([[UPDATE Setting SET Password = ']]..psd..[[' WHERE id = 1 ;]])
                         database:exec([[UPDATE Setting SET Protect = "ON" WHERE id = 1 ;]])
+                        native.setKeyboardFocus( nil )
                         composer.showOverlay( "setup" )
                     else
                         alertText.text = "兩次輸入密碼不同"
@@ -122,6 +124,7 @@ addCloseBtn = function (  )
                         print( "yes" )
                         database:exec([[UPDATE Setting SET Password = "" WHERE id = 1 ;]])
                         database:exec([[UPDATE Setting SET Protect = "OFF" WHERE id = 1 ;]])
+                        native.setKeyboardFocus( nil )
                         composer.showOverlay( "setup" )
                     else                  
                         alertText.text = "密碼錯誤"  
@@ -156,6 +159,7 @@ updateBtn = function (  )
             else
                 if updateNum == 1 then
                     database:exec([[UPDATE Setting SET Password = ']]..psd..[[' WHERE id = 1 ;]])
+                    native.setKeyboardFocus( nil )
                     composer.showOverlay( "setup" )
                 else
                     for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
