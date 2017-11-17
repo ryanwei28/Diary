@@ -26,8 +26,9 @@ function M.alert( alertType )
         local alert = native.showAlert( "","與下次月經開始日太接近，請確認日期", { "OK" }, onCompleteee )
     elseif alertType == "noStart" then
         local alert = native.showAlert( "","請先建立一筆經期開始資料", { "OK" }, onCompleteee )
+    elseif alertType == "notToday" then
+        local alert = native.showAlert( "","如經期非於本日結束，請直接於結束當天標記", { "OK" }, onCompleteee )
 
-        
     end
 end
 
