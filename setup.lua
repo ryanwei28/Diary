@@ -36,25 +36,25 @@ local readDb
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
     print( prevScene )
-    title = display.newText( _parent, "設定", X, Y*0.2, font , 50 )
+    title = display.newText( _parent, "設定", X, Y*0.2, font , H*0.045 )
 
-    text1 = display.newText( _parent, "密碼保護", X*0.2, Y*0.4, font , 50 )
+    text1 = display.newText( _parent, "密碼保護", X*0.2, Y*0.4, font , H*0.043 )
     text1.anchorX = 0
-    text2 = display.newText( _parent, "通知功能", X*0.2, Y*0.7, font , 50 )
+    text2 = display.newText( _parent, "通知功能", X*0.2, Y*0.7, font , H*0.043 )
     text2.anchorX = 0
-    text3 = display.newText( _parent, "通知時間", X*0.2, Y*0.9, font , 50 )
+    text3 = display.newText( _parent, "通知時間", X*0.2, Y*0.9, font , H*0.043 )
     text3.anchorX = 0
-    text4 = display.newText( _parent, "計畫", X*0.2, Y*1.1, font , 50 )
+    text4 = display.newText( _parent, "計畫", X*0.2, Y*1.1, font , H*0.043 )
     text4.anchorX = 0
-    text5 = display.newText( _parent, "性別", X*0.2, Y*1.3, font , 50 )
+    text5 = display.newText( _parent, "性別", X*0.2, Y*1.3, font , H*0.043 )
     text5.anchorX = 0
-    text6 = display.newText( _parent, "OFF", X*1.6, Y*0.4, font , 30 )
+    text6 = display.newText( _parent, "OFF", X*1.6, Y*0.4, font , H*0.028 )
     text6.anchorX = 0 
-    text7 = display.newText( _parent, "ON", X*1.6, Y*0.7, font , 30 )
+    text7 = display.newText( _parent, "ON", X*1.6, Y*0.7, font ,  H*0.028 )
     text7.anchorX = 0 
-    text8 = display.newText( _parent, "想避孕", X*1.6, Y*1.1, font , 30 )
+    text8 = display.newText( _parent, "想避孕", X*1.6, Y*1.1, font ,  H*0.028 )
     text8.anchorX = 0 
-    text9 = display.newText( _parent, "女生", X*1.6, Y*1.3, font , 30 )
+    text9 = display.newText( _parent, "女生", X*1.6, Y*1.3, font ,  H*0.028 )
     text9.anchorX = 0 
 
     local predictSetBtn = widget.newButton({ 
@@ -62,11 +62,11 @@ init = function ( _parent )
         y = Y*1.55,
         id = "predictSetBtn",
         label = "行經日數及未來經期預測設定          ＞",
-        fontSize = 30 ,
+        fontSize = H*0.026 ,
         shape = "roundedRect",
         width = W*0.9,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.017,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = setBtnEvent 
     }) 
@@ -78,11 +78,11 @@ init = function ( _parent )
         y = Y*1.75,
         id = "tallSetBtn",
         label = "身高設定                                             ＞",
-        fontSize = 30 ,
+        fontSize = H*0.026 ,
         shape = "roundedRect",
         width = W*0.9,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.017,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = setBtnEvent 
     })
@@ -90,7 +90,7 @@ init = function ( _parent )
     _parent:insert(tallSetBtn)
 
     -- createSwitch()
-    back = display.newCircle( _parent, X*0.2, Y*0.2, 50 )
+    back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
     back:addEventListener( "tap", listener )
 
     checkSwitchBtn()

@@ -21,9 +21,9 @@ local alertText
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "密碼保護", X, Y*0.2, font , 50 )
+    title = display.newText( _parent, "密碼保護", X, Y*0.2, font , H*0.045 )
 
-    back = display.newCircle( _parent, X*0.2, Y*0.2, 50 )
+    back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
     back:addEventListener( "tap", listener )
     createBtn()
     -- psdSwitchBtn:setLabel( "New Label" )
@@ -50,7 +50,7 @@ createBtn = function (  )
                         if alertText then
                             alertText:removeSelf( )
                         end
-                        alertText = display.newText( sceneGroup, "請先設置密碼", X, Y*0.85, font , 30 )
+                        alertText = display.newText( sceneGroup, "請先設置密碼", X, Y*0.85, font , H*0.028 )
                     end
                 end
                
@@ -64,11 +64,11 @@ createBtn = function (  )
         y = Y*0.4,
         id = "psdSwitchBtn",
         label = "開啟密碼保護",
-        fontSize = 40 ,
+        fontSize = H*0.03 ,
         shape = "roundedRect",
         width = W*0.7,
         height = H*0.1,
-        cornerRadius = 30,
+        cornerRadius = H*0.028,
         fillColor = { default={0.12,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = buttonEvent 
     })
@@ -78,11 +78,11 @@ createBtn = function (  )
         y = Y*0.7,
         id = "changePsdBtn",
         label = "變更密碼保護",
-        fontSize = 40 ,
+        fontSize = H*0.03 ,
         shape = "roundedRect",
         width = W*0.7,
         height = H*0.1,
-        cornerRadius = 30,
+        cornerRadius = H*0.028,
         fillColor = { default={0.12,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = buttonEvent 
     })

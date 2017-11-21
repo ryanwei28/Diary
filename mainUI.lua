@@ -18,7 +18,7 @@ local overlayOptions = {
                 sampleVar = "my sample variable"
             }
         }
-local tabFontSize = 40
+local tabFontSize = H*0.03
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -64,9 +64,9 @@ init = function ( _parent )
     -- Create the widget
     local tabBar = widget.newTabBar(
         {
-            top = H - 100,
+            top = H - H*0.06,
             width = display.contentWidth,
-            height = 100 , 
+            height =  H*0.06 , 
             buttons = tabButtons
         }
 )

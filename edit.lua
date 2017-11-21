@@ -98,35 +98,36 @@ local startStatisticalDays
 local endStatisticalDays 
 local sDay
 local duringDays
+local continuanceCount 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
 
-    title = display.newText( _parent, "紀錄", X, Y*0.2, font , 60 )
+    title = display.newText( _parent, "紀錄", X, Y*0.2, font , H*0.045 )
 
-    text1 = display.newText( _parent, "今天經期開始", X*0.3, Y*0.6, font , 40 )
+    text1 = display.newText( _parent, "今天經期開始", X*0.3, Y*0.6, font , H*0.035 )
     text1.anchorX = 0
-    text2 = display.newText( _parent, "今天經期結束", X*0.3, Y*0.8, font , 40 )
+    text2 = display.newText( _parent, "今天經期結束", X*0.3, Y*0.8, font , H*0.035 )
     text2.anchorX = 0
     
-    statusText = display.newText( _parent, "今天是安全期", X, Y*0.5, font , 30 )
+    statusText = display.newText( _parent, "今天是安全期", X, Y*0.5, font , H*0.025 )
     statusText:setFillColor( 0.88 , 0.33 , 0.342 )
 
-    closeText = display.newText( textGroup, "text", X*1.2, Y*1 , font , 40 )
+    closeText = display.newText( textGroup, "text", X*1.2, Y*1 , font , H*0.025 )
     closeText.anchorX = 0
-    temperatureText = display.newText( textGroup, "text", X*1.2, Y*1.2 , font , 40 )
+    temperatureText = display.newText( textGroup, "text", X*1.2, Y*1.2 , font , H*0.025 )
     temperatureText.anchorX = 0
-    weightText = display.newText( textGroup, "text", X*1.2, Y*1.4 , font , 40 )
+    weightText = display.newText( textGroup, "text", X*1.2, Y*1.4 , font , H*0.025 )
     weightText.anchorX = 0
-    noticText = display.newText( textGroup, "text", X*1.2, Y*1.6 , font , 40 )
+    noticText = display.newText( textGroup, "text", X*1.2, Y*1.6 , font , H*0.025 )
     noticText.anchorX = 0
 
     createBtn()
     -- createPickerWheel()
     judgeWeek()
-    dateText1 = display.newText( _parent, c..y.."/"..m.."/"..d , X , Y*0.4 , font , 50 )
+    dateText1 = display.newText( _parent, c..y.."/"..m.."/"..d , X , Y*0.4 , font , H*0.038 )
     -- dateText2 = display.newText( _parent, c..y.."  "..week , X, Y*0.4, font , 30 )
     if m == 1 then 
         m = 13
@@ -141,9 +142,9 @@ init = function ( _parent )
         y = Y*0.4,
         id = "leftBtn",
         label = "<",
-        fontSize = 30 ,
+        fontSize = H*0.025 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.025 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = handleButtonEvent 
     })
@@ -153,9 +154,9 @@ init = function ( _parent )
         y = Y*0.4,
         id = "rightBtn",
         label = ">",
-        fontSize = 30 ,
+        fontSize = H*0.025 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.025 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = handleButtonEvent 
     })
@@ -166,7 +167,7 @@ init = function ( _parent )
     checkDb()
     checkBoxBtn()
     readDb()
-    statisticalDays()
+    -- statisticalDays()
     
 end
 
@@ -301,13 +302,53 @@ rightLeapYear = function (  )
     end
 end
 
+-- writeDb = function (  )
+--     for i = 1 , daysTable[m] do 
+--         local tablesetup =  [[
+--                             INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+--                         ]]
+--                         -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+--         database:exec(tablesetup)
+--     end
+-- end
+
+
 writeDb = function (  )
-    for i = 1 , daysTable[m] do 
-        local tablesetup =  [[
-                            INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
-                        ]]
-                        -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
-        database:exec(tablesetup)
+    for row in database:nrows([[SELECT COUNT(*) FROM Diary ; ]]) do
+        firstRow = row['COUNT(*)']
+    end
+
+    if firstRow <= 10 then 
+        for row in database:nrows([[SELECT * FROM Diary WHERE Start = 1 ;]]) do
+            firstStart = row.Date
+        end
+
+        for row in database:nrows([[SELECT * FROM Diary WHERE End = 1 ;]]) do
+            firstEnd = row.Date
+        end
+
+         for i = 1 , daysTable[m] do 
+            local firstDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
+            
+            if firstDate < firstStart or firstDate > firstEnd then
+
+                local tablesetup =  [[
+                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+                                ]]
+                                -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+                database:exec(tablesetup)
+            else
+
+            end
+        end
+    else
+        for i = 1 , daysTable[m] do 
+            local tablesetup =  [[
+                                INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+                            ]]
+                            -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+            database:exec(tablesetup)
+        end
     end
 end
 
@@ -357,11 +398,11 @@ createBtn = function (  )
         y = Y*1,
         id = "close",
         label = "親密行為                                            ＞",
-        fontSize = 30 ,
+        fontSize = H*0.022 ,
         shape = "roundedRect",
         width = W*0.8,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.015,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = createBtnEvent 
     })
@@ -371,11 +412,11 @@ createBtn = function (  )
         y = Y*1.2,
         id = "temperature",
         label = "基礎體溫                                            ＞",
-        fontSize = 30 ,
+        fontSize = H*0.022 ,
         shape = "roundedRect",
         width = W*0.8,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.015,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = createBtnEvent 
     })
@@ -385,11 +426,11 @@ createBtn = function (  )
         y = Y*1.4,
         id = "weight",
         label = "體重KG                                            ＞",
-        fontSize = 30 ,
+        fontSize = H*0.022 ,
         shape = "roundedRect",
         width = W*0.8,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.015,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = createBtnEvent 
     })
@@ -399,16 +440,16 @@ createBtn = function (  )
         y = Y*1.6,
         id = "notes",
         label = "Notes                                            ＞",
-        fontSize = 30 ,
+        fontSize = H*0.022 ,
         shape = "roundedRect",
         width = W*0.8,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.015,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = createBtnEvent 
     })
 
-    back = display.newCircle(  X*0.2, Y*0.2, 50 )
+    back = display.newCircle(  X*0.2, Y*0.2, H*0.045 )
     back:addEventListener( "tap", listener )
 
     btnGroup:insert(back)
@@ -427,7 +468,7 @@ createPickerWheel = function ( btnId )
         {
             {
                 align = "left",
-                width = 280,
+                width = H*0.19,
                 startIndex = 2,
                 labelPadding = 1,
                 labels = { "有避孕", "沒避孕", "不知道是否有避孕", }
@@ -438,14 +479,14 @@ createPickerWheel = function ( btnId )
         {
             {
                 align = "left",
-                width = 80,
+                width = H*0.075,
                 startIndex = 2,
                 labelPadding = 10,
                 labels = { "35", "36", "37", "38" }
             },
             {
                 align = "left",
-                width = 80,
+                width = H*0.075,
                 labelPadding = 10,
                 startIndex = 1,
                 labels = { ".00", ".01", ".02",".03",".04",".05",".06", }
@@ -453,7 +494,7 @@ createPickerWheel = function ( btnId )
             {
                 align = "left",
                 labelPadding = 10,
-                width = 80,
+                width = H*0.075,
                 startIndex = 1,
                 labels = { "度C" }
             }
@@ -463,14 +504,14 @@ createPickerWheel = function ( btnId )
         {
             {
                 align = "left",
-                width = 80,
+                width = H*0.075,
                 startIndex = 2,
                 labelPadding = 10,
-                labels = { "35", "36", "37", "38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61", }
+                labels = { "35", "36", "37", "38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99",}
             },
             {
                 align = "left",
-                width = 80,
+                width = H*0.075,
                 labelPadding = 10,
                 startIndex = 1,
                 labels = { ".0", ".1", ".2",".3",".4",".5",".6",".7",".8",".9", }
@@ -478,7 +519,7 @@ createPickerWheel = function ( btnId )
             {
                 align = "left",
                 labelPadding = 10,
-                width = 80,
+                width = H*0.075,
                 startIndex = 1,
                 labels = { "kg" }
             }
@@ -490,7 +531,7 @@ createPickerWheel = function ( btnId )
     {
         x = X ,
         y = Y*0.8,
-        fontSize = 30,
+        fontSize = H*0.024,
         columns = columnData
     })  
          
@@ -541,9 +582,9 @@ createPickerWheelBtn = function ( id )
         y = Y*1.2,
         id = "clearPickerWheelBtn",
         label = "清除",
-        fontSize = 40 ,
+        fontSize = H*0.038 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.025 ,
         fillColor = { default={0.12,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = pickerWheelButtonEvent 
     })
@@ -553,9 +594,9 @@ createPickerWheelBtn = function ( id )
         y = Y*1.2,
         id = "chkPickerWheelBtn",
         label = "儲存",
-        fontSize = 40 ,
+        fontSize = H*0.038 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.025 ,
         fillColor = { default={0.12,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = pickerWheelButtonEvent 
     })
@@ -590,7 +631,9 @@ readDb = function (  )
         weightText.text = row.Weight
         noticText.text = row.Notes
 
-        if row.Start == 1 then 
+        print( type(row.Start).."start" )
+        local start = tostring(row.Start)
+        if start == "1" then 
             ch1Text.text = "V"
             ch1 = 0
         else
@@ -598,7 +641,8 @@ readDb = function (  )
             ch1 = 1
         end
 
-        if row.End == 1 then 
+        local endd = tostring(row.End)
+        if endd == "1" then 
             ch2Text.text = "V"
             ch2 = 0
         else
@@ -786,7 +830,7 @@ checkBoxBtn = function (  )
         y = Y*0.6,
         id = "checkBox1",
         label = "",
-        fontSize = 30 ,
+        fontSize = H*0.025 ,
         shape = "rect",
         width = W*0.1 ,
         height = H*0.05 ,
@@ -799,7 +843,7 @@ checkBoxBtn = function (  )
         y = Y*0.8,
         id = "checkBox2",
         label = "",
-        fontSize = 30 ,
+        fontSize = H*0.025 ,
         shape = "rect",
         width = W*0.1 ,
         height = H*0.05 ,
@@ -808,91 +852,16 @@ checkBoxBtn = function (  )
         onEvent = checkBoxBtnEvent 
     })
 
-    ch1Text = display.newText( textGroup , "" , X*1.4 , Y*0.6, font , 50 )
-    ch2Text = display.newText( textGroup , "" , X*1.4 , Y*0.8, font , 50 )
+    ch1Text = display.newText( textGroup , "" , X*1.4 , Y*0.6, font , H*0.045 )
+    ch2Text = display.newText( textGroup , "" , X*1.4 , Y*0.8, font , H*0.045 )
 
     sceneGroup:insert(checkBox1)
     sceneGroup:insert(checkBox2)
 
 end
 
-
-statisticalDays = function (  )
-    startTable = {}
-    startNum = 0
-    for row in database:nrows([[SELECT * FROM Diary WHERE Start = 1 ORDER BY Date ASC]]) do
-        startNum = startNum + 1
-        startTable[startNum] = row.Date
-    end
-
-    endTable = {}
-    endNum = 0
-    for row in database:nrows([[SELECT * FROM Diary WHERE End = 1  ORDER BY Date ASC]]) do
-        endNum = endNum + 1 
-        endTable[endNum] = row.Date
-    end
-
-    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ]]) do
-        during = row.During
-    end
-
-    for i = 1 , #startTable do 
-        local s = os.date(os.time{year=string.sub(startTable[i] , 1 , 4) ,month=string.sub(startTable[i] , 6 , 7),day=string.sub(startTable[i] , 9 , 10)})
-        sD = tonumber( string.sub( startTable[i], 9 , 10 ) -1 )
-        sM = tonumber( string.sub( startTable[i], 6 , 7 ) )
-        sY = tonumber( string.sub( startTable[i], 1 , 4 ) )
-        sDate = startTable[i]
-        print( sDate..":sssssssss" )
-        if endTable[i] then
-            local e = os.date(os.time{year=string.sub(endTable[i] , 1 , 4) ,month=string.sub(endTable[i] , 6 , 7),day=string.sub(endTable[i] , 9 , 10)})
-        
-            -- print( e.."eee" )
-            days = (tonumber(e-s)/24/60/60+1) 
-            print(days.."天?")
-
-            -- 要加if 判斷有無資料
-             for row in database:nrows([[SELECT COUNT(*) FROM Statistics WHERE StartDay = ']]..startTable[i]..[[']]) do
-                rows = row['COUNT(*)']
-            end
-
-            if rows < 1 then 
-                local tablesetup =  [[
-                        INSERT INTO Statistics VALUES ( NULL , ']]..startTable[i]..[[' , ']]..days..[[' , "" );
-                    ]]
-                    -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
-                database:exec(tablesetup)
-            end
-
-            
-
-            for j = 1 , days do 
-                statisticCount()
-                database:exec([[UPDATE Diary SET StartDays = ']]..j..[[' WHERE date =']]..sDate..[[';]])
-                
-                -- sD = string.sub( startTable[i], 9 , 10 )
-                -- print( sD )
-                -- print( i..j )
-            end
-        else
-
-             -- for k =  1 , during do 
-             --    statisticCount()
-             --    database:exec([[UPDATE Diary SET StartDays = ']]..k..[[' WHERE date =']]..sDate..[[';]])
-
-
-                    -- sD = string.sub( startTable[i], 9 , 10 )
-                    -- print( sD )
-                -- print( i..j )
-            -- end
-        end
-    end
-end 
-
 statisticCount = function (  )
-    -- sD = tonumber( string.sub( startTable[j], 9 , 10 ) )
-    -- sM = tonumber( string.sub( startTable[j], 6 , 7 ) )
-    -- sY = tonumber( string.sub( startTable[j], 1 , 4 ) )
-
+    
     local sLeap = math.fmod( sY , 4)
     
     if sLeap == 3 then 
@@ -916,10 +885,51 @@ statisticCount = function (  )
     end
 
     sDate = sY.."/"..string.format("%02d",sM).."/"..string.format("%02d",sD)
-    -- print( sY.."/"..string.format("%02d",sM).."/"..string.format("%02d",sD) )
+end
+
+continuanceCount = function (  )
+    local continuRows
+    local continuTable = {}
+    local continuNum = 0
+    for row in database:nrows([[SELECT COUNT(*) FROM Statistics ;]]) do
+        continuRows = row['COUNT(*)']
+    end
+
+    if continuRows > 1 then 
+
+        for row in database:nrows([[SELECT * FROM Statistics ORDER BY StartDay ASC ;]]) do
+            continuNum = continuNum + 1 
+            continuTable[continuNum] = row.StartDay 
+        end
+
+        for i = 1 , continuRows-1 do 
+            local s = os.date(os.time({year = string.sub( continuTable[i] , 1 , 4 ), month = string.sub( continuTable[i] , 6 , 7) , day = string.sub( continuTable[i] , 9 , 10)}))
+            local e = os.date(os.time({year = string.sub( continuTable[i+1] , 1 , 4 ), month = string.sub( continuTable[i+1] , 6 , 7) , day = string.sub( continuTable[i+1] , 9 , 10)}))
+            local n = (24*60*60)
+            local d = (e-s)/n
+            print( d.."qq"..i )
+            -- print( continuTable[i] )
+            database:exec([[UPDATE Statistics SET Padding = ']]..d..[[' WHERE StartDay =']]..continuTable[i+1]..[[';]])
+        end
+    end
+
+    database:exec([[UPDATE Statistics SET Padding = 0 WHERE StartDay =']]..continuTable[1]..[[';]])
+
+
+    --=================================================================================================
+    -- local lastDay 
+
+    -- for row in database:nrows([[SELECT * FROM Statistics ORDER BY StartDay ASC ;]]) do
+    --     if row.StartDay and row.StartDay < dbDate then
+    --         lastDay = row.StartDay
+    --     end
+    -- end
+
+    -- print( lastDay )
 end
 
 startStatisticalDays = function (  )
+
     for row in database:nrows([[SELECT COUNT(*) FROM Statistics WHERE StartDay = ']]..dbDate..[[']]) do
         rows = row['COUNT(*)']
     end
@@ -931,6 +941,8 @@ startStatisticalDays = function (  )
                     -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
             database:exec(tablesetup)
     end
+
+    continuanceCount()
 end
 
 endStatisticalDays = function (  )
@@ -994,6 +1006,7 @@ endStatisticalDays = function (  )
                     -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
             database:exec(tablesetup)
     end
+
 end
 -- -----------------------------------------------------------------------------------
 -- Scene event functions

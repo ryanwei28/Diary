@@ -45,7 +45,7 @@ main = function (  )
     checkDb()
     Runtime:addEventListener("system", onSystemEvent)
 
-    composer.gotoScene( "enterPassword" )
+    composer.gotoScene( "initSetting" )
 
      -- local tablesetup =  [[
      --                    INSERT INTO Diary VALUES ( NULL , "" ,  , "End" , "Close" , "Temperature" , "Weight" , "Notes");
@@ -59,7 +59,10 @@ end
 
 writeDb = function (  )
     local tablesetup =  [[
-                        INSERT INTO Setting VALUES ( NULL , "" , "" , "" , "" , "" , "" , "5" , "" ,"OFF");
+                        INSERT INTO Setting VALUES ( NULL , "" , "" , "" , "" , "" , "" , "" , "" ,"OFF");
+                        INSERT INTO Diary VALUES( "" , "2017/11/05" , "1" , "" , "" , "" , "" , "" , "");
+
+
                     ]]
                     -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
     database:exec(tablesetup)

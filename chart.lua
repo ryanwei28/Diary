@@ -63,7 +63,7 @@ local labelTable2
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "圖表", X, Y*0.15, font , 50 )
+    title = display.newText( _parent, "圖表", X, Y*0.15, font , H*0.045 )
 
 
     
@@ -143,12 +143,12 @@ printWeightPlot = function (  )
 
         --X軸數值
         for i = 1 , 7 do 
-            vTable[i] = display.newText( vGroup, string.format( "%.1f", small + (big-small)*(i-1)/6  )  , X*0.16 , Y*1.77 - i*Y*0.18 , font , 30 )
+            vTable[i] = display.newText( vGroup, string.format( "%.1f", small + (big-small)*(i-1)/6  )  , X*0.16 , Y*1.77 - i*Y*0.18 , font , H*0.028 )
         end
 
         --Y軸日期
         for i = 1 , 130 do 
-            dateTable[i] = display.newText( sceneGroup, string.sub( preDate, 6 ,-1 ).."\n"..string.sub( preDate, 1 ,4 )  , X*0.1 + i*0.3*X, Y*1.35 ,font , 30 )
+            dateTable[i] = display.newText( sceneGroup, string.sub( preDate, 6 ,-1 ).."\n"..string.sub( preDate, 1 ,4 )  , X*0.1 + i*0.3*X, Y*1.35 ,font , H*0.028 )
             scrollView:insert(dateTable[i])
 
             lineTable[i] = display.newLine( sceneGroup, X*0.1 + i*0.3*X, Y*1.2, X*0.1 + i*0.3*X, Y*0.1 )
@@ -170,11 +170,11 @@ printWeightPlot = function (  )
         for i = 1 , #wPointTable do 
             if wPointTable[i] ~= "" then
                 a = a + 1
-                pointTable[i] = display.newCircle( sceneGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -3 )-small)/(big-small)*Y*1.1), 12 )
+                pointTable[i] = display.newCircle( sceneGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -3 )-small)/(big-small)*Y*1.1), H*0.008 )
                 pointTable[i]:setFillColor( 0/255, 154/255, 219/255 )
                 labelTable[i] = display.newRect( sceneGroup, pointTable[i].x , pointTable[i].y + Y*0.06, W*0.09, H*0.026 )
                 labelTable[i]:setFillColor( 0.72 , 0.45 , 0.62 )
-                labelTable2[i] = display.newText( sceneGroup , string.sub( wPointTable[i], 1 , -3 ) , pointTable[i].x, pointTable[i].y + Y*0.06, font , 35 )
+                labelTable2[i] = display.newText( sceneGroup , string.sub( wPointTable[i], 1 , -3 ) , pointTable[i].x, pointTable[i].y + Y*0.06, font , H*0.028 )
                 labelTable2[i]:setFillColor( 0.1 )
                 scrollView:insert(pointTable[i])
                 scrollView:insert(labelTable[i])
@@ -202,7 +202,7 @@ printWeightPlot = function (  )
         --     onComplete = onScrollComplete
         -- }
     else 
-        noDataText = display.newText( vGroup, "尚無資料", X, Y , font , 60 )
+        noDataText = display.newText( vGroup, "尚無資料", X, Y , font , H*0.05 )
     end
 end
 
@@ -288,12 +288,12 @@ printTemperaturePlot = function (  )
 
         --X軸數值
         for i = 1 , 7 do 
-            vTable[i] = display.newText( vGroup, string.format( "%.1f", small + (big-small)*(i-1)/6  )  , X*0.16 , Y*1.77 - i*Y*0.18 , font , 30 )
+            vTable[i] = display.newText( vGroup, string.format( "%.1f", small + (big-small)*(i-1)/6  )  , X*0.16 , Y*1.77 - i*Y*0.18 , font , H*0.028 )
         end
 
         --Y軸日期
         for i = 1 , 130 do 
-            dateTable[i] = display.newText( sceneGroup, string.sub( preDate, 6 ,-1 ).."\n"..string.sub( preDate, 1 ,4 )  , X*0.1 + i*0.3*X, Y*1.35 ,font , 30 )
+            dateTable[i] = display.newText( sceneGroup, string.sub( preDate, 6 ,-1 ).."\n"..string.sub( preDate, 1 ,4 )  , X*0.1 + i*0.3*X, Y*1.35 ,font , H*0.028 )
             scrollView:insert(dateTable[i])
 
             lineTable[i] = display.newLine( sceneGroup, X*0.1 + i*0.3*X, Y*1.2, X*0.1 + i*0.3*X, Y*0.1 )
@@ -319,11 +319,11 @@ printTemperaturePlot = function (  )
                 -- pointTable[i]:setFillColor( 0/255, 154/255, 219/255 )
                 -- scrollView:insert(pointTable[i])
 
-                  pointTable[i] = display.newCircle( sceneGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -5 )-small)/(big-small)*Y*1.1), 12 )
+                  pointTable[i] = display.newCircle( sceneGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -5 )-small)/(big-small)*Y*1.1), H*0.008 )
                 pointTable[i]:setFillColor( 0/255, 154/255, 219/255 )
                 labelTable[i] = display.newRect( sceneGroup, pointTable[i].x , pointTable[i].y + Y*0.06, W*0.12, H*0.026 )
                 labelTable[i]:setFillColor( 0.72 , 0.45 , 0.62 )
-                labelTable2[i] = display.newText( sceneGroup , string.sub( wPointTable[i], 1 , -5 ) , pointTable[i].x, pointTable[i].y + Y*0.06, font , 35 )
+                labelTable2[i] = display.newText( sceneGroup , string.sub( wPointTable[i], 1 , -5 ) , pointTable[i].x, pointTable[i].y + Y*0.06, font , H*0.04 )
                 labelTable2[i]:setFillColor( 0.1 )
                 scrollView:insert(pointTable[i])
                 scrollView:insert(labelTable[i])
@@ -343,7 +343,7 @@ printTemperaturePlot = function (  )
 
         scrollView:scrollTo( "right", { time=0 } )
     else
-        noDataText = display.newText( vGroup, "尚無資料", X, Y , font , 60 )
+        noDataText = display.newText( vGroup, "尚無資料", X, Y , font , H*0.058 )
     end
 end
 
@@ -441,11 +441,11 @@ createBtn = function (  )
         y = Y*0.3,
         id = "temperatureBtn",
         label = "基礎體溫(度C)",
-        fontSize = 30 ,
+        fontSize = H*0.025 ,
         shape = "roundedRect",
         width = W*0.5,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.018,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = createBtnEvent 
     })
@@ -455,11 +455,11 @@ createBtn = function (  )
         y = Y*0.3,
         id = "weightBtn",
         label = "體重(kg)",
-        fontSize = 30 ,
+        fontSize = H*0.025 ,
         shape = "roundedRect",
         width = W*0.5,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.018,
         fillColor = { default={0.3,0.28,0.75,0.4}, over={0.2,0.78,0.75,0.4} },
         onEvent = createBtnEvent 
     })

@@ -29,9 +29,9 @@ local psdChk
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "密碼設定", X, Y*0.2, font , 50 )
+    title = display.newText( _parent, "密碼設定", X, Y*0.2, font , H*0.045 )
 
-    back = display.newCircle( _parent, X*0.2, Y*0.2, 50 )
+    back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
     back:addEventListener( "tap", listener )
 
     -- addBtn()
@@ -42,7 +42,7 @@ init = function ( _parent )
     textField:addEventListener( "userInput", textListener )
     _parent:insert(textField)
 
-    alertText = display.newText( sceneGroup, "", X, Y*0.5, font , 30 )
+    alertText = display.newText( sceneGroup, "", X, Y*0.5, font , H*0.028 )
 
     if setType == "change" then 
         title.text = "變更密碼"
@@ -100,11 +100,11 @@ addBtn = function (  )
         y = Y*0.65,
         id = "chkBth",
         label = "確定",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "roundedRect",
         width = W*0.2,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.015,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = chkBthEvent 
     } )                 
@@ -139,11 +139,11 @@ addCloseBtn = function (  )
         y = Y*0.65,
         id = "colseBth",
         label = "確定",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "roundedRect",
         width = W*0.2,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.015,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = closeBthEvent 
     } )                 
@@ -181,11 +181,11 @@ updateBtn = function (  )
         y = Y*0.65,
         id = "updateBtn",
         label = "確定",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "roundedRect",
         width = W*0.2,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.015,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = updateBtnEvent 
     } )                 

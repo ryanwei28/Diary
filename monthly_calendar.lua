@@ -61,6 +61,12 @@ local wd
 local listener
 local backBtn2
 local readMonthDb
+local fourSqrare
+local duringDays = 0
+local duringNum = 0
+local paddingNum = 0 
+local paddingDays = 0
+local last
 composer.setVariable( "prevScene", "monthly_calendar" )
 -- ❤▲◯
 -- -----------------------------------------------------------------------------------
@@ -68,12 +74,12 @@ composer.setVariable( "prevScene", "monthly_calendar" )
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "月曆", X, Y*0.15, font , 50 )
+    title = display.newText( _parent, "月曆", X, Y*0.15, font , H*0.05 )
 
     judgeWeek()
     judge1stWeek()
-    dateText1 = display.newText( _parent, c..y.." 年 "..m.." 月" , X , Y*0.3 , font , 50 )
-    wd = display.newText( _parent, "SUN   MON   TUE   WED   THU   FRI   SAT", X, Y*0.5 , font , 25 )
+    dateText1 = display.newText( _parent, c..y.." 年 "..m.." 月" , X , Y*0.3 , font ,  H*0.04 )
+    wd = display.newText( _parent, "SUN   MON   TUE   WED   THU   FRI   SAT", X, Y*0.5 , font , H*0.022 )
     -- dateText2 = display.newText( _parent, c..y.."  "..week , X, Y*0.4, font , 30 )
     if m == 1 then 
         m = 13
@@ -94,9 +100,9 @@ init = function ( _parent )
         y = Y*0.3,
         id = "leftBtn",
         label = "<",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.028 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = handleButtonEvent 
     })
@@ -106,9 +112,9 @@ init = function ( _parent )
         y = Y*0.3,
         id = "rightBtn",
         label = ">",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.028 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = handleButtonEvent 
     })
@@ -119,7 +125,7 @@ init = function ( _parent )
     backToday()
     setBtn()
     -- readDb()
-    
+    fourSqrare()
 end
 
 
@@ -337,9 +343,9 @@ backToday = function (  )
         y = Y*0.15,
         id = "backBtn",
         label = "回今天",
-        fontSize = 40 ,
+        fontSize = H*0.035 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.028 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = backButtonEvent 
     })
@@ -367,9 +373,9 @@ setBtn = function (  )
         y = Y*0.15,
         id = "disclaimer",
         label = "免責",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.028 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = setBtnEvent 
     })
@@ -379,9 +385,9 @@ setBtn = function (  )
         y = Y*0.15,
         id = "statistics",
         label = "統計",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.028 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = setBtnEvent 
     })
@@ -391,9 +397,9 @@ setBtn = function (  )
         y = Y*0.15,
         id = "setup",
         label = "設定",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.028 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = setBtnEvent 
     })
@@ -416,6 +422,71 @@ setBtn = function (  )
     -- sceneGroup:insert(editBtn)
 
 end
+fourSqrare = function (  )
+    square1 = display.newRect( sceneGroup, X*0.25, Y*1.7, W*0.25, H*0.15 )
+    square1:setFillColor( 0.92,0.3,0.41 )
+    square2 = display.newRect( sceneGroup, X*0.75, Y*1.7, W*0.25, H*0.15 )
+    square2:setFillColor( 0.3,0.93,0.41 )
+    square3 = display.newRect( sceneGroup, X*1.25, Y*1.7, W*0.25, H*0.15 )
+    square3:setFillColor( 0.92,0.83,0.41 )
+    square4 = display.newRect( sceneGroup, X*1.75, Y*1.7, W*0.25, H*0.15 )
+    square4:setFillColor( 0.1,0.3,0.841 )
+
+    tText1 = display.newText( sceneGroup, "上次月經開始", square1.x , Y*1.82 , native.systemFontBold , H*0.02 )
+    tText2 = display.newText( sceneGroup, "下次月經預測", square2.x , Y*1.82 , native.systemFontBold , H*0.02 )
+    tText3 = display.newText( sceneGroup, "平均週期", square3.x , Y*1.82 , native.systemFontBold , H*0.02 )
+    tText4 = display.newText( sceneGroup, "平均天數", square4.x , Y*1.82 , native.systemFontBold , H*0.02 )
+    sText1 = display.newText( sceneGroup, "", square1.x , Y*1.75 , native.systemFontBold , H*0.05 )
+    sText1Year = display.newText( sceneGroup, "", square1.x , Y*1.65 , native.systemFontBold , H*0.047 )
+    sText2 = display.newText( sceneGroup, "", square2.x , Y*1.75 , native.systemFontBold , H*0.05 )
+    sText2Year = display.newText( sceneGroup, "", square2.x , Y*1.65 , native.systemFontBold , H*0.047 )
+    sText3 = display.newText( sceneGroup, "", square3.x , Y*1.75 , native.systemFontBold , H*0.07 )
+    sText3Day = display.newText( sceneGroup, "天", square3.x + X*0.13 , Y*1.75 , native.systemFontBold , H*0.02 )
+    sText4 = display.newText( sceneGroup, "", square4.x , Y*1.75 , native.systemFontBold , H*0.07 )
+    sText4Day = display.newText( sceneGroup, "天", square4.x + X*0.13 , Y*1.75 , native.systemFontBold , H*0.02 )
+
+    for row in database:nrows([[SELECT * FROM Statistics ORDER BY StartDay ASC ;]]) do
+        last = row.StartDay
+    end
+
+    if last then
+        sText1.text = string.sub( last , -5 , -1 ) 
+        sText1Year.text = string.sub( last , 1 , 4 ) 
+        -- local e = os.date(os.time{year=string.sub(endTable[i] , 1 , 4) ,month=string.sub(endTable[i] , 6 , 7),day=string.sub(endTable[i] , 9 , 10)})
+
+        local s = os.date(os.time({year = string.sub( last , 1 , 4 ), month = string.sub( last , 6 , 7) , day = string.sub( last , 9 , 10)}))
+        local d = 30
+        for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+            d = row.Cycle
+        end
+        local n = (24*60*60)
+        local e = s + (d)*n
+
+        sText2Year.text = os.date("%Y",e)
+        sText2.text = os.date("%m",e).."/"..os.date("%d",e)
+
+         for row in database:nrows([[SELECT * FROM Statistics ;]]) do
+            paddingDays = paddingDays + row.Padding
+            paddingNum = paddingNum + 1
+        end
+
+        for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+            sText3.text = row.Cycle
+        end
+
+        if paddingNum > 1 then
+            sText3.text = string.format("%d" , paddingDays/(paddingNum-1) )
+        end 
+
+        for row in database:nrows([[SELECT * FROM Statistics ;]]) do
+            duringDays = duringDays + row.Continuance
+            duringNum = duringNum + 1
+        end
+
+        sText4.text = string.format("%d" , duringDays/duringNum )
+    end
+end
+
 
 writeDb = function (  )
     for i = 1 , daysTable[m] do 
@@ -466,7 +537,7 @@ creatMonthlyCalendar = function (  )
             k = i*7+j-7 
             if k <= daysTable[m] then 
                 if (firstW + j -1 ) <= 6 then
-                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , X*0.27 + (firstW + j  ) * 72, 300+ i * 100, font , 40 )
+                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , X*0.1 + (firstW + j  ) * H*0.062, H*0.25+ i * H*0.075, font , H*0.028 )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
                     mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
@@ -477,24 +548,24 @@ creatMonthlyCalendar = function (  )
 
                     for row in database:nrows([[SELECT * FROM Diary WHERE Date = ']]..mCalendarTable[i*7+j-7].id..[[' ]]) do
                         if row.Close ~= "" then
-                            local cc = display.newText( mGroup, "❤" , X*0.24 + (firstW + j  ) * 72, 290+ i * 100, font , 30 )
+                            local cc = display.newText( mGroup, "❤" ,  X*0.1 + (firstW + j  ) * H*0.06, H*0.25+ i * H*0.074, font , H*0.024 )
                             cc:setFillColor( 0.9 , 0.1 , 0.1 )
                         end
 
                         if row.Temperature ~= "" then
-                            local dd = display.newText( mGroup, "◯" , X*0.3 + (firstW + j  ) * 72, 290+ i * 100, font , 30 )
+                            local dd = display.newText( mGroup, "◯" ,  X*0.1 + (firstW + j  ) * H*0.06, H*0.25+ i * H*0.076, font , H*0.024 )
                             dd:setFillColor( 0.1 , 0.851 , 0.21 )
                         end
 
                         if row.Weight ~= "" then
-                            local ee = display.newText( mGroup, "▲" , X*0.24 + (firstW + j  ) * 72, 310+ i * 100, font , 30 )
+                            local ee = display.newText( mGroup, "▲" , X*0.1 + (firstW + j  ) * H*0.064, H*0.25+ i * H*0.076, font , H*0.024 )
                             ee:setFillColor( 0.15 , 0.12 , 0.91 )
                         end
                     end
                 end
 
                 if (firstW + j -1 ) > 6 then
-                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , X*0.27 + -X*1.35 + (firstW + j  ) * 72, 300+ (i + 1) * 100, font , 40 )
+                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , X*0.1 + -X*1.53 + (firstW + j  ) * H*0.062, H*0.25+ (i + 1) * H*0.075, font , H*0.028 )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d", mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
                     mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
@@ -506,17 +577,17 @@ creatMonthlyCalendar = function (  )
 
                     for row in database:nrows([[SELECT * FROM Diary WHERE Date = ']]..mCalendarTable[i*7+j-7].id..[[' ]]) do
                         if row.Close ~= "" then
-                            local cc = display.newText( mGroup, "❤" , X*0.24 + (firstW + j  ) * 72 -X*1.35, 290 + (i + 1) * 100, font , 30 )
+                            local cc = display.newText( mGroup, "❤" , X*0.1 + -X*1.53 + (firstW + j  ) * H*0.061, H*0.25+ (i + 1) * H*0.074, font ,  H*0.024 )
                             cc:setFillColor( 0.9 , 0.1 , 0.1 )
                         end
 
                         if row.Temperature ~= "" then
-                            local dd = display.newText( mGroup, "◯" , X*0.3 + (firstW + j  ) * 72-X*1.35, 290 + (i + 1) * 100, font , 30 )
+                            local dd = display.newText( mGroup, "◯" ,X*0.1 + -X*1.53 + (firstW + j  ) * H*0.061, H*0.25+ (i + 1) * H*0.076, font ,  H*0.024 )
                             dd:setFillColor( 0.1 , 0.851 , 0.21 )
                         end
 
                         if row.Weight ~= "" then
-                            local ee = display.newText( mGroup, "▲" , X*0.24 + (firstW + j  ) * 72-X*1.35, 310 + (i + 1) * 100, font , 30 )
+                            local ee = display.newText( mGroup, "▲" , X*0.1 + -X*1.53 + (firstW + j  ) * H*0.062, H*0.25+ (i + 1) * H*0.076, font ,  H*0.024 )
                             ee:setFillColor( 0.15 , 0.12 , 0.91 )
                         end
                     end

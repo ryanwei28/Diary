@@ -63,37 +63,37 @@ composer.setVariable( "prevScene", "daily_calendar" )
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "日曆", X, Y*0.15, font , 50 )
+    title = display.newText( _parent, "日曆", X, Y*0.15, font , H*0.05 )
 
-    text1 = display.newText( _parent , "本日狀況", X, Y*0.6 , font , 40 )
+    text1 = display.newText( _parent , "本日狀況", X, Y*0.6 , font , H*0.037 )
     
-    text2 = display.newText( _parent , "親密行為", X*0.3, Y*0.8 , font , 40 )
+    text2 = display.newText( _parent , "親密行為", X*0.3, Y*0.8 , font , H*0.03 )
     text2.anchorX = 0 
-    text3 = display.newText( _parent , "基礎體溫", X*0.3, Y*1 , font , 40 )
+    text3 = display.newText( _parent , "基礎體溫", X*0.3, Y*1 , font , H*0.03 )
     text3.anchorX = 0 
-    text4 = display.newText( _parent , "體重", X*0.3, Y*1.2 , font , 40 )
+    text4 = display.newText( _parent , "體重", X*0.3, Y*1.2 , font , H*0.03 )
     text4.anchorX = 0 
-    text5 = display.newText( _parent , "BMI", X*0.3, Y*1.4 , font , 40 )
+    text5 = display.newText( _parent , "BMI", X*0.3, Y*1.4 , font , H*0.03 )
     text5.anchorX = 0 
-    text6 = display.newText( _parent , "Notes", X*0.3, Y*1.6 , font , 40 )
+    text6 = display.newText( _parent , "Notes", X*0.3, Y*1.6 , font , H*0.03 )
     text6.anchorX = 0 
-    closeText = display.newText( _parent , "尚無紀錄", X*0.8, Y*0.8 , font , 30 )
+    closeText = display.newText( _parent , "尚無紀錄", X*0.8, Y*0.8 , font , H*0.025 )
     closeText.anchorX = 0
-    temperatureText = display.newText( _parent , "尚無紀錄", X*0.8, Y*1 , font , 30 )
+    temperatureText = display.newText( _parent , "尚無紀錄", X*0.8, Y*1 , font , H*0.025 )
     temperatureText.anchorX = 0
-    weightText = display.newText( _parent , "尚無紀錄", X*0.6, Y*1.2 , font , 30 )
+    weightText = display.newText( _parent , "尚無紀錄", X*0.6, Y*1.2 , font , H*0.025 )
     weightText.anchorX = 0
-    BMIText = display.newText( _parent , "請至設定頁設定身高", X*0.6, Y*1.4 , font , 30 )
+    BMIText = display.newText( _parent , "請至設定頁設定身高", X*0.6, Y*1.4 , font , H*0.025 )
     BMIText.anchorX = 0
-    noticText = display.newText( _parent , "尚無紀錄", X*0.7, Y*1.6 , font , 30 )
+    noticText = display.newText( _parent , "尚無紀錄", X*0.7, Y*1.6 , font , H*0.025 )
     noticText.anchorX = 0
 
-    statusText = display.newText( _parent , "今天是安全期", X, Y*0.7 , font , 35 )
+    statusText = display.newText( _parent , "今天是安全期", X, Y*0.7 , font , H*0.028 )
     statusText:setFillColor( 0.88 , 0.33 , 0.342 )
 
     judgeWeek()
-    dateText1 = display.newText( _parent, m.."/"..d , X , Y*0.3 , font , 80 )
-    dateText2 = display.newText( _parent, c..y.."  "..week , X, Y*0.4, font , 30 )
+    dateText1 = display.newText( _parent, m.."/"..d , X , Y*0.3 , font , H*0.05 )
+    dateText2 = display.newText( _parent, c..y.."  "..week , X, Y*0.4, font , H*0.025 )
     if m == 1 then 
         m = 13
         y = y - 1
@@ -107,9 +107,9 @@ init = function ( _parent )
         y = Y*0.3,
         id = "leftBtn",
         label = "<",
-        fontSize = 40 ,
+        fontSize = H*0.037 ,
         shape = "circle",
-        radius = 50 ,
+        radius = H*0.04 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = handleButtonEvent 
     })
@@ -119,9 +119,9 @@ init = function ( _parent )
         y = Y*0.3,
         id = "rightBtn",
         label = ">",
-        fontSize = 40 ,
+        fontSize = H*0.037 ,
         shape = "circle",
-        radius = 50 ,
+        radius =  H*0.04 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = handleButtonEvent 
     })
@@ -148,7 +148,19 @@ init = function ( _parent )
     backToday()
     setBtn()
     readDb()
-    statisticalDays()
+    -- statisticalDays()
+
+    --  for row in database:nrows([[SELECT * FROM Diary WHERE id = 2 ]]) do
+    --     a2 = row.Date
+    --     print( type(row.Date)..row.Date)
+    -- end
+
+    --    for row in database:nrows([[SELECT * FROM Diary WHERE id = 5 ]]) do
+    --     a5 = row.Date
+    --     print( type(row.Date)..row.Date)
+    -- end
+
+    -- print(a2 == a5)
 end
 
 
@@ -318,9 +330,9 @@ backToday = function (  )
         y = Y*0.15,
         id = "backBtn",
         label = "回今天",
-        fontSize = 40 ,
+        fontSize = H*0.032 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.032 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = backButtonEvent 
     })
@@ -353,9 +365,9 @@ setBtn = function (  )
         y = Y*0.15,
         id = "disclaimer",
         label = "免責",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.028 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = setBtnEvent 
     })
@@ -365,9 +377,9 @@ setBtn = function (  )
         y = Y*0.15,
         id = "statistics",
         label = "統計",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.028 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = setBtnEvent 
     })
@@ -377,9 +389,9 @@ setBtn = function (  )
         y = Y*0.15,
         id = "setup",
         label = "設定",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.028 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = setBtnEvent 
     })
@@ -389,9 +401,9 @@ setBtn = function (  )
         y = Y*0.6,
         id = "editBtn",
         label = "編輯",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "circle",
-        radius = 30 ,
+        radius = H*0.028 ,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = setBtnEvent 
     })
@@ -404,23 +416,52 @@ setBtn = function (  )
 end
 
 writeDb = function (  )
-     for i = 1 , daysTable[m] do 
-        local tablesetup =  [[
-                            INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
-                        ]]
-                        -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
-        database:exec(tablesetup)
+    for row in database:nrows([[SELECT COUNT(*) FROM Diary ; ]]) do
+        firstRow = row['COUNT(*)']
+    end
+
+    if firstRow <= 10 then 
+        for row in database:nrows([[SELECT * FROM Diary WHERE Start = 1 ;]]) do
+            firstStart = row.Date
+        end
+
+        for row in database:nrows([[SELECT * FROM Diary WHERE End = 1 ;]]) do
+            firstEnd = row.Date
+        end
+
+         for i = 1 , daysTable[m] do 
+            local firstDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
+            
+            if firstDate < firstStart or firstDate > firstEnd then
+
+                local tablesetup =  [[
+                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+                                ]]
+                                -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+                database:exec(tablesetup)
+            else
+
+            end
+        end
+    else
+        for i = 1 , daysTable[m] do 
+            local tablesetup =  [[
+                                INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+                            ]]
+                            -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+            database:exec(tablesetup)
+        end
     end
 end
 
 checkDb = function (  )
     for row in database:nrows([[SELECT COUNT(*) FROM Diary WHERE Date = ']]..dbDate..[[']]) do
         rows = row['COUNT(*)']
+        if rows < 1 then 
+            writeDb()
+        end
     end
 
-    if rows < 1 then 
-        writeDb()
-    end
     print("rrrr:"..rows)
 end
 
@@ -431,6 +472,7 @@ readDb = function (  )
         weightText.text = row.Weight
         noticText.text = row.Notes
         statusNum = row.StartDays
+        print(statusNum.."statusNum")
     end
 
     if closeText.text == "" then 
@@ -464,7 +506,7 @@ readDb = function (  )
     if statusNum ~= "" then
         statusText.text = "今天是月經期"
 
-    else
+    elseif statusNum == "" or statusNum == nil then
         statusText.text = "今天是安全期"
     end
 end

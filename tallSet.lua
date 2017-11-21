@@ -18,6 +18,7 @@ local cmText
 local textListener 
 local tallText = ""
 local setBtnEvent 
+local tt
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -25,10 +26,10 @@ local setBtnEvent
 init = function ( _parent )
 
 
-    title = display.newText( _parent, "身高設定", X, Y*0.2, font , 50 )
-    cmText = display.newText( _parent, "單位:公分", X, Y*0.6, font , 30 )
+    title = display.newText( _parent, "身高設定", X, Y*0.2, font , H*0.045 )
+    cmText = display.newText( _parent, "單位:公分", X, Y*0.6, font , H*0.028 )
 
-    back = display.newCircle( _parent, X*0.2, Y*0.2, 50 )
+    back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
     back:addEventListener( "tap", listener )
 
     for row in database:nrows([[SELECT * FROM Setting WHERE id = 1]]) do
@@ -46,11 +47,11 @@ init = function ( _parent )
         y = Y*0.8,
         id = "cancelBtn",
         label = "取消",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "roundedRect",
         width = W*0.2,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.015,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = setBtnEvent 
     }) 
@@ -62,11 +63,11 @@ init = function ( _parent )
         y = Y*0.8,
         id = "confirmBtn",
         label = "確定",
-        fontSize = 30 ,
+        fontSize = H*0.028 ,
         shape = "roundedRect",
         width = W*0.2,
         height = H*0.08,
-        cornerRadius = 20,
+        cornerRadius = H*0.015,
         fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = setBtnEvent 
     })

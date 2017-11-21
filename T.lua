@@ -28,7 +28,8 @@ function M.alert( alertType )
         local alert = native.showAlert( "","請先建立一筆經期開始資料", { "OK" }, onCompleteee )
     elseif alertType == "notToday" then
         local alert = native.showAlert( "","如經期非於本日結束，請直接於結束當天標記", { "OK" }, onCompleteee )
-
+    elseif alertType == "next" then
+        local alert = native.showAlert( "","請輸入完整三筆資料", { "OK" }, onCompleteee )
     end
 end
 

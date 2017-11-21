@@ -21,16 +21,21 @@ local v2
 local touchlistener
 local text1
 local text2 
+local text2Day
 local text3 
 local bg1 
 local bg2
-
+local indexCycle
+local indexDuring
+local paddingDays = 0 
+local paddingNum = 0 
+local avgCycle
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "週期設定", X, Y*0.2, font , 50 )
+    title = display.newText( _parent, "週期設定", X, Y*0.2, font , H*0.045 )
 
     bg1 = display.newRect( _parent, X, Y*0.55 , W*0.9, H*0.25 )
     bg1.id = "bg1"
@@ -41,15 +46,36 @@ init = function ( _parent )
     bg2:setFillColor( 0.2 )
     bg2:addEventListener( "touch", touchlistener )
 
-    back = display.newCircle( _parent, X*0.2, Y*0.2, 50 )
+    back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
     back:addEventListener( "tap", listener )
 
-    text1 = display.newText( _parent, "採用固定周期", X*0.37, Y*0.55, font,40 )
+    text1 = display.newText( _parent, "採用固定周期", X*0.37, Y*0.55, font,H*0.035 )
     text1.anchorX = 0
-    text2 = display.newText( _parent, "採用平均週期", X*0.37, Y*1, font,40 )
+    text2 = display.newText( _parent, "採用平均週期", X*0.37, Y*1, font,H*0.035 )
     text2.anchorX = 0
-    text3 = display.newText( _parent, "每次行經日數", X*0.27, Y*1.5, font,40 )
+    text2Day = display.newText( _parent, "    天", X*1.8, Y*1, font,H*0.035 )
+    text2Day.anchorX = 1
+    text3 = display.newText( _parent, "每次行經日數", X*0.27, Y*1.5, font,H*0.035 )
     text3.anchorX = 0
+
+    for row in database:nrows([[SELECT * FROM Statistics ;]]) do
+        paddingDays = paddingDays + row.Padding
+        paddingNum = paddingNum + 1
+    end
+
+    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+        avgCycle = row.Cycle
+        text2Day.text = avgCycle.."    天"
+    end
+
+    if paddingNum > 1 then 
+        avgCycle = string.format("%d" , paddingDays/(paddingNum-1) )
+        text2Day.text = string.format("%d" , paddingDays/(paddingNum-1) ).."    天"
+    end
+
+    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+        indexCycle = row.Cycle
+    end
 
     local columnData = 
     { 
@@ -57,8 +83,8 @@ init = function ( _parent )
             align = "center",
             width =  W*0.3,
             labelPadding = 20,
-            startIndex = 2,
-            labels = { "2天", "3天", "4天", "5天" , "6天", "7天", "8天", "9天", "10天", }
+            startIndex = indexCycle-14 ,
+            labels = { "15天", "16天", "17天", "18天" , "19天", "20天", "21天", "22天", "23天", "24天","25天","26天","27天","28天","29天","30天","31天","32天","33天","34天","35天","36天","37天","38天","39天","40天","41天","42天","43天","44天","45天","46天","47天","48天","49天","50天","51天","52天","53天","54天","55天","56天","57天","58天","59天","60天", }
         },
     }
  
@@ -70,20 +96,24 @@ init = function ( _parent )
         columns = columnData,
         style = "resizable",
         width = W*0.3,
-        rowHeight = 65,
-        fontSize = 50,
+        rowHeight = H*0.05,
+        fontSize = H*0.042,
         onValueSelected = onValueSelected,
     })
  
     _parent:insert(pickerWheel)
     
+    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+        indexDuring = row.During
+    end
+
     local columnData2 = 
     { 
         { 
             align = "center",
             width =  W*0.3,
             labelPadding = 20,
-            startIndex = 2,
+            startIndex = indexDuring-1 ,
             labels = { "2天", "3天", "4天", "5天" , "6天", "7天", "8天", "9天", "10天", }
         },
     }
@@ -96,8 +126,8 @@ init = function ( _parent )
         columns = columnData2,
         style = "resizable",
         width = W*0.3,
-        rowHeight = 65,
-        fontSize = 50,
+        rowHeight = H*0.05,
+        fontSize = H*0.042,
         onValueSelected = onValueSelected2,
     })
  
