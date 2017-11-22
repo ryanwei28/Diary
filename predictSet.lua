@@ -30,6 +30,7 @@ local indexDuring
 local paddingDays = 0 
 local paddingNum = 0 
 local avgCycle
+local regularCycle
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -74,7 +75,8 @@ init = function ( _parent )
     end
 
     for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
-        indexCycle = row.Cycle
+        indexCycle = row.regularCycle
+        regularCycle = row.regularCycle
     end
 
     local columnData = 
@@ -145,9 +147,12 @@ onValueSelected = function (  )
 
     timer.performWithDelay( 1, function (  )
         values = pickerWheel:getValues()
-        v1 = string.sub(  values[1].value , 1 , -4 )
-        database:exec([[UPDATE Setting SET Cycle = ']]..v1..[[' WHERE id = 1 ;]])
-        print( v1 )
+        regularCycle = string.sub(  values[1].value , 1 , -4 )
+        database:exec([[UPDATE Setting SET Cycle = ']]..regularCycle..[[' , regularCycle = ']]..regularCycle..[[' WHERE id = 1 ;]])
+        -- print( v1 )
+        bg1:setFillColor( 0.85 , 0.41 , 0.74 )
+        bg2:setFillColor( 0.2 )
+        print(regularCycle)
     end  )
    
 end
@@ -168,9 +173,13 @@ touchlistener = function ( e )
         if e.target.id == "bg1" then
             bg1:setFillColor( 0.85 , 0.41 , 0.74 )
             bg2:setFillColor( 0.2 )
+            if regularCycle then
+                database:exec([[UPDATE Setting SET Cycle = ']]..regularCycle..[[' , regularCycle = ']]..regularCycle..[[' WHERE id = 1 ;]])
+            end
         elseif e.target.id == "bg2" then
             bg1:setFillColor( 0.2 )
             bg2:setFillColor( 0.85 , 0.41 , 0.74 )
+            database:exec([[UPDATE Setting SET Cycle = ']]..avgCycle..[[' WHERE id = 1 ;]])
         end
     end
 end

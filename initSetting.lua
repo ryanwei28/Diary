@@ -291,7 +291,7 @@ btnEvent = function ( e )
                 T.alert("next")
             else
                 database:exec([[INSERT INTO Statistics VALUES ( NULL , ']]..setValue1..[[' , ']]..setValue3..[[' , 0 );]])
-                database:exec([[UPDATE Setting SET Cycle =']]..setValue2..[[' , During =']]..setValue3..[[' WHERE id = 1 ;]])
+                database:exec([[UPDATE Setting SET Cycle =']]..setValue2..[[' , regularCycle =']]..setValue2..[[' , During =']]..setValue3..[[' WHERE id = 1 ;]])
                 
                 sY = tonumber( string.sub( setValue1, 1 , 4 ) )
                 sM = tonumber( string.sub( setValue1, 6 , 7 ) )

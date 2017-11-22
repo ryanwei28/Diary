@@ -488,13 +488,52 @@ fourSqrare = function (  )
 end
 
 
+-- writeDb = function (  )
+--     for i = 1 , daysTable[m] do 
+--         local tablesetup =  [[
+--                             INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum).."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "" , "");
+--                         ]]
+--                         -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+--         database:exec(tablesetup)
+--     end
+-- end
+
 writeDb = function (  )
-    for i = 1 , daysTable[m] do 
-        local tablesetup =  [[
-                            INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum).."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "" , "");
-                        ]]
-                        -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
-        database:exec(tablesetup)
+    for row in database:nrows([[SELECT COUNT(*) FROM Diary ; ]]) do
+        firstRow = row['COUNT(*)']
+    end
+
+    if firstRow <= 10 then 
+        for row in database:nrows([[SELECT * FROM Diary WHERE Start = 1 ;]]) do
+            firstStart = row.Date
+        end
+
+        for row in database:nrows([[SELECT * FROM Diary WHERE End = 1 ;]]) do
+            firstEnd = row.Date
+        end
+
+         for i = 1 , daysTable[m] do 
+            local firstDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
+            
+            if firstDate < firstStart or firstDate > firstEnd then
+
+                local tablesetup =  [[
+                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+                                ]]
+                                -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+                database:exec(tablesetup)
+            else
+
+            end
+        end
+    else
+        for i = 1 , daysTable[m] do 
+            local tablesetup =  [[
+                                INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+                            ]]
+                            -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+            database:exec(tablesetup)
+        end
     end
 end
 

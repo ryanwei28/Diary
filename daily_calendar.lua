@@ -56,6 +56,7 @@ local title
 local backBtn
 local statisticalDays 
 local statusText
+local statusNum
 composer.setVariable( "prevScene", "daily_calendar" )
 
 -- -----------------------------------------------------------------------------------
@@ -503,11 +504,12 @@ readDb = function (  )
         end
     end
 
-    if statusNum ~= "" then
-        statusText.text = "今天是月經期"
-
-    elseif statusNum == "" or statusNum == nil then
+    
+    -- print(statusNum.."$$$$$$$$")
+    if statusNum == "" or statusNum == nil then
         statusText.text = "今天是安全期"
+    elseif statusNum ~= ""  then
+        statusText.text = "今天是月經期"
     end
 end
 

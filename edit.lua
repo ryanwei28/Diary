@@ -659,12 +659,27 @@ readDb = function (  )
 end
 
 judgeReadDb = function ( judgeType )
-    
+        local judgeDayEndd = 0
         for row in database:nrows([[SELECT * FROM Diary WHERE Date = ']]..dbDate..[[']]) do
             judgeDayStart = row.StartDays  
             judgeDayEnd = ""
             -- row.StartDays    
+            if row.Start == 1 then 
+                judgeDayEndd = "1"
+            end
         end
+
+
+        local ftDate = nil 
+
+        for row in database:nrows([[SELECT * FROM Statistics ORDER BY StartDay DESC ]]) do
+            ftDate = row.StartDay
+        end
+
+        if ftDate and dbDate < ftDate or ftDate == nil then
+            judgeDayEnd = "noStart"
+        end
+
 
     -- if judgeType == "tooClose" then
         sD = tonumber( string.sub( dbDate, 9 , 10 ) )
@@ -683,20 +698,10 @@ judgeReadDb = function ( judgeType )
             statisticCount()
         end 
 
-        if judgeDayEnd == "1" then 
+        if judgeDayEndd == "1" then 
             judgeDayEnd = "firstDay"
         end
-   
-    -- elseif judgeType == "noStart" then
-        for row in database:nrows([[SELECT * FROM Statistics ORDER BY StartDay DESC ]]) do
-            ftDate = row.StartDay
-        end
-
-        if ftDate and dbDate < ftDate then
-            judgeDayEnd = "noStart"
-        end
-
-
+        
     -- elseif
         -- elseif judgeType == "future" then
         local today = tonumber(os.date( "%Y" ))..string.format("%02d", tonumber(os.date( "%m" )))..string.format("%02d", tonumber(os.date( "%d" ))) 
@@ -707,12 +712,8 @@ judgeReadDb = function ( judgeType )
             judgeDayEnd = "future"
         end
 
-
-        
-
-
-      
     -- end
+    print(judgeDayEnd.."###")
 end
 
 checkBoxBtn = function (  )
@@ -785,6 +786,7 @@ checkBoxBtn = function (  )
                                 database:exec([[UPDATE Diary SET Start = "" , StartDays = "" WHERE date =']]..dbDate..[[';]])
                                 database:exec([[DELETE FROM Statistics WHERE StartDay =']]..dbDate..[[';]])
                                 readDb()
+                                -- judgeDayEnd = "startDelete"
                             end
                         end
                     end
@@ -798,7 +800,7 @@ checkBoxBtn = function (  )
                     print(judgeDayEnd.."PPPPPPPP" )
                     if judgeDayEnd == "" then
                         ch2Text.text = "V"
-                        -- database:exec([[UPDATE Diary SET End = 1 WHERE date =']]..dbDate..[[';]])
+                        -- database:exec([[UPDATE Diary SET End = 1 WHERE date =']]..dbDate..[[';]])XXX
                         endStatisticalDays()
                     elseif judgeDayEnd == "future" then
                         print( judgeDayEnd..":jjjday" )
@@ -895,12 +897,13 @@ continuanceCount = function (  )
         continuRows = row['COUNT(*)']
     end
 
-    if continuRows > 1 then 
+    for row in database:nrows([[SELECT * FROM Statistics ORDER BY StartDay ASC ;]]) do
+        continuNum = continuNum + 1 
+        continuTable[continuNum] = row.StartDay 
+        print(continuTable[continuNum]..":"..row.StartDay.."@@@@@@")
+    end
 
-        for row in database:nrows([[SELECT * FROM Statistics ORDER BY StartDay ASC ;]]) do
-            continuNum = continuNum + 1 
-            continuTable[continuNum] = row.StartDay 
-        end
+    if continuRows > 1 then 
 
         for i = 1 , continuRows-1 do 
             local s = os.date(os.time({year = string.sub( continuTable[i] , 1 , 4 ), month = string.sub( continuTable[i] , 6 , 7) , day = string.sub( continuTable[i] , 9 , 10)}))
@@ -913,7 +916,9 @@ continuanceCount = function (  )
         end
     end
 
-    database:exec([[UPDATE Statistics SET Padding = 0 WHERE StartDay =']]..continuTable[1]..[[';]])
+    if continuRows == 1 then
+        database:exec([[UPDATE Statistics SET Padding = 0 WHERE StartDay =']]..continuTable[1]..[[';]])
+    end
 
 
     --=================================================================================================
@@ -1007,6 +1012,7 @@ endStatisticalDays = function (  )
             database:exec(tablesetup)
     end
 
+    continuanceCount()
 end
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
