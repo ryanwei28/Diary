@@ -55,6 +55,7 @@ local title
 local judge1stWeek 
 local firstW
 local mCalendarTable = {}
+local periodTable = {}
 local creatMonthlyCalendar 
 local mGroup
 local wd
@@ -404,24 +405,11 @@ setBtn = function (  )
         onEvent = setBtnEvent 
     })
 
-    -- local editBtn = widget.newButton({ 
-    --     x = X*1.5,
-    --     y = Y*0.6,
-    --     id = "editBtn",
-    --     label = "編輯",
-    --     fontSize = 30 ,
-    --     shape = "circle",
-    --     radius = 30 ,
-    --     fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
-    --     onEvent = setBtnEvent 
-    -- })
-
     sceneGroup:insert(disclaimerBtn)
     sceneGroup:insert(statisticsBtn)
     sceneGroup:insert(setupBtn)
-    -- sceneGroup:insert(editBtn)
-
 end
+
 fourSqrare = function (  )
     square1 = display.newRect( sceneGroup, X*0.25, Y*1.7, W*0.25, H*0.15 )
     square1:setFillColor( 0.92,0.3,0.41 )
@@ -466,15 +454,17 @@ fourSqrare = function (  )
         sText2.text = os.date("%m",e).."/"..os.date("%d",e)
 
          for row in database:nrows([[SELECT * FROM Statistics ;]]) do
-            paddingDays = paddingDays + row.Padding
-            paddingNum = paddingNum + 1
+            if row.Padding ~= "" then
+                paddingDays = paddingDays + tonumber(row.Padding)
+                paddingNum = paddingNum + 1
+            end
         end
 
         for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
             sText3.text = row.Cycle
         end
 
-        if paddingNum > 1 then
+        if paddingNum > 1 and type(paddingDays) == "number" then
             sText3.text = string.format("%d" , paddingDays/(paddingNum-1) )
         end 
 
@@ -487,16 +477,45 @@ fourSqrare = function (  )
     end
 end
 
-
 -- writeDb = function (  )
---     for i = 1 , daysTable[m] do 
---         local tablesetup =  [[
---                             INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum).."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "" , "");
---                         ]]
---                         -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
---         database:exec(tablesetup)
+--     for row in database:nrows([[SELECT COUNT(*) FROM Diary ; ]]) do
+--         firstRow = row['COUNT(*)']
+--     end
+
+--     if firstRow <= 10 then 
+--         for row in database:nrows([[SELECT * FROM Diary WHERE Start = 1 ;]]) do
+--             firstStart = row.Date
+--         end
+
+--         for row in database:nrows([[SELECT * FROM Diary WHERE End = 1 ;]]) do
+--             firstEnd = row.Date
+--         end
+
+--          for i = 1 , daysTable[m] do 
+--             local firstDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
+            
+--             if firstDate < firstStart or firstDate > firstEnd then
+
+--                 local tablesetup =  [[
+--                                     INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+--                                 ]]
+--                                 -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+--                 database:exec(tablesetup)
+--             else
+
+--             end
+--         end
+--     else
+--         for i = 1 , daysTable[m] do 
+--             local tablesetup =  [[
+--                                 INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+--                             ]]
+--                             -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+--             database:exec(tablesetup)
+--         end
 --     end
 -- end
+
 
 writeDb = function (  )
     for row in database:nrows([[SELECT COUNT(*) FROM Diary ; ]]) do
@@ -518,7 +537,7 @@ writeDb = function (  )
             if firstDate < firstStart or firstDate > firstEnd then
 
                 local tablesetup =  [[
-                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","" , "");
                                 ]]
                                 -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
                 database:exec(tablesetup)
@@ -528,11 +547,20 @@ writeDb = function (  )
         end
     else
         for i = 1 , daysTable[m] do 
-            local tablesetup =  [[
-                                INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
-                            ]]
-                            -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
-            database:exec(tablesetup)
+            local uu 
+            local uuDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
+
+            for row in database:nrows([[SELECT COUNT(*) FROM Diary WHERE date =  ']]..uuDate..[[' ; ]]) do
+                uu = row['COUNT(*)']
+            end
+
+            if uu < 1 then 
+                local tablesetup =  [[
+                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","" , "" );
+                                ]]
+                                -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+                database:exec(tablesetup)
+            end
         end
     end
 end
@@ -571,6 +599,22 @@ end
 creatMonthlyCalendar = function (  )
     mGroup = display.newGroup( )
     sceneGroup:insert(mGroup)
+    local s1 = c..yNum.."/"..string.format("%02d",mNum) .."/".."01"
+    local mm = mNum+1 
+    local yy = yNum
+    if mm > 12 then 
+        mm = 1 
+        yy = yNum + 1
+    end
+    local e1 = c..yy.."/"..string.format("%02d",mm+1) .."/".."01"
+    local dTable = {}
+    local dNum = 0 
+    -- for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay >= ']]..s1..[[' AND StartDay < ']]..e1..[[' ;]]) do
+    --     -- print(row.StartDay.."***")
+    --     dNum = dNum + 1
+    --     dTable[dNum] = row.StartDay
+    -- end 
+
     for i = 1 , 5 do 
         for j = 1 , 7 do 
             k = i*7+j-7 
@@ -580,6 +624,26 @@ creatMonthlyCalendar = function (  )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
                     mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
+                    periodTable[i*7+j-7] = display.newText( mGroup,"", X*0.1 + (firstW + j  ) * H*0.062, H*0.25+ i * H*0.075, native.systemFontBold , H*0.032 )
+                    periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)
+
+                    for l = 1 , #dTable do 
+                        local e = os.date(os.time{year=string.sub(mCalendarTable[i*7+j-7].id , 1 , 4) ,month=string.sub(mCalendarTable[i*7+j-7].id , 6 , 7),day=string.sub(mCalendarTable[i*7+j-7].id , 9 , 10)})
+                        local s = os.date(os.time{year=string.sub(dTable[l] , 1 , 4) ,month=string.sub(dTable[l] , 6 , 7),day=string.sub(dTable[l] , 9 , 10)})
+
+                        local days = (tonumber(e-s)/24/60/60) 
+                        print(mCalendarTable[i*7+j-7].id..":"..days.."天")
+                        -- print(days)
+                        -- print(0 == nil)
+                        if days >= 0 and days <= 5 then 
+                            periodTable[i*7+j-7].text = "經"
+                        elseif days == 14 then 
+                            periodTable[i*7+j-7].text = "卵"
+                        elseif days < 14 and days > 9  or days >14 and days <19 then 
+                            periodTable[i*7+j-7].text = "危險"
+                        end
+                    end 
+
                     if mCalendarTable[i*7+j-7].id == todayNum then
                         mCalendarTable[i*7+j-7]:setFillColor( 1,0,0 )
                         mCalendarTable[i*7+j-7].size = 50
@@ -601,6 +665,8 @@ creatMonthlyCalendar = function (  )
                             ee:setFillColor( 0.15 , 0.12 , 0.91 )
                         end
                     end
+
+                    -- print(mCalendarTable[i*7+j-7].id..":<6")
                 end
 
                 if (firstW + j -1 ) > 6 then
@@ -608,6 +674,26 @@ creatMonthlyCalendar = function (  )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d", mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
                     mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
+                    
+                    periodTable[i*7+j-7] = display.newText( mGroup, "" , X*0.1 + -X*1.53 + (firstW + j  ) * H*0.062, H*0.25+ (i + 1) * H*0.075, native.systemFontBold , H*0.032 )
+                    periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)
+
+                     for l = 1 , #dTable do 
+                        local e = os.date(os.time{year=string.sub(mCalendarTable[i*7+j-7].id , 1 , 4) ,month=string.sub(mCalendarTable[i*7+j-7].id , 6 , 7),day=string.sub(mCalendarTable[i*7+j-7].id , 9 , 10)})
+                        local s = os.date(os.time{year=string.sub(dTable[l] , 1 , 4) ,month=string.sub(dTable[l] , 6 , 7),day=string.sub(dTable[l] , 9 , 10)})
+
+                        local days = (tonumber(e-s)/24/60/60) 
+                        print(mCalendarTable[i*7+j-7].id..":"..days.."天")
+                        -- print(days)
+                        -- print(0 == nil)
+                        if days >= 0 and days <= 5 then 
+                            periodTable[i*7+j-7].text = "經"
+                        elseif days == 14 then 
+                            periodTable[i*7+j-7].text = "卵"
+                        elseif days < 14 and days > 9  or days >14 and days <19 then 
+                            periodTable[i*7+j-7].text = "危險"
+                        end
+                    end 
 
                     if mCalendarTable[i*7+j-7].id == todayNum then
                         mCalendarTable[i*7+j-7]:setFillColor( 1,0,0 )
@@ -630,6 +716,8 @@ creatMonthlyCalendar = function (  )
                             ee:setFillColor( 0.15 , 0.12 , 0.91 )
                         end
                     end
+
+                     -- print(mCalendarTable[i*7+j-7].id..":>6")
                 end 
             end
         end

@@ -40,6 +40,8 @@ local wPointNum
 local connectLineTable 
 local prePointNum
 local a 
+local b
+local c 
 local createBtn
 local createBtnEvent
 local temperatureBtn
@@ -57,6 +59,12 @@ local vGroup
 local noDataText
 local labelTable 
 local labelTable2 
+local startTable 
+local endTable
+local startTableNum 
+local endTableNum
+local connectPeriodTable 
+local periodEndTable
 -- print( "2017/10/31" < "2017/11/01" )
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -108,8 +116,29 @@ printWeightPlot = function (  )
     wPointNum = 0
     connectLineTable = {}
     a = 0
+    connectPeriodTable = {}
+    periodEndTable = {}
+    b = 0
+    c = 0
     labelTable = {}
     labelTable2 = {}
+
+
+    startTable = {} 
+    endTable = {} 
+    startTableNum = 0
+    endTableNum = 0
+
+    for row in database:nrows([[SELECT * FROM Diary WHERE Date >= ']]..regularPreDate..[[' AND Date <= ']]..today..[[' ORDER BY Date ASC ;]]) do
+        startTableNum = startTableNum + 1 
+        startTable[startTableNum] = row.Start 
+    end 
+
+    for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay >= ']]..regularPreDate..[[' AND StartDay <= ']]..today..[[' ORDER BY StartDay ASC ;]]) do
+        endTableNum = endTableNum + 1 
+        endTable[endTableNum] = row.Continuance 
+    end 
+
 
     for row in database:nrows([[SELECT * FROM Diary ORDER BY Weight ASC ;]]) do
         if row.Weight ~= "" then
@@ -137,9 +166,9 @@ printWeightPlot = function (  )
     
     if #wTable >= 2 then
         --下限
-        small = string.sub( wTable[1], 1 , -3 )   
+        small = string.sub( wTable[1], 1 , -3 ) - string.sub( wTable[1], 1 , -3 )*0.02
         --上限
-        big = string.sub( wTable[wNum], 1 , -3 )   
+        big = string.sub( wTable[wNum], 1 , -3 ) + string.sub( wTable[wNum], 1 , -3 )*0.02
 
         --X軸數值
         for i = 1 , 7 do 
@@ -193,14 +222,26 @@ printWeightPlot = function (  )
             end
         end
 
+
+        for i = 1 , #startTable do 
+            
+
+            if startTable[i] ~= "" then
+               c = c + 1
+               print(endTable[c] ..">>>>>>>>days")
+              
+                connectPeriodTable[i] = display.newRect( sceneGroup, lineTable[i+1].x - X*0.15, Y*0.1, 0.3*X*endTable[c] , H*0.55  )
+                connectPeriodTable[i]:setFillColor( 0.35,0.81,0.1,0.1 )
+                connectPeriodTable[i].anchorX = 0
+                connectPeriodTable[i].anchorY = 0
+                local text = display.newText( sceneGroup, "經\n期", lineTable[i+1].x - X*0.1 , Y*0.15 , font , H*0.02 )
+                scrollView:insert(connectPeriodTable[i])
+                scrollView:insert(text)
+            end
+        end
+
         scrollView:scrollTo( "right", { time=0 } )
-        -- scrollView:scrollToPosition
-        -- {
-        --     x = -10000,
-        --     y = 0,
-        --     time = 800,
-        --     onComplete = onScrollComplete
-        -- }
+        
     else 
         noDataText = display.newText( vGroup, "尚無資料", X, Y , font , H*0.05 )
     end
@@ -224,27 +265,20 @@ printTemperaturePlot = function (  )
     preDate = sY.."/"..string.format( "%02d", sM).."/"..string.format( "%02d",sD)
 
     regularPreDate = tostring(preDate)
-
     dateTable = {}
-
     lineTable = {}
-
     vTable = {}
-
     wNum = 0 
-
     wTable = {}
-
     pointTable = {}
-
     wPointTable = {}
-
     wPointNum = 0
-
     connectLineTable = {}
-
+    connectPeriodTable = {}
+    periodEndTable = {}
     a = 0
-
+    b = 0
+    c = 0
     labelTable = {}
     labelTable2 = {}
 
@@ -255,14 +289,6 @@ printTemperaturePlot = function (  )
             print( row.Temperature.."tt" )
         end
     end
-
-    -- for row in database:nrows([[SELECT * FROM Diary ORDER BY Weight ASC ;]]) do
-    --     if row.Weight ~= "" then
-    --         wNum = wNum + 1
-    --         wTable[wNum] = row.Weight
-    --         print( row.Weight.."ww" )
-    --     end
-    -- end
 
     scrollView = widget.newScrollView(
         {
@@ -280,11 +306,26 @@ printTemperaturePlot = function (  )
  
     sceneGroup:insert(scrollView)
     
+    startTable = {} 
+    endTable = {} 
+    startTableNum = 0
+    endTableNum = 0
+
+    for row in database:nrows([[SELECT * FROM Diary WHERE Date >= ']]..regularPreDate..[[' AND Date <= ']]..today..[[' ORDER BY Date ASC ;]]) do
+        startTableNum = startTableNum + 1 
+        startTable[startTableNum] = row.Start 
+    end 
+
+    for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay >= ']]..regularPreDate..[[' AND StartDay <= ']]..today..[[' ORDER BY StartDay ASC ;]]) do
+        endTableNum = endTableNum + 1 
+        endTable[endTableNum] = row.Continuance 
+    end 
+
     if #wTable >= 2 then
         --下限
-        small = tonumber(string.sub( wTable[1], 1 , -5 ))
+        small = tonumber(string.sub( wTable[1], 1 , -5 )) - tonumber(string.sub( wTable[1], 1 , -5 ))*0.02
         --上限
-        big = tonumber( string.sub( wTable[wNum], 1 , -5 ))
+        big = tonumber( string.sub( wTable[wNum], 1 , -5 )) + tonumber( string.sub( wTable[wNum], 1 , -5 ))*0.02
 
         --X軸數值
         for i = 1 , 7 do 
@@ -319,7 +360,7 @@ printTemperaturePlot = function (  )
                 -- pointTable[i]:setFillColor( 0/255, 154/255, 219/255 )
                 -- scrollView:insert(pointTable[i])
 
-                  pointTable[i] = display.newCircle( sceneGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -5 )-small)/(big-small)*Y*1.1), H*0.008 )
+                pointTable[i] = display.newCircle( sceneGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -5 )-small)/(big-small)*Y*1.1), H*0.008 )
                 pointTable[i]:setFillColor( 0/255, 154/255, 219/255 )
                 labelTable[i] = display.newRect( sceneGroup, pointTable[i].x , pointTable[i].y + Y*0.06, W*0.12, H*0.026 )
                 labelTable[i]:setFillColor( 0.72 , 0.45 , 0.62 )
@@ -338,6 +379,24 @@ printTemperaturePlot = function (  )
                     
                 end
                 prePointNum = i
+            end
+        end
+
+
+        for i = 1 , #startTable do 
+            
+
+            if startTable[i] ~= "" then
+               c = c + 1
+               print(endTable[c] ..">>>>>>>>days")
+              
+                connectPeriodTable[i] = display.newRect( sceneGroup, lineTable[i+1].x - X*0.15, Y*0.1, 0.3*X*endTable[c] , H*0.55  )
+                connectPeriodTable[i]:setFillColor( 0.35,0.81,0.1,0.1 )
+                connectPeriodTable[i].anchorX = 0
+                connectPeriodTable[i].anchorY = 0
+                local text = display.newText( sceneGroup, "經\n期", lineTable[i+1].x - X*0.1 , Y*0.15 , font , H*0.02 )
+                scrollView:insert(connectPeriodTable[i])
+                scrollView:insert(text)
             end
         end
 
@@ -382,14 +441,14 @@ chkDb = function (  )
     for row in database:nrows([[SELECT COUNT(*) FROM Diary WHERE Date = ']]..preDate..[[' ;]]) do
         if row['COUNT(*)'] < 1 then
             writeDb()
-            print( preDate.."tt" )
+            -- print( preDate.."tt" )
         end
     end
 end
 
 writeDb = function (  )
     local tablesetup =  [[
-                            INSERT INTO Diary VALUES ( NULL , ']]..preDate..[[' , "" , "" , "" , "" , "" , "","");
+                            INSERT INTO Diary VALUES ( NULL , ']]..preDate..[[' , "" , "" , "" , "" , "" , "","" ,"");
                         ]]
     database:exec(tablesetup)
 end

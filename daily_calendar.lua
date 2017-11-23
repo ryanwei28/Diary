@@ -57,6 +57,8 @@ local backBtn
 local statisticalDays 
 local statusText
 local statusNum
+local sceneGroupListener 
+local bg 
 composer.setVariable( "prevScene", "daily_calendar" )
 
 -- -----------------------------------------------------------------------------------
@@ -64,6 +66,9 @@ composer.setVariable( "prevScene", "daily_calendar" )
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
+    bg = display.newRect( _parent, X, Y, W, H )
+    bg.alpha = 0.01
+
     title = display.newText( _parent, "日曆", X, Y*0.15, font , H*0.05 )
 
     text1 = display.newText( _parent , "本日狀況", X, Y*0.6 , font , H*0.037 )
@@ -162,8 +167,94 @@ init = function ( _parent )
     -- end
 
     -- print(a2 == a5)
+    sceneGroup:addEventListener("touch" , sceneGroupListener)
 end
 
+sceneGroupListener = function ( e )
+    if e.phase == "began" then 
+        sx = e.x 
+    elseif e.phase == "moved" then 
+        ex = e.x 
+    elseif e.phase == "ended" then
+        if ex then
+            print( sx..":"..ex )
+            if sx < ex then 
+                rightLeapYear()
+                print( daysTable[14] )
+                d = d + 1 
+                if d > daysTable[m] then 
+                    d = 1 
+                    print( daysTable[m] )
+                    m = m + 1 
+                    if m > 14 then 
+                        m = 3 
+                        y = y + 1 
+                    end
+                end
+
+                judgeWeek()
+
+                yNum = y 
+                if m > 12 then 
+                    yNum = y + 1
+                end
+
+                mNum = m 
+                if m == 13 then
+                    mNum = 1 
+                elseif m == 14 then 
+                    mNum = 2 
+                end 
+
+                dateText1.text = mNum.."/"..d
+                dateText2.text = c..yNum.."  "..week
+                dbDate = c..yNum.."/"..string.format("%02d" ,mNum ).."/"..string.format("%02d" ,d )
+                checkDb()
+                readDb()
+                print( dbDate..":dddddd" )
+            elseif sx > ex then 
+                leftLeapYear()
+
+                -- print( daysTable[14] )
+                d = d - 1
+                if d < 1 then 
+                    m = m - 1
+                    if m < 3 then
+                        m = 14
+                        y = y - 1 
+                    end
+                    d = daysTable[m]
+                    
+                end
+
+                judgeWeek()
+                
+                yNum = y 
+                if m == 12 and d == 31 then 
+                    yNum = y 
+                elseif m > 12 then 
+                    yNum = y + 1 
+                end
+
+                mNum = m 
+                if m == 13 then
+                    mNum = 1 
+                elseif m == 14 then 
+                    mNum = 2 
+                end 
+
+                dateText1.text = mNum.."/"..d
+                dateText2.text = c..yNum.."  "..week
+                dbDate = c..yNum.."/"..string.format("%02d" ,mNum ).."/"..string.format("%02d" ,d )
+                checkDb()
+                readDb()
+                print( dbDate..":dddd" )
+            end
+
+            sx , ex = nil ,nil
+        end
+    end
+end
 
 textListener = function( event )
     if ( event.phase == "began" ) then
@@ -436,7 +527,7 @@ writeDb = function (  )
             if firstDate < firstStart or firstDate > firstEnd then
 
                 local tablesetup =  [[
-                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","" , "");
                                 ]]
                                 -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
                 database:exec(tablesetup)
@@ -446,11 +537,20 @@ writeDb = function (  )
         end
     else
         for i = 1 , daysTable[m] do 
-            local tablesetup =  [[
-                                INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
-                            ]]
-                            -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
-            database:exec(tablesetup)
+            local uu 
+            local uuDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
+
+            for row in database:nrows([[SELECT COUNT(*) FROM Diary WHERE date =  ']]..uuDate..[[' ; ]]) do
+                uu = row['COUNT(*)']
+            end
+
+            if uu < 1 then 
+                local tablesetup =  [[
+                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","" , "");
+                                ]]
+                                -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+                database:exec(tablesetup)
+            end
         end
     end
 end

@@ -300,7 +300,7 @@ btnEvent = function ( e )
                 local t = tonumber(setValue3)
                 for i = 1 , t do 
 
-                    database:exec([[INSERT INTO Diary VALUES ( NULL , ']]..sDate..[[' , "" , "" ,"" ,"" ,"" ,"" , ']]..i..[['  );]])
+                    database:exec([[INSERT INTO Diary VALUES ( NULL , ']]..sDate..[[' , "" , "" ,"" ,"" ,"" ,"" , ']]..i..[['  ,"" ) ;]])
                     print( type(t).."ss"..t..i )
                     if i == 1 then
                         database:exec([[UPDATE Diary SET Start = 1 WHERE Date = ']]..sDate..[[';]])

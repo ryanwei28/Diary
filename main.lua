@@ -36,7 +36,7 @@ main = function (  )
          
 
     database:exec([[
-                    CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Date , Start , End , Close , Temperature , Weight , Notes , StartDays);
+                    CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Date , Start , End , Close , Temperature , Weight , Notes , StartDays ,  Period);
                     CREATE TABLE IF NOT EXISTS Setting ( id INTEGER PRIMARY KEY , Password , Notification , NoticeTime , Plan , Sex , Cycle , regularCycle , During , Height ,Protect);
                     CREATE TABLE IF NOT EXISTS Statistics ( id INTEGER PRIMARY KEY , StartDay , Continuance , Padding );
                      
@@ -60,10 +60,11 @@ end
 writeDb = function (  )
     local tablesetup =  [[
                         INSERT INTO Setting VALUES ( NULL , "" , "" , "" , "" , "" ,"" , "" , "" , "" ,"OFF");
-                        INSERT INTO Diary VALUES( "" , "2017/11/05" , "1" , "" , "" , "" , "" , "" , "");
+                        ]]
+                    --     INSERT INTO Diary VALUES( "" , "2017/11/05" , "1" , "" , "" , "" , "" , "" , "");
 
 
-                    ]]
+                    -- ]]
                     -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
     database:exec(tablesetup)
 end

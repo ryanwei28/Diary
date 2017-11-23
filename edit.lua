@@ -99,6 +99,8 @@ local endStatisticalDays
 local sDay
 local duringDays
 local continuanceCount 
+local checkUpdate 
+local updateCount
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -283,10 +285,8 @@ leftLeapYear = function (  )
     
     if leap == 0 then 
         daysTable[14] = 29
-        print( "leap" )
     elseif leap ~= 0 then 
         daysTable[14] = 28
-        print( "no leap" )
     end
 end
 
@@ -295,10 +295,8 @@ rightLeapYear = function (  )
     
     if leap == 3 then 
         daysTable[14] = 29
-        print( "leap" )
     elseif leap ~= 3 then 
         daysTable[14] = 28
-        print( "no leap" )
     end
 end
 
@@ -313,43 +311,93 @@ end
 -- end
 
 
+-- writeDb = function (  )
+--     for row in database:nrows([[SELECT COUNT(*) FROM Diary ; ]]) do
+--         firstRow = row['COUNT(*)']
+--     end
+
+--     if firstRow <= 10 then 
+--         for row in database:nrows([[SELECT * FROM Diary WHERE Start = 1 ;]]) do
+--             firstStart = row.Date
+--         end
+
+--         for row in database:nrows([[SELECT * FROM Diary WHERE End = 1 ;]]) do
+--             firstEnd = row.Date
+--         end
+
+--          for i = 1 , daysTable[m] do 
+--             local firstDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
+            
+--             if firstDate < firstStart or firstDate > firstEnd then
+
+--                 local tablesetup =  [[
+--                                     INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+--                                 ]]
+--                                 -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+--                 database:exec(tablesetup)
+--             else
+
+--             end
+--         end
+--     else
+--         for i = 1 , daysTable[m] do 
+--             local tablesetup =  [[
+--                                 INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+--                             ]]
+--                             -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+--             database:exec(tablesetup)
+--         end
+
+--     end
+-- end
+
+
 writeDb = function (  )
     for row in database:nrows([[SELECT COUNT(*) FROM Diary ; ]]) do
         firstRow = row['COUNT(*)']
     end
 
-    if firstRow <= 10 then 
-        for row in database:nrows([[SELECT * FROM Diary WHERE Start = 1 ;]]) do
-            firstStart = row.Date
-        end
+    -- if firstRow <= 10 then 
+    --     for row in database:nrows([[SELECT * FROM Diary WHERE Start = 1 ;]]) do
+    --         firstStart = row.Date
+    --     end
 
-        for row in database:nrows([[SELECT * FROM Diary WHERE End = 1 ;]]) do
-            firstEnd = row.Date
-        end
+    --     for row in database:nrows([[SELECT * FROM Diary WHERE End = 1 ;]]) do
+    --         firstEnd = row.Date
+    --     end
 
-         for i = 1 , daysTable[m] do 
-            local firstDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
+    --      for i = 1 , daysTable[m] do 
+    --         local firstDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
             
-            if firstDate < firstStart or firstDate > firstEnd then
+    --         if firstDate < firstStart or firstDate > firstEnd then
 
+    --             local tablesetup =  [[
+    --                                 INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","" , "");
+    --                             ]]
+    --                             -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+    --             database:exec(tablesetup)
+    --         else
+
+    --         end
+    --     end
+    -- else
+        for i = 1 , daysTable[m] do 
+            local uu 
+            local uuDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
+
+            for row in database:nrows([[SELECT COUNT(*) FROM Diary WHERE date =  ']]..uuDate..[[' ; ]]) do
+                uu = row['COUNT(*)']
+            end
+
+            if uu < 1 then 
                 local tablesetup =  [[
-                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
+                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","" , "");
                                 ]]
                                 -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
                 database:exec(tablesetup)
-            else
-
             end
         end
-    else
-        for i = 1 , daysTable[m] do 
-            local tablesetup =  [[
-                                INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
-                            ]]
-                            -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
-            database:exec(tablesetup)
-        end
-    end
+    -- end
 end
 
 checkDb = function (  )
@@ -609,7 +657,6 @@ end
 maskListener = function ( e )
     if e.phase == "began" then
         display.getCurrentStage():setFocus( e.target )
-        print( 123 )
     elseif e.phase == "ended" then
         display.getCurrentStage():setFocus(nil)
     end
@@ -631,7 +678,6 @@ readDb = function (  )
         weightText.text = row.Weight
         noticText.text = row.Notes
 
-        print( type(row.Start).."start" )
         local start = tostring(row.Start)
         if start == "1" then 
             ch1Text.text = "V"
@@ -716,6 +762,12 @@ judgeReadDb = function ( judgeType )
     print(judgeDayEnd.."###")
 end
 
+checkUpdate = function (  )
+    for row in database:nrows([[SELECT COUNT(*) FROM Diary WHERE date =']]..sDate..[[';]]) do
+        updateCount = row['COUNT(*)'] 
+    end
+end
+
 checkBoxBtn = function (  )
     checkBoxBtnEvent = function ( e )
         judgeReadDb()
@@ -729,7 +781,7 @@ checkBoxBtn = function (  )
                             startCount = row['COUNT(*)'] + 1
                             -- print( row['COUNT(*)'].."?????" )
                         end
-                        print(startCount.."????")
+                        -- print(startCount.."????")
                         database:exec([[UPDATE Diary SET Start = 1 WHERE date =']]..dbDate..[[';]])
                         sD = tonumber( string.sub( dbDate, 9 , 10 ) )
                         sM = tonumber( string.sub( dbDate, 6 , 7 ) )
@@ -737,15 +789,25 @@ checkBoxBtn = function (  )
                         -- sDate = sY.."/"..sM.."/"..sD
                         sDate = sY.."/"..string.format("%02d",sM).."/"..string.format("%02d",sD)
                         for i = 1 , nextTime do 
-                            -- database:exec([[UPDATE Diary SET StartDays = ']]..i..[[' WHERE date =']]..sDate..[[';]])
-                            print( i..sDate..":iiii"..dbDate )
-                            database:exec([[UPDATE Diary SET StartDays = ']]..i..[[' WHERE date =']]..sDate..[[';]])                            
+                            checkUpdate()
+
+                            if updateCount < 1 then 
+                                database:exec([[INSERT INTO Diary VALUES ( NULL , ']]..sDate..[[' , "" , "" , "" , "" ,"" , "" , ']]..i..[[' , "" );]])
+                            elseif updateCount > 0 then 
+                                database:exec([[UPDATE Diary SET StartDays = ']]..i..[[' WHERE date = ']]..sDate..[[';]])                            
+                            end
+
                             statisticCount()
+
                             if i == nextTime-1 then
-                                database:exec([[UPDATE Diary SET End = 1 WHERE date =']]..sDate..[[';]])
+                                if updateCount < 1 then 
+                                    database:exec([[INSERT INTO Diary VALUES ( NULL , ']]..sDate..[[' , "" , 1 , "" , "" ,"" , "" , "" , "" );]])
+                                elseif updateCount > 0 then 
+                                    database:exec([[UPDATE Diary SET End = 1 WHERE date = ']]..sDate..[[';]])
+                                end
                             end 
                         end
-
+                        addPeriodDay()
                         startStatisticalDays()
                     elseif judgeDayStart == "tooClose" then
                         print( judgeDayStart..":jjjday" )
@@ -781,8 +843,6 @@ checkBoxBtn = function (  )
                                     end
                                 end
                                 ch1Text.text = ""
-                                print( sDate.."sadsadsad" )
-                                -- database:exec([[UPDATE Diary SET End = "" WHERE date =']]..sDate..[[';]])
                                 database:exec([[UPDATE Diary SET Start = "" , StartDays = "" WHERE date =']]..dbDate..[[';]])
                                 database:exec([[DELETE FROM Statistics WHERE StartDay =']]..dbDate..[[';]])
                                 readDb()
@@ -797,7 +857,7 @@ checkBoxBtn = function (  )
             elseif e.target.id == "checkBox2" then 
                 ch2 = 1 - ch2
                 if ch2 == 0 then 
-                    print(judgeDayEnd.."PPPPPPPP" )
+                    -- print(judgeDayEnd.."PPPPPPPP" )
                     if judgeDayEnd == "" then
                         ch2Text.text = "V"
                         -- database:exec([[UPDATE Diary SET End = 1 WHERE date =']]..dbDate..[[';]])XXX
@@ -862,6 +922,39 @@ checkBoxBtn = function (  )
 
 end
 
+addPeriodDay = function (  )
+    --找出前面日期
+    local e = os.date(os.time{year=string.sub(dbDate , 1 , 4) ,month=string.sub(dbDate , 6 , 7),day=string.sub(dbDate , 9 , 10)})
+    -- local s = os.date(os.time{year=string.sub(sDay , 1 , 4) ,month=string.sub(sDay , 6 , 7),day=string.sub(sDay , 9 , 10)})
+    local d = 14
+    local s = e - d*24*60*60
+    local sYear = os.date( "%Y" , s )
+    local sMonth = os.date( "%m" , s )
+    local sDay = os.date( "%d", s )
+    print( sYear..sMonth..sDay.."&&&&&&&" )
+    --=======================================================================
+
+    --加入period編號
+    for i = 1 , 40 do 
+
+    end 
+    -- local s1 = c..yNum.."/"..string.format("%02d",mNum) .."/".."01"
+    -- local mm = mNum+1 
+    -- local yy = yNum
+    -- if mm > 12 then 
+    --     mm = 1 
+    --     yy = yNum + 1
+    -- end
+    -- local e1 = c..yy.."/"..string.format("%02d",mm+1) .."/".."01"
+    -- local dTable = {}
+    -- local dNum = 0 
+    -- for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay >= ']]..s1..[[' AND StartDay < ']]..e1..[[' ;]]) do
+    --     -- print(row.StartDay.."***")
+    --     dNum = dNum + 1
+    --     dTable[dNum] = row.StartDay
+    -- end 
+end
+
 statisticCount = function (  )
     
     local sLeap = math.fmod( sY , 4)
@@ -900,7 +993,7 @@ continuanceCount = function (  )
     for row in database:nrows([[SELECT * FROM Statistics ORDER BY StartDay ASC ;]]) do
         continuNum = continuNum + 1 
         continuTable[continuNum] = row.StartDay 
-        print(continuTable[continuNum]..":"..row.StartDay.."@@@@@@")
+        -- print(continuTable[continuNum]..":"..row.StartDay.."@@@@@@")
     end
 
     if continuRows > 1 then 
@@ -916,9 +1009,9 @@ continuanceCount = function (  )
         end
     end
 
-    if continuRows == 1 then
+    -- if continuRows == 1 then
         database:exec([[UPDATE Statistics SET Padding = 0 WHERE StartDay =']]..continuTable[1]..[[';]])
-    end
+    -- end
 
 
     --=================================================================================================
@@ -958,7 +1051,7 @@ endStatisticalDays = function (  )
 
     for row in database:nrows([[SELECT * FROM Diary WHERE End = 1 and Date > ']]..sDay..[[' ORDER BY Date DESC ]]) do
         eDay = row.Date 
-        print( eDay.."eeeeeeeeeeeeee" )
+        -- print( eDay.."eeeeeeeeeeeeee" )
     end 
 
     local e = os.date(os.time{year=string.sub(eDay , 1 , 4) ,month=string.sub(eDay , 6 , 7),day=string.sub(eDay , 9 , 10)})
@@ -970,7 +1063,7 @@ endStatisticalDays = function (  )
     sM = tonumber( string.sub( sDay, 6 , 7 ) )
     sY = tonumber( string.sub( sDay, 1 , 4 ) )
     sDate = sY.."/"..sM.."/"..sD
-    print( days.."dddddddddddd" )
+    -- print( days.."dddddddddddd" )
     for i = 1 , days do 
         database:exec([[UPDATE Diary SET StartDays = "" WHERE date =']]..sDate..[[';]])
         statisticCount()

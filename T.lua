@@ -92,6 +92,40 @@ function M.print_r( t )
     print()
 end 
 
+
+function M.statisticCount ()
+
+    local sLeap = math.fmod( sY , 4)
+    
+    if sLeap == 3 then 
+        daysTable[2] = 29
+        -- print( "leap" )
+    elseif sLeap ~= 3 then 
+        daysTable[2] = 28
+        -- print( "no leap" )
+    end
+
+  
+    sD = sD + 1 
+    if sD > daysTable[sM] then 
+        sD = 1 
+        sM = sM + 1 
+        if sM > 12 then 
+            sM = 1 
+            sY = sY + 1 
+        end
+    end
+
+    sDate = sY.."/"..string.format("%02d",sM).."/"..string.format("%02d",sD)
+end
+
+function M.note(  )
+    local e = os.date(os.time{year=string.sub(eDay , 1 , 4) ,month=string.sub(eDay , 6 , 7),day=string.sub(eDay , 9 , 10)})
+    local s = os.date(os.time{year=string.sub(sDay , 1 , 4) ,month=string.sub(sDay , 6 , 7),day=string.sub(sDay , 9 , 10)})
+
+    days = (tonumber(e-s)/24/60/60+1) 
+end
+
 return M
 
 
