@@ -21,6 +21,8 @@ composer = require ("composer")
 sqlite3 = require "sqlite3"
 path = system.pathForFile("data.db", system.DocumentsDirectory)
 database = sqlite3.open( path )
+display.setStatusBar( display.LightTransparentStatusBar )
+bold = "cwTeXHei-zhonly"
 
 local main 
 local writeDb
@@ -37,7 +39,7 @@ main = function (  )
 
     database:exec([[
                     CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Date , Start , End , Close , Temperature , Weight , Notes , StartDays ,  Period);
-                    CREATE TABLE IF NOT EXISTS Setting ( id INTEGER PRIMARY KEY , Password , Notification , NoticeTime , Plan , Sex , Cycle , regularCycle , During , Height ,Protect);
+                    CREATE TABLE IF NOT EXISTS Setting ( id INTEGER PRIMARY KEY , Password , Notification , NoticeTime , Plan , Sex , Cycle , regularCycle , During , Height ,Protect, SetSwitch );
                     CREATE TABLE IF NOT EXISTS Statistics ( id INTEGER PRIMARY KEY , StartDay , Continuance , Padding );
                      
                 ]])
@@ -59,7 +61,7 @@ end
 
 writeDb = function (  )
     local tablesetup =  [[
-                        INSERT INTO Setting VALUES ( NULL , "" , "" , "" , "" , "" ,"" , "" , "" , "" ,"OFF");
+                        INSERT INTO Setting VALUES ( NULL , "" , "" , "" , "" , "" ,"" , "" , "" , "" ,"OFF", 1);
                         ]]
                     --     INSERT INTO Diary VALUES( "" , "2017/11/05" , "1" , "" , "" , "" , "" , "" , "");
 

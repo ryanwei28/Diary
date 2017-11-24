@@ -21,7 +21,8 @@ local alertText
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "密碼保護", X, Y*0.2, font , H*0.045 )
+    -- title = display.newText( _parent, "密碼保護", X, Y*0.2, font , H*0.045 )
+    T.title("密碼保護" , sceneGroup)
 
     back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
     back:addEventListener( "tap", listener )

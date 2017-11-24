@@ -68,6 +68,8 @@ local duringNum = 0
 local paddingNum = 0 
 local paddingDays = 0
 local last
+-- local bg 
+-- local titleBg
 composer.setVariable( "prevScene", "monthly_calendar" )
 -- ❤▲◯
 -- -----------------------------------------------------------------------------------
@@ -75,7 +77,14 @@ composer.setVariable( "prevScene", "monthly_calendar" )
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "月曆", X, Y*0.15, font , H*0.05 )
+    
+    -- bg = display.newImageRect( _parent, "images/bg_dot@3x.png", W, H )
+    -- bg.x , bg.y = X , Y*1.07
+
+    -- titleBg = display.newImageRect( _parent, "images/bg_top@3x.png", W, H*0.07 )
+    -- titleBg.x , titleBg.y ,titleBg.anchorY= X, Y*0.07 , 0
+    -- title = display.newText( _parent, "月曆", X, Y*0.14, bold , H*0.032 )
+    T.title("月曆" , sceneGroup)
 
     judgeWeek()
     judge1stWeek()
@@ -339,15 +348,31 @@ backToday = function (  )
         end
     end
 
+    -- backBtn2 = widget.newButton({ 
+    --     x = X*0.2,
+    --     y = Y*0.15,
+    --     id = "backBtn",
+    --     label = "回今天",
+    --     fontSize = H*0.035 ,
+    --     shape = "circle",
+    --     radius = H*0.028 ,
+    --     fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+    --     onEvent = backButtonEvent 
+    -- })
+
     backBtn2 = widget.newButton({ 
         x = X*0.2,
-        y = Y*0.15,
+        y = Y*0.13,
         id = "backBtn",
-        label = "回今天",
-        fontSize = H*0.035 ,
-        shape = "circle",
-        radius = H*0.028 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.15,
+        height = H*0.039,
+        -- label = "回今天",
+        -- fontSize = H*0.032 ,
+        -- shape = "circle",
+        -- radius = H*0.032 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        defaultFile = "images/nav_today@3x.png" , 
+        overFile = "images/nav_today_press@3x.png" , 
         onEvent = backButtonEvent 
     })
 
@@ -369,39 +394,51 @@ setBtn = function (  )
         end
     end
 
-    local disclaimerBtn = widget.newButton({ 
-        x = X*1.4,
-        y = Y*0.15,
+     local disclaimerBtn = widget.newButton({ 
+        x = X*1.45,
+        y = Y*0.135,
         id = "disclaimer",
-        label = "免責",
-        fontSize = H*0.028 ,
-        shape = "circle",
-        radius = H*0.028 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        -- label = "免責",
+        -- fontSize = H*0.028 ,
+        -- shape = "circle",
+        -- radius = H*0.028 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.064, 
+        height = H*0.036, 
+        defaultFile = "images/nav_info@3x.png" ,
+        overFile = "images/nav_info_press@3x.png" , 
         onEvent = setBtnEvent 
     })
 
     local statisticsBtn = widget.newButton({ 
-        x = X*1.6,
-        y = Y*0.15,
+        x = X*1.65,
+        y = Y*0.135,
         id = "statistics",
-        label = "統計",
-        fontSize = H*0.028 ,
-        shape = "circle",
-        radius = H*0.028 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        -- label = "統計",
+        -- fontSize = H*0.028 ,
+        -- shape = "circle",
+        -- radius = H*0.028 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.064, 
+        height = H*0.036, 
+        defaultFile = "images/nav_chart@3x.png" ,
+        overFile = "images/nav_chart_press@3x.png" , 
         onEvent = setBtnEvent 
     })
 
     local setupBtn = widget.newButton({ 
-        x = X*1.8,
-        y = Y*0.15,
+        x = X*1.85,
+        y = Y*0.135,
         id = "setup",
-        label = "設定",
-        fontSize = H*0.028 ,
-        shape = "circle",
-        radius = H*0.028 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        -- label = "設定",
+        -- fontSize = H*0.028 ,
+        -- shape = "circle",
+        -- radius = H*0.028 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.064, 
+        height = H*0.036, 
+        defaultFile = "images/nav_setting@3x.png" ,
+        overFile = "images/nav_setting_press@3x.png" , 
         onEvent = setBtnEvent 
     })
 

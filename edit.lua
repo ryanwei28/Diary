@@ -30,8 +30,6 @@ local dateText2
 local week = ""
 local daysTable = { 31 ,28 ,31 ,30 ,31 ,30 ,31 ,31 ,30 ,31 ,30 ,31 ,31 ,28}
 local judgeWeek 
-local mNum = m
-local yNum = y
 local leftLeapYear
 local rightLeapYear
 local checkDb
@@ -65,6 +63,8 @@ if mCalendarY then
     m = mCalendarM
     d = mCalendarD
 end
+local mNum = m
+local yNum = y
 local dbDate = tostring(c..y.."/"..string.format("%02d",m).."/"..string.format("%02d",d))
 local listener
 local prevScene = composer.getVariable( "prevScene" )
@@ -107,7 +107,8 @@ local updateCount
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
 
-    title = display.newText( _parent, "紀錄", X, Y*0.2, font , H*0.045 )
+    -- title = display.newText( _parent, "紀錄", X, Y*0.2, font , H*0.045 )
+    T.title("紀錄" , sceneGroup)
 
     text1 = display.newText( _parent, "今天經期開始", X*0.3, Y*0.6, font , H*0.035 )
     text1.anchorX = 0
@@ -175,6 +176,9 @@ end
 
 listener = function ( e )
     -- composer.hideOverlay(  )
+    composer.setVariable( "dCalendarY", c..yNum )
+    composer.setVariable( "dCalendarM", mNum )
+    composer.setVariable( "dCalendarD", d )
     composer.showOverlay( prevScene )
     -- composer.showOverlay( "notes" )
 end

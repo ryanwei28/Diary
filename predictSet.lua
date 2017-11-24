@@ -31,12 +31,14 @@ local paddingDays = 0
 local paddingNum = 0 
 local avgCycle
 local regularCycle
+local setSwitch
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "週期設定", X, Y*0.2, font , H*0.045 )
+    -- title = display.newText( _parent, "週期設定", X, Y*0.2, font , H*0.045 )
+    T.title("週期設定" , sceneGroup)
 
     bg1 = display.newRect( _parent, X, Y*0.55 , W*0.9, H*0.25 )
     bg1.id = "bg1"
@@ -137,6 +139,17 @@ init = function ( _parent )
     
     -- local xxx = display.newCircle( _parent, X, Y*1.7, 30 )
     -- xxx:addEventListener( "tap", xxxlistener )
+    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+        setSwitch = row.SetSwitch
+    end
+
+    if setSwitch == 1 then 
+        bg1:setFillColor( 0.85 , 0.41 , 0.74 )
+        bg2:setFillColor( 0.2 )
+    elseif setSwitch == 2 then 
+        bg1:setFillColor( 0.2 )
+        bg2:setFillColor( 0.85 , 0.41 , 0.74 )
+    end 
 end
 
 listener = function ( e )
@@ -149,6 +162,7 @@ onValueSelected = function (  )
         values = pickerWheel:getValues()
         regularCycle = string.sub(  values[1].value , 1 , -4 )
         database:exec([[UPDATE Setting SET Cycle = ']]..regularCycle..[[' , regularCycle = ']]..regularCycle..[[' WHERE id = 1 ;]])
+        database:exec([[UPDATE Setting SET setSwitch = 1 WHERE id = 1 ;]])
         -- print( v1 )
         bg1:setFillColor( 0.85 , 0.41 , 0.74 )
         bg2:setFillColor( 0.2 )
@@ -175,11 +189,13 @@ touchlistener = function ( e )
             bg2:setFillColor( 0.2 )
             if regularCycle then
                 database:exec([[UPDATE Setting SET Cycle = ']]..regularCycle..[[' , regularCycle = ']]..regularCycle..[[' WHERE id = 1 ;]])
+                database:exec([[UPDATE Setting SET setSwitch = 1 WHERE id = 1 ;]])
             end
         elseif e.target.id == "bg2" then
             bg1:setFillColor( 0.2 )
             bg2:setFillColor( 0.85 , 0.41 , 0.74 )
             database:exec([[UPDATE Setting SET Cycle = ']]..avgCycle..[[' WHERE id = 1 ;]])
+            database:exec([[UPDATE Setting SET setSwitch = 2 WHERE id = 1 ;]])
         end
     end
 end

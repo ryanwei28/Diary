@@ -4,6 +4,13 @@ function M.init()
 	print("MMMMMMMMMMM")
 end
 
+function M.title( titleText , group )
+    local titleBg = display.newImageRect( group, "images/bg_top@3x.png", W, H*0.07 )
+    titleBg.x , titleBg.y ,titleBg.anchorY= X, Y*0.07 , 0
+    -- print(X)
+    local titleText = display.newText( group , titleText , X, Y*0.14, bold , H*0.032 )
+end
+
 function M.alert( alertType )
     function onCompleteee( event )
         if ( event.action == "clicked" ) then

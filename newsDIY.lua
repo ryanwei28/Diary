@@ -16,7 +16,8 @@ local back
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    cc = display.newText( _parent, "s", X, Y, font , 50 )
+    -- cc = display.newText( _parent, "s", X, Y, font , 50 )
+    T.title("News DIY" , sceneGroup)
 
     local webView = native.newWebView( display.contentCenterX, display.contentCenterY, W, H*0.7 )
     webView:request( "https://www.google.com/" )

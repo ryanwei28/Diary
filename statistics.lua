@@ -51,7 +51,8 @@ local paddingNum = 0
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "經期資料統計", X, Y*0.2, font , H*0.04 )
+    -- title = display.newText( _parent, "經期資料統計", X, Y*0.2, font , H*0.04 )
+    T.title("經期資料統計" , sceneGroup)
 
     text = display.newText( _parent, "月經開始日    持續天數    間隔", X*1.1, Y*0.4, font , H*0.031 )
     text:setFillColor( 0.885 , 0.323,0.241 )

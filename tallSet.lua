@@ -25,8 +25,9 @@ local tt
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
 
+    T.title("身高設定" , sceneGroup)
 
-    title = display.newText( _parent, "身高設定", X, Y*0.2, font , H*0.045 )
+    -- title = display.newText( _parent, "身高設定", X, Y*0.2, font , H*0.045 )
     cmText = display.newText( _parent, "單位:公分", X, Y*0.6, font , H*0.028 )
 
     back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )

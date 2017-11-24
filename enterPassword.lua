@@ -22,7 +22,8 @@ local alertText
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "輸入密碼", X, Y*0.2, font , 50 )
+    -- title = display.newText( _parent, "輸入密碼", X, Y*0.2, font , 50 )
+    T.title("輸入密碼" , sceneGroup)
 
     alertText = display.newText( _parent, "", X, Y*0.5 , font , 30 )
     textField = native.newTextField( X, Y*0.4, W*0.7, H*0.05 )
@@ -47,6 +48,7 @@ enterBtn = function (  )
             else
                 for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
                     if psd == row.Password then
+                        native.setKeyboardFocus( nil )
                         composer.gotoScene( "mainUI" )
                     else
                         alertText.text = "密碼錯誤"

@@ -71,7 +71,8 @@ local periodEndTable
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "圖表", X, Y*0.15, font , H*0.045 )
+    -- title = display.newText( _parent, "圖表", X, Y*0.15, font , H*0.045 )
+        T.title("圖表" , sceneGroup)
 
 
     
@@ -389,6 +390,7 @@ printTemperaturePlot = function (  )
             if startTable[i] ~= "" then
                c = c + 1
                print(endTable[c] ..">>>>>>>>days")
+               print(0.3*X*endTable[c])
               
                 connectPeriodTable[i] = display.newRect( sceneGroup, lineTable[i+1].x - X*0.15, Y*0.1, 0.3*X*endTable[c] , H*0.55  )
                 connectPeriodTable[i]:setFillColor( 0.35,0.81,0.1,0.1 )

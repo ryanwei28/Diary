@@ -25,14 +25,23 @@ local y = tonumber(string.sub( os.date( "%Y" ) , 3 , 4 ))
 local m = tonumber(os.date( "%m" ))
 local d = tonumber(os.date( "%d" ))
 local w = tonumber(os.date( "%w" )) 
+local dCalendarY = composer.getVariable( "dCalendarY" )
+local dCalendarM = composer.getVariable( "dCalendarM" )
+local dCalendarD = composer.getVariable( "dCalendarD" )
+if dCalendarY then
+    c = tonumber(string.sub( dCalendarY , 1 , 2 ))
+    y = tonumber(string.sub( dCalendarY , 3 , 4 ))
+    m = dCalendarM
+    d = dCalendarD
+end
+local mNum = m
+local yNum = y
 local dbDate = tostring(c..y.."/"..string.format("%02d",m).."/"..string.format("%02d",d))
 local dateText1
 local dateText2
 local week = ""
 local daysTable = { 31 ,28 ,31 ,30 ,31 ,30 ,31 ,31 ,30 ,31 ,30 ,31 ,31 ,28}
 local judgeWeek 
-local mNum = m
-local yNum = y
 local leftLeapYear
 local rightLeapYear
 local backButtonEvent
@@ -52,13 +61,26 @@ local BMIText
 local readDb 
 local checkDb 
 local writeDb
-local title
+-- local title
 local backBtn
 local statisticalDays 
 local statusText
 local statusNum
 local sceneGroupListener 
 local bg 
+local bg_green
+-- local titleBg 
+local pinkRect
+local whiteRect
+local closeImg
+local tempImg
+local weightImg
+local bmiImg
+local noteImg
+local addDashedLine
+local dashedLine
+local bird 
+
 composer.setVariable( "prevScene", "daily_calendar" )
 
 -- -----------------------------------------------------------------------------------
@@ -66,40 +88,82 @@ composer.setVariable( "prevScene", "daily_calendar" )
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    bg = display.newRect( _parent, X, Y, W, H )
-    bg.alpha = 0.01
+    bg = display.newImageRect( _parent, "images/bg_dot@3x.png", W, H )
+    bg.x , bg.y = X , Y*1.07
 
-    title = display.newText( _parent, "日曆", X, Y*0.15, font , H*0.05 )
+    T.title("日曆" , sceneGroup)
 
-    text1 = display.newText( _parent , "本日狀況", X, Y*0.6 , font , H*0.037 )
-    
-    text2 = display.newText( _parent , "親密行為", X*0.3, Y*0.8 , font , H*0.03 )
+    -- titleBg = display.newImageRect( _parent, "images/bg_top@3x.png", W, H*0.07 )
+    -- titleBg.x , titleBg.y ,titleBg.anchorY= X, Y*0.07 , 0
+
+    bg_green = display.newImageRect( _parent, "images/bg_green@3x.png", W, H*0.602 )
+    bg_green.x , bg_green.y = X , Y * 1.398
+
+    pinkRect = display.newRoundedRect( _parent, X, Y*1.3, W*0.92, H*0.707, H*0.015 )
+    pinkRect:setFillColor( 254/255,118/255,118/255 )
+
+    bird = display.newImageRect( _parent, "images/bird_1@3x.png", W*0.1226, H*0.09 )
+    bird.anchorX , bird.anchorY = 0 , 0
+    bird.x , bird.y = X*0.08 , Y*0.48
+
+    whiteRect = display.newRoundedRect( _parent, X, Y*1.35, W*0.84, H*0.645, H*0.015 )
+    -- bg = display.newRect( _parent, X, Y, W, H )
+    -- bg.alpha = 0.01
+
+    -- title = display.newText( _parent, "日曆", X, Y*0.14, bold , H*0.032 )
+
+    closeImg = display.newImageRect( _parent, "images/ico_lip@3x.png", W*0.064, H*0.036 )
+    closeImg.x , closeImg.y ,closeImg.anchorX = X*2*0.1173 , Y *0.92 , 0
+
+    tempImg = display.newImageRect( _parent, "images/ico_temp@3x.png", W*0.064, H*0.036 )
+    tempImg.x , tempImg.y ,tempImg.anchorX = X*2*0.1173 , Y *1.055 , 0
+
+    weightImg = display.newImageRect( _parent, "images/ico_weight@3x.png", W*0.064, H*0.036 )
+    weightImg.x , weightImg.y ,weightImg.anchorX = X*2*0.1173 , Y *1.195 , 0
+
+    bmiImg = display.newImageRect( _parent, "images/ico_bmi@3x.png", W*0.064, H*0.036 )
+    bmiImg.x , bmiImg.y ,bmiImg.anchorX = X*2*0.1173 , Y *1.33 , 0
+
+    noteImg = display.newImageRect( _parent, "images/ico_note@3x.png", W*0.064, H*0.036 )
+    noteImg.x , noteImg.y ,noteImg.anchorX = X*2*0.1173 , Y *1.47 , 0
+
+    text1 = display.newText( _parent , "本日狀況", X, Y*0.65 , bold , H*0.024 )
+    text1:setFillColor( 1 )
+    text2 = display.newText( _parent , "親密行為", X*2*0.202, closeImg.y , bold , H*0.024 )
+    text2.anchorX = 0
+    text2:setFillColor( 0 )
     text2.anchorX = 0 
-    text3 = display.newText( _parent , "基礎體溫", X*0.3, Y*1 , font , H*0.03 )
+    text3 = display.newText( _parent , "基礎體溫", X*2*0.202, tempImg.y , bold , H*0.024 )
+    text3.anchorX = 0
+    text3:setFillColor( 0 )
     text3.anchorX = 0 
-    text4 = display.newText( _parent , "體重", X*0.3, Y*1.2 , font , H*0.03 )
+    text4 = display.newText( _parent , "體重", X*2*0.202, weightImg.y , bold , H*0.024 )
+    text4.anchorX = 0
+    text4:setFillColor( 0 )
     text4.anchorX = 0 
-    text5 = display.newText( _parent , "BMI", X*0.3, Y*1.4 , font , H*0.03 )
-    text5.anchorX = 0 
-    text6 = display.newText( _parent , "Notes", X*0.3, Y*1.6 , font , H*0.03 )
-    text6.anchorX = 0 
-    closeText = display.newText( _parent , "尚無紀錄", X*0.8, Y*0.8 , font , H*0.025 )
+
+    closeText = display.newText( _parent , "尚無紀錄", X*2*0.405, closeImg.y , bold , H*0.024 )
+    closeText:setFillColor( 170/255 )
     closeText.anchorX = 0
-    temperatureText = display.newText( _parent , "尚無紀錄", X*0.8, Y*1 , font , H*0.025 )
+    temperatureText = display.newText( _parent , "尚無紀錄", X*2*0.405, tempImg.y , bold , H*0.024 )
+    temperatureText:setFillColor(  170/255 )
     temperatureText.anchorX = 0
-    weightText = display.newText( _parent , "尚無紀錄", X*0.6, Y*1.2 , font , H*0.025 )
+    weightText = display.newText( _parent , "尚無紀錄", X*2*0.32, weightImg.y , bold , H*0.024 )
+    weightText:setFillColor(  170/255 )
     weightText.anchorX = 0
-    BMIText = display.newText( _parent , "請至設定頁設定身高", X*0.6, Y*1.4 , font , H*0.025 )
+    BMIText = display.newText( _parent , "請至設定頁設定身高", X*2*0.2026, bmiImg.y , bold , H*0.024 )
+    BMIText:setFillColor(  170/255 )
     BMIText.anchorX = 0
-    noticText = display.newText( _parent , "尚無紀錄", X*0.7, Y*1.6 , font , H*0.025 )
+    noticText = display.newText( _parent , "尚無紀錄", X*2*0.2026, noteImg.y , bold , H*0.024 )
+    noticText:setFillColor(  170/255 )
     noticText.anchorX = 0
 
-    statusText = display.newText( _parent , "今天是安全期", X, Y*0.7 , font , H*0.028 )
-    statusText:setFillColor( 0.88 , 0.33 , 0.342 )
+    statusText = display.newText( _parent , "今天是安全期", X, Y*0.79 , bold , H*0.024 )
+    statusText:setFillColor( 254/255,118/255,118/255 )
 
-    judgeWeek()
-    dateText1 = display.newText( _parent, m.."/"..d , X , Y*0.3 , font , H*0.05 )
-    dateText2 = display.newText( _parent, c..y.."  "..week , X, Y*0.4, font , H*0.025 )
+    dateText1 = display.newText( _parent, m.."/"..d , X , Y*0.4 , native.systemFontBold , H*0.135 )
+    dateText1:setFillColor( 226/255,68/255,61/255 )
+    
     if m == 1 then 
         m = 13
         y = y - 1
@@ -107,28 +171,39 @@ init = function ( _parent )
         m = 14 
         y = y - 1
     end
-
+    
+    judgeWeek()
+    dateText2 = display.newText( _parent, c..y.."  "..week , X, Y*0.55, bold , H*0.03 )
+    dateText2:setFillColor(  226/255,68/255,61/255  )
     leftBtn = widget.newButton({ 
-        x = X*0.1,
-        y = Y*0.3,
+        x = X*0.07,
+        y = Y*0.38,
         id = "leftBtn",
-        label = "<",
-        fontSize = H*0.037 ,
-        shape = "circle",
-        radius = H*0.04 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        -- label = "<",
+        -- fontSize = H*0.037 ,
+        -- shape = "circle",
+        -- radius = H*0.04 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.0693 , 
+        height = H*0.09745,
+        defaultFile = "images/btn_prev@3x.png" , 
+        overFile = "images/btn_prev_press@3x.png" , 
         onEvent = handleButtonEvent 
     })
 
     rightBtn = widget.newButton({ 
-        x = X*1.9,
-        y = Y*0.3,
+        x = X*1.93,
+        y = Y*0.38,
         id = "rightBtn",
-        label = ">",
-        fontSize = H*0.037 ,
-        shape = "circle",
-        radius =  H*0.04 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        -- label = ">",
+        -- fontSize = H*0.037 ,
+        -- shape = "circle",
+        -- radius =  H*0.04 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.0693 , 
+        height = H*0.09745,
+        defaultFile = "images/btn_next@3x.png" , 
+        overFile = "images/btn_next_press@3x.png" , 
         onEvent = handleButtonEvent 
     })
 
@@ -154,6 +229,11 @@ init = function ( _parent )
     backToday()
     setBtn()
     readDb()
+    addDashedLine(H*0.425)
+    addDashedLine(H*0.493)
+    addDashedLine(H*0.561)
+    addDashedLine(H*0.629)
+    addDashedLine(H*0.697)
     -- statisticalDays()
 
     --  for row in database:nrows([[SELECT * FROM Diary WHERE id = 2 ]]) do
@@ -168,6 +248,11 @@ init = function ( _parent )
 
     -- print(a2 == a5)
     sceneGroup:addEventListener("touch" , sceneGroupListener)
+end
+
+addDashedLine = function ( y )
+    dashedLine = display.newImageRect( sceneGroup, "images/line_dashed@3x.png", W*0.7866, H*0.001499 )
+    dashedLine.x , dashedLine.y = X , y
 end
 
 sceneGroupListener = function ( e )
@@ -419,13 +504,17 @@ backToday = function (  )
 
     backBtn = widget.newButton({ 
         x = X*0.2,
-        y = Y*0.15,
+        y = Y*0.13,
         id = "backBtn",
-        label = "回今天",
-        fontSize = H*0.032 ,
-        shape = "circle",
-        radius = H*0.032 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.15,
+        height = H*0.039,
+        -- label = "回今天",
+        -- fontSize = H*0.032 ,
+        -- shape = "circle",
+        -- radius = H*0.032 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        defaultFile = "images/nav_today@3x.png" , 
+        overFile = "images/nav_today_press@3x.png" , 
         onEvent = backButtonEvent 
     })
 
@@ -453,57 +542,90 @@ setBtn = function (  )
     end
 
     local disclaimerBtn = widget.newButton({ 
-        x = X*1.4,
-        y = Y*0.15,
+        x = X*1.45,
+        y = Y*0.135,
         id = "disclaimer",
-        label = "免責",
-        fontSize = H*0.028 ,
-        shape = "circle",
-        radius = H*0.028 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        -- label = "免責",
+        -- fontSize = H*0.028 ,
+        -- shape = "circle",
+        -- radius = H*0.028 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.064, 
+        height = H*0.036, 
+        defaultFile = "images/nav_info@3x.png" ,
+        overFile = "images/nav_info_press@3x.png" , 
         onEvent = setBtnEvent 
     })
 
     local statisticsBtn = widget.newButton({ 
-        x = X*1.6,
-        y = Y*0.15,
+        x = X*1.65,
+        y = Y*0.135,
         id = "statistics",
-        label = "統計",
-        fontSize = H*0.028 ,
-        shape = "circle",
-        radius = H*0.028 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        -- label = "統計",
+        -- fontSize = H*0.028 ,
+        -- shape = "circle",
+        -- radius = H*0.028 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.064, 
+        height = H*0.036, 
+        defaultFile = "images/nav_chart@3x.png" ,
+        overFile = "images/nav_chart_press@3x.png" , 
         onEvent = setBtnEvent 
     })
 
     local setupBtn = widget.newButton({ 
-        x = X*1.8,
-        y = Y*0.15,
+        x = X*1.85,
+        y = Y*0.135,
         id = "setup",
-        label = "設定",
-        fontSize = H*0.028 ,
-        shape = "circle",
-        radius = H*0.028 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        -- label = "設定",
+        -- fontSize = H*0.028 ,
+        -- shape = "circle",
+        -- radius = H*0.028 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.064, 
+        height = H*0.036, 
+        defaultFile = "images/nav_setting@3x.png" ,
+        overFile = "images/nav_setting_press@3x.png" , 
         onEvent = setBtnEvent 
     })
 
     local editBtn = widget.newButton({ 
-        x = X*1.5,
+        x = W*0.813,
         y = Y*0.6,
         id = "editBtn",
-        label = "編輯",
-        fontSize = H*0.028 ,
-        shape = "circle",
-        radius = H*0.028 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        -- label = "編輯",
+        -- fontSize = H*0.028 ,
+        -- shape = "circle",
+        -- radius = H*0.028 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.1013, 
+        height = H*0.057,
+        defaultFile = "images/btn_edit@3x.png" , 
+        overFile = "images/btn_edit_press@3x.png" ,
         onEvent = setBtnEvent 
     })
+    editBtn.anchorX = 0 
 
+    local helpBtn = widget.newButton({ 
+        left = W*0.818,
+        top = H*0.647,
+        id = "helpBtn",
+        -- label = "編輯",
+        -- fontSize = H*0.028 ,
+        -- shape = "circle",
+        -- radius = H*0.028 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.0586, 
+        height = H*0.0329,
+        defaultFile = "images/btn_help@3x.png" , 
+        overFile = "images/btn_help_press@3x.png" ,
+        onEvent = setBtnEvent 
+    })
     sceneGroup:insert(disclaimerBtn)
     sceneGroup:insert(statisticsBtn)
     sceneGroup:insert(setupBtn)
     sceneGroup:insert(editBtn)
+    sceneGroup:insert(helpBtn)
 
 end
 

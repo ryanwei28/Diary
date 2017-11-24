@@ -18,7 +18,8 @@ local prevScene = composer.getVariable( "prevScene" )
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    cc = display.newText( _parent, "免責聲明", X, Y, font , 50 )
+    -- cc = display.newText( _parent, "免責聲明", X, Y, font , 50 )
+    T.title("免責聲明" , sceneGroup)
 
     back = display.newCircle( _parent, X*0.2, Y*0.2, 50 )
     back:addEventListener( "tap", listener )

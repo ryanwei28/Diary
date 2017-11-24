@@ -36,7 +36,8 @@ local readDb
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
     print( prevScene )
-    title = display.newText( _parent, "設定", X, Y*0.2, font , H*0.045 )
+    -- title = display.newText( _parent, "設定", X, Y*0.2, font , H*0.045 )
+    T.title("設定" , sceneGroup)
 
     text1 = display.newText( _parent, "密碼保護", X*0.2, Y*0.4, font , H*0.043 )
     text1.anchorX = 0

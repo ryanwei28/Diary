@@ -31,26 +31,36 @@ local daysTable = { 31 ,28 ,31 ,30 ,31 ,30 ,31 ,31 ,30 ,31 ,30 ,31 ,31 ,28}
 local sY 
 local sM 
 local sD 
+local bg 
+local titleBg 
+local bird 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
 
+    bg = display.newImageRect( _parent, "images/bg_dot@3x.png", W, H )
+    bg.x , bg.y = X , Y*1.07
 
+    titleBg = display.newImageRect( _parent, "images/bg_top@3x.png", W, H*0.07 )
+    titleBg.x , titleBg.y ,titleBg.anchorY= X, Y*0.07 , 0
 
-    title = display.newText( _parent, "初次使用設定", X, Y*0.2, font , H*0.05 )
+    bird = display.newImageRect( _parent, "images/twobirds@3x.png", W*0.2666, H*0.09 )
+    bird.x , bird.y = X ,Y *0.37
 
-    text1 = display.newText( _parent, "上次月經開始...", X*0.9, Y*0.6, font , H*0.03 )
+    title = display.newText( _parent, "初次使用設定", X, Y*0.14, bold , H*0.032 )
+
+    text1 = display.newText( _parent, "上次月經開始...", X*0.96, Y*0.6, bold , H*0.027 )
     text1.anchorX = 1 
-    text1:setFillColor( 0.85,0.22,0.23 )
-    text2 = display.newText( _parent, "月經週期", X*0.9, Y*0.8, font , H*0.03 )
+    text1:setFillColor( 226/255,68/255,61/255 )
+    text2 = display.newText( _parent, "月經週期", X*0.96, Y*0.8, bold , H*0.027 )
     text2.anchorX = 1 
     text2:setFillColor( 0.85,0.22,0.23 )
-    text3 = display.newText( _parent, "經期長度", X*0.9, Y*1.0, font , H*0.03 )
+    text3 = display.newText( _parent, "經期長度", X*0.96, Y*1.0, bold , H*0.027 )
     text3.anchorX = 1 
     text3:setFillColor( 0.85,0.22,0.23 )
-    text4 = display.newText( _parent, "性別", X*0.9, Y*1.2, font , H*0.03 )
+    text4 = display.newText( _parent, "性別", X*0.96, Y*1.2, bold , H*0.027 )
     text4.anchorX = 1 
     text4:setFillColor( 0.85,0.22,0.23 )
 
@@ -221,44 +231,53 @@ end
 
 addBtn = function (  )
     btn1 = widget.newButton( {
-        left = X*1.03 , 
+        left = X*1.07 , 
         top = Y*0.55 , 
         id = "btn1" ,
-        shape = "roundedRect",
-        width = W*0.45,
-        height = H*0.05,
-        cornerRadius = H*0.015,
+        -- shape = "roundedRect",
+        width = W*0.373,
+        height = H*0.048,
+        -- cornerRadius = H*0.015,
         label = "",
         fontSize = H*0.03 ,
-        fillColor = { default={0.95,0.95,0.99,0.99}, over={0.2,0.78,0.75,0.4} },
+        labelColor =  { default={226/255,68/255,61/255}, over={226/255,68/255,61/255}, } ,   
+        -- strokeWidth = 1 ,
+        -- strokeColor = { default={ 0.5, 0.5, 0.5 }, over={ 0.5, 0.5, 0.5 }, } , 
+        defaultFile = "images/input@3x.png",
+        -- overFile = "buttonOver.png",
+        -- fillColor = { default={1,1,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = btnEvent 
         } )
 
     btn2 = widget.newButton( {
-        left = X*1.03 , 
+        left = X*1.07 , 
         top = Y*0.75 , 
         id = "btn2" ,
-        shape = "roundedRect",
-        width = W*0.3,
-        height = H*0.05,
-        cornerRadius = H*0.015,
+        -- shape = "roundedRect",
+        width = W*0.213,
+        height = H*0.048,
+        defaultFile = "images/input@3x.png",
+        -- cornerRadius = H*0.015,
         label = "",
         fontSize = H*0.03 ,
-        fillColor = { default={0.95,0.95,0.99,0.99}, over={0.2,0.78,0.75,0.4} },
+        labelColor =  { default={226/255,68/255,61/255}, over={226/255,68/255,61/255}, } ,   
+        -- fillColor = { default={0.95,0.95,0.99,0.99}, over={0.2,0.78,0.75,0.4} },
         onEvent = btnEvent 
         } )
 
     btn3 = widget.newButton( {
-        left = X*1.03 , 
+        left = X*1.07 , 
         top = Y*0.95 , 
         id = "btn3" ,
-        shape = "roundedRect",
-        width = W*0.3,
-        height = H*0.05,
-        cornerRadius = H*0.015,
+        -- shape = "roundedRect",
+        width = W*0.213,
+        height = H*0.048,
+        -- cornerRadius = H*0.015,
+        defaultFile = "images/input@3x.png",
         label = "",
         fontSize = H*0.03 ,
-        fillColor = { default={0.95,0.95,0.99,0.99}, over={0.2,0.78,0.75,0.4} },
+        labelColor =  { default={226/255,68/255,61/255}, over={226/255,68/255,61/255}, } ,   
+        -- fillColor = { default={0.95,0.95,0.99,0.99}, over={0.2,0.78,0.75,0.4} },
         onEvent = btnEvent 
         } )
 
@@ -271,9 +290,10 @@ addBtn = function (  )
         height = H*0.05,
         -- cornerRadius = 20,
         label = "下一步",
-        fontSize = H*0.03 ,
+        font = bold ,
+        fontSize = H*0.028 ,
         labelColor = {default = {1,1,1,1}} ,
-        fillColor = { default={0.85,0.122,0.275,0.5}, over={0.2,0.78,0.75,0.4} },
+        fillColor = { default={254/255,118/254,118/254,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = btnEvent 
         } )
 

@@ -23,7 +23,8 @@ local noteContent = ""
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    title = display.newText( _parent, "紀錄", X, Y*0.2, font , 50 )
+    -- title = display.newText( _parent, "紀錄", X, Y*0.2, font , 50 )
+    T.title("紀錄" , sceneGroup)
 
     back = display.newCircle( _parent, X*0.2, Y*0.2, 50 )
     back:addEventListener( "tap", listener )
