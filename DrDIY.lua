@@ -11,11 +11,16 @@ local init
 local sceneGroup
 local tableView
 local onRowRender
+local bg 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
+    bg = display.newRect( _parent, X, Y*1.07, W, H )
+    bg:setFillColor( 0.1,0.75,0.8 )
+    T.title("Dr. DIY" , _parent)
+
     display.newText( _parent, "DIY", X, Y, font , 50 )
 
     tableView = widget.newTableView(

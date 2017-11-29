@@ -72,7 +72,8 @@ local periodEndTable
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
     -- title = display.newText( _parent, "圖表", X, Y*0.15, font , H*0.045 )
-        T.title("圖表" , sceneGroup)
+    -- T.bg(_parent)
+    T.title("圖表" , sceneGroup)
 
 
     
@@ -85,7 +86,7 @@ init = function ( _parent )
 
     -- printPlot()
     printTemperaturePlot()
-        createBtn()
+    createBtn()
     -- end
 
 end
@@ -244,7 +245,8 @@ printWeightPlot = function (  )
         scrollView:scrollTo( "right", { time=0 } )
         
     else 
-        noDataText = display.newText( vGroup, "尚無資料", X, Y , font , H*0.05 )
+        noDataText = display.newText( vGroup, "尚無資料", X, Y , bold , H*0.05 )
+        noDataText:setFillColor(0.5)
     end
 end
 
@@ -404,7 +406,8 @@ printTemperaturePlot = function (  )
 
         scrollView:scrollTo( "right", { time=0 } )
     else
-        noDataText = display.newText( vGroup, "尚無資料", X, Y , font , H*0.058 )
+        noDataText = display.newText( vGroup, "尚無資料", X, Y , bold , H*0.05 )
+        noDataText:setFillColor(0.5)
     end
 end
 

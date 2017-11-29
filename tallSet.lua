@@ -19,6 +19,7 @@ local textListener
 local tallText = ""
 local setBtnEvent 
 local tt
+local backBtn
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -30,8 +31,23 @@ init = function ( _parent )
     -- title = display.newText( _parent, "身高設定", X, Y*0.2, font , H*0.045 )
     cmText = display.newText( _parent, "單位:公分", X, Y*0.6, font , H*0.028 )
 
-    back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
-    back:addEventListener( "tap", listener )
+    backBtn = widget.newButton({
+        label = "<",
+        onEvent = listener,
+        left = X*0.02 ,
+        top = Y*0.07, 
+        shape = "rect",
+        width = W*0.1,
+        height = H*0.07,
+        fontSize = H*0.05 ,
+        font = bold ,
+        fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
+        labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
+        } )
+
+    sceneGroup:insert( backBtn)
+    -- back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
+    -- back:addEventListener( "tap", listener )
 
     for row in database:nrows([[SELECT * FROM Setting WHERE id = 1]]) do
         tt = row.Height
@@ -77,8 +93,10 @@ init = function ( _parent )
 end
 
 listener = function ( e )
-    native.setKeyboardFocus( nil )
-    composer.showOverlay( "setup" )
+    if e.phase == "ended" then
+        native.setKeyboardFocus( nil )
+        composer.showOverlay( "setup" )
+    end
 end
 
 setBtnEvent = function ( e )

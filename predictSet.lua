@@ -32,33 +32,38 @@ local paddingNum = 0
 local avgCycle
 local regularCycle
 local setSwitch
+local duringRect 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
     -- title = display.newText( _parent, "週期設定", X, Y*0.2, font , H*0.045 )
+    T.bg(_parent)
     T.title("週期設定" , sceneGroup)
 
     bg1 = display.newRect( _parent, X, Y*0.55 , W*0.9, H*0.25 )
     bg1.id = "bg1"
-    bg1:setFillColor( 0.85 , 0.41 , 0.74 )
+    bg1:setFillColor( 254/255,118/255,118/255 )
     bg1:addEventListener( "touch", touchlistener )
     bg2 = display.newRect( _parent, X, Y*1, W*0.9 , H*0.15 )
     bg2.id = "bg2"
     bg2:setFillColor( 0.2 )
     bg2:addEventListener( "touch", touchlistener )
 
-    back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
-    back:addEventListener( "tap", listener )
+    duringRect = display.newRect( _parent, X, Y*1.5, W*0.9, H*0.25 )
+    duringRect:setFillColor(  254/255,118/255,118/255 )
+    -- back = display.newCircle( _ parent, X*0.2, Y*0.2, H*0.045 )
+    -- back:addEventListener( "tap", listener )
+    T.backBtn(sceneGroup,"setup")
 
-    text1 = display.newText( _parent, "採用固定周期", X*0.37, Y*0.55, font,H*0.035 )
+    text1 = display.newText( _parent, "採用固定周期", X*0.37, Y*0.55, bold ,H*0.035 )
     text1.anchorX = 0
-    text2 = display.newText( _parent, "採用平均週期", X*0.37, Y*1, font,H*0.035 )
+    text2 = display.newText( _parent, "採用平均週期", X*0.37, Y*1, bold,H*0.035 )
     text2.anchorX = 0
-    text2Day = display.newText( _parent, "    天", X*1.8, Y*1, font,H*0.035 )
+    text2Day = display.newText( _parent, "    天", X*1.8, Y*1, bold,H*0.035 )
     text2Day.anchorX = 1
-    text3 = display.newText( _parent, "每次行經日數", X*0.27, Y*1.5, font,H*0.035 )
+    text3 = display.newText( _parent, "每次行經日數", X*0.27, Y*1.5, bold,H*0.035 )
     text3.anchorX = 0
 
     for row in database:nrows([[SELECT * FROM Statistics ;]]) do
@@ -144,11 +149,11 @@ init = function ( _parent )
     end
 
     if setSwitch == 1 then 
-        bg1:setFillColor( 0.85 , 0.41 , 0.74 )
+        bg1:setFillColor( 254/255,118/255,118/255 )
         bg2:setFillColor( 0.2 )
     elseif setSwitch == 2 then 
         bg1:setFillColor( 0.2 )
-        bg2:setFillColor( 0.85 , 0.41 , 0.74 )
+        bg2:setFillColor( 254/255,118/255,118/255 )
     end 
 end
 
@@ -164,7 +169,7 @@ onValueSelected = function (  )
         database:exec([[UPDATE Setting SET Cycle = ']]..regularCycle..[[' , regularCycle = ']]..regularCycle..[[' WHERE id = 1 ;]])
         database:exec([[UPDATE Setting SET setSwitch = 1 WHERE id = 1 ;]])
         -- print( v1 )
-        bg1:setFillColor( 0.85 , 0.41 , 0.74 )
+        bg1:setFillColor( 254/255,118/255,118/255 )
         bg2:setFillColor( 0.2 )
         print(regularCycle)
     end  )
@@ -185,7 +190,7 @@ end
 touchlistener = function ( e )
     if e.phase == "ended" then
         if e.target.id == "bg1" then
-            bg1:setFillColor( 0.85 , 0.41 , 0.74 )
+            bg1:setFillColor( 254/255,118/255,118/255 )
             bg2:setFillColor( 0.2 )
             if regularCycle then
                 database:exec([[UPDATE Setting SET Cycle = ']]..regularCycle..[[' , regularCycle = ']]..regularCycle..[[' WHERE id = 1 ;]])
@@ -193,7 +198,7 @@ touchlistener = function ( e )
             end
         elseif e.target.id == "bg2" then
             bg1:setFillColor( 0.2 )
-            bg2:setFillColor( 0.85 , 0.41 , 0.74 )
+            bg2:setFillColor( 254/255,118/255,118/255 )
             database:exec([[UPDATE Setting SET Cycle = ']]..avgCycle..[[' WHERE id = 1 ;]])
             database:exec([[UPDATE Setting SET setSwitch = 2 WHERE id = 1 ;]])
         end

@@ -4,6 +4,36 @@ function M.init()
 	print("MMMMMMMMMMM")
 end
 
+function M.backBtn( sceneGroup , prevScene )
+    
+    function backBtnListener( e )
+        if e.phase == "ended" then
+            composer.showOverlay( prevScene )
+        end
+    end
+
+    local backBtn = widget.newButton({
+        label = "<",
+        onEvent = backBtnListener,
+        left = X*0.02 ,
+        top = Y*0.07, 
+        shape = "rect",
+        width = W*0.1,
+        height = H*0.07,
+        fontSize = H*0.05 ,
+        font = bold ,
+        fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
+        labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
+        } )
+
+    sceneGroup:insert( backBtn)
+end
+
+function M.bg( group )
+    local bg = display.newImageRect( group, "images/bg_dot@3x.png", W, H )
+    bg.x , bg.y = X , Y*1.07
+end
+
 function M.title( titleText , group )
     local titleBg = display.newImageRect( group, "images/bg_top@3x.png", W, H*0.07 )
     titleBg.x , titleBg.y ,titleBg.anchorY= X, Y*0.07 , 0

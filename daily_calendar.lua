@@ -700,28 +700,43 @@ readDb = function (  )
 
     if closeText.text == "" then 
         closeText.text = "尚無紀錄"
+        closeText:setFillColor( 170/255 )
+    else
+        closeText:setFillColor( 254/255,118/255,118/255  )
     end
 
     if temperatureText.text == "" then 
         temperatureText.text = "尚無紀錄"
+         temperatureText:setFillColor( 170/255 )
+    else
+        temperatureText:setFillColor( 254/255,118/255,118/255  )
     end
 
     if weightText.text == "" then
         weightText.text = "尚無紀錄"
+         weightText:setFillColor( 170/255 )
+    else
+        weightText:setFillColor( 254/255,118/255,118/255  )
     end
 
     if noticText.text == "" then
         noticText.text = "尚無紀錄"
+         noticText:setFillColor( 170/255 )
+    else
+        noticText:setFillColor( 254/255,118/255,118/255  )
     end
 
     for row in database:nrows([[SELECT * FROM Setting WHERE id = 1]]) do
         if row.Height == "" then
             BMIText.text = "請至設定頁設定身高"
+            BMIText:setFillColor( 170/255 )
         elseif row.Height ~= "" then
             if weightText.text ~= "尚無紀錄" then
                 BMIText.text =  string.sub (string.sub( weightText.text, 1,4 ) /(row.Height / 100 )^2 , 1 , 4 )
+                BMIText:setFillColor( 254/255,118/255,118/255  )
             else
                 BMIText.text = "請輸入體重"
+                BMIText:setFillColor( 170/255 )
             end
         end
     end

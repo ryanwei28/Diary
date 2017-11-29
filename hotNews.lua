@@ -9,18 +9,18 @@ local scene = composer.newScene()
 local date = os.date( "*t" ) 
 local init 
 local sceneGroup
-local cc
 local month
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    -- cc = display.newText( _parent, "hotNews", X, Y, font , 50 )
+    bg = display.newRect( _parent, X, Y*1.07, W, H )
+    bg:setFillColor( 0.1,0.75,0.8 )
     T.title("Hot News" , sceneGroup)
 
-    month = native.newTextField( X*0.9, Y*0.7, W*0.7, H*0.1 )
-    _parent:insert(month)
+    -- month = native.newTextField( X*0.9, Y*0.7, W*0.7, H*0.1 )
+    -- _parent:insert(month)
 end
 
 

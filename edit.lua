@@ -176,11 +176,13 @@ end
 
 listener = function ( e )
     -- composer.hideOverlay(  )
-    composer.setVariable( "dCalendarY", c..yNum )
-    composer.setVariable( "dCalendarM", mNum )
-    composer.setVariable( "dCalendarD", d )
-    composer.showOverlay( prevScene )
-    -- composer.showOverlay( "notes" )
+    if e.phase == "ended" then
+        composer.setVariable( "dCalendarY", c..yNum )
+        composer.setVariable( "dCalendarM", mNum )
+        composer.setVariable( "dCalendarD", d )
+        composer.showOverlay( prevScene )
+        -- composer.showOverlay( "notes" )
+    end
 end
 
 
@@ -501,10 +503,26 @@ createBtn = function (  )
         onEvent = createBtnEvent 
     })
 
-    back = display.newCircle(  X*0.2, Y*0.2, H*0.045 )
-    back:addEventListener( "tap", listener )
+    local backBtn = widget.newButton({
+        label = "<",
+        onEvent = listener,
+        left = X*0.02 ,
+        top = Y*0.07, 
+        shape = "rect",
+        width = W*0.1,
+        height = H*0.07,
+        fontSize = H*0.05 ,
+        font = bold ,
+        fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
+        labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
+        } )
 
-    btnGroup:insert(back)
+    -- back = display.newCircle(  X*0.2, Y*0.2, H*0.045 )
+    -- back:addEventListener( "tap", listener )
+
+
+
+    btnGroup:insert(backBtn)
     btnGroup:insert(closeBtn)
     btnGroup:insert(temperatureBtn)
     btnGroup:insert(weightBtn)

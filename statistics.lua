@@ -46,21 +46,25 @@ local duringDays = 0
 local duringNum = 0
 local paddingDays = 0
 local paddingNum = 0
+local line 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
     -- title = display.newText( _parent, "經期資料統計", X, Y*0.2, font , H*0.04 )
+    T.bg(sceneGroup)
     T.title("經期資料統計" , sceneGroup)
 
-    text = display.newText( _parent, "月經開始日    持續天數    間隔", X*1.1, Y*0.4, font , H*0.031 )
-    text:setFillColor( 0.885 , 0.323,0.241 )
+    text = display.newText( _parent, "月經開始日    持續天數    間隔", X*1.1, Y*0.35, bold , H*0.032 )
+    text:setFillColor( 226/255,68/255,61/255 )
 
+    line = display.newImageRect( sceneGroup , "images/line_dashed@3x.png" ,W*0.83 , H*0.001499 )
+    line.x , line.y =  X*1.06, Y*0.445
 
-    back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.04 )
-    back:addEventListener( "tap", listener )
-
+    -- back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.04 )
+    -- back:addEventListener( "tap", listener )
+    T.backBtn(_parent , prevScene)
 
     scrollView = widget.newScrollView(
         {
@@ -217,10 +221,13 @@ end
 
 createRows = function (  )
     for i = 1 , rows do 
-        rowTable[i] = display.newText( sceneGroup , dbData[i].StartDay.."             "..dbData[i].Continuance.."            "..dbData[i].Padding , X*0.1, Y*-0.1 + i*Y*0.2, font , H*0.032 )
-        rowTable[i]:setFillColor( 0.8 )
+        rowTable[i] = display.newText( sceneGroup , dbData[i].StartDay.."           "..dbData[i].Continuance.."            "..dbData[i].Padding , X*0.1, Y*-0.1 + i*Y*0.2, font , H*0.032 )
+        rowTable[i]:setFillColor( 0.18 )
         rowTable[i].anchorX = 0
-        lineTable[i] = display.newText( sceneGroup , "-------------------------------------------------------------" , X*0.6, Y*-0.03 + i*Y*0.2, font , H*0.032 )
+        lineTable[i] = display.newImageRect( sceneGroup , "images/line_dashed@3x.png" ,W*0.9 , H*0.001499 )
+        lineTable[i].x , lineTable[i].y =  X*0.8, Y*-0.03 + i*Y*0.2
+        -- lineTable[i] = display.newText( sceneGroup , "-------------------------------------------------------------" , X*0.6, Y*-0.03 + i*Y*0.2, font , H*0.032 )
+        -- lineTable[i]:setFillColor(0)
         scrollView:insert( rowTable[i] )
         scrollView:insert( lineTable[i] )
     end

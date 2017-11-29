@@ -18,16 +18,35 @@ local saveBtn
 local saveBtnEvent
 local dbDate = composer.getVariable( "dbDate" )
 local noteContent = ""
+local backBtn
+local bg_green 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
     -- title = display.newText( _parent, "紀錄", X, Y*0.2, font , 50 )
-    T.title("紀錄" , sceneGroup)
+    T.bg(sceneGroup)
 
-    back = display.newCircle( _parent, X*0.2, Y*0.2, 50 )
-    back:addEventListener( "tap", listener )
+    bg_green = display.newImageRect( _parent, "images/bg_green@3x.png", W, H*0.602 )
+    bg_green.x , bg_green.y = X , Y * 1.398
+    T.title("紀錄" , sceneGroup)
+     
+    backBtn = widget.newButton({
+        label = "<",
+        onEvent = listener,
+        left = X*0.02 ,
+        top = Y*0.07, 
+        shape = "rect",
+        width = W*0.1,
+        height = H*0.07,
+        fontSize = H*0.05 ,
+        font = bold ,
+        fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
+        labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
+        } )
+
+    sceneGroup:insert( backBtn)
 
     msgBox = native.newTextBox( X*1, Y*1.1, W*0.9, H*0.6 )
     msgBox.id = "msgBox"
@@ -43,8 +62,10 @@ init = function ( _parent )
 end
 
 listener = function ( e )
-    native.setKeyboardFocus( nil )
-    composer.showOverlay( "edit" )
+    if e.phase == "ended" then
+        native.setKeyboardFocus( nil )
+        composer.showOverlay( "edit" )
+    end
 end
 
 textListener = function( event )
@@ -55,9 +76,9 @@ textListener = function( event )
     elseif ( event.phase == "editing" ) then
         -- msgText = event.text 
         noteContent = event.text
-        if back then
-            back:removeSelf( )
-            back = nil 
+        if backBtn then
+            backBtn:removeSelf( )
+            backBtn = nil 
         end
 
         if not saveBtn then
@@ -69,13 +90,15 @@ end
 addSaveBtn = function (  )
     saveBtn = widget.newButton( {
         x = X*1.8 , 
-        y = Y*0.2 , 
+        y = Y*0.14 , 
         shape = "rect" , 
         width = W*0.1 , 
         height = H*0.05 ,
         label = "儲存",
-        fontSize = 30 ,
-        fillColor = { default={0.7,0.52,0.75,0.5}, over={0.2,0.78,0.75,0.4} },
+        fontSize = H*0.03 ,
+        font = bold ,
+        fillColor = { default={1,1,1,0}, over={0.7,0.7,0.7,0} },
+        labelColor = { default={1,1,1,}, over={0.7,0.7,0.7} },
         onEvent = saveBtnEvent 
         } )
 
@@ -89,8 +112,22 @@ saveBtnEvent = function ( e )
         saveBtn:removeSelf( )
         saveBtn = nil
         native.setKeyboardFocus( nil )
-        back = display.newCircle( sceneGroup, X*0.2, Y*0.2, 50 )
-        back:addEventListener( "tap", listener )
+        
+        backBtn = widget.newButton({
+            label = "<",
+            onEvent = listener,
+            left = X*0.02 ,
+            top = Y*0.07, 
+            shape = "rect",
+            width = W*0.1,
+            height = H*0.07,
+            fontSize = H*0.05 ,
+            font = bold ,
+            fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
+            labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
+        } )
+
+        sceneGroup:insert( backBtn)
     end
 end
 

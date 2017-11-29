@@ -16,16 +16,24 @@ local createBtn
 local buttonEvent 
 local readDb
 local alertText
+local titleBg
+local title
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
     -- title = display.newText( _parent, "密碼保護", X, Y*0.2, font , H*0.045 )
-    T.title("密碼保護" , sceneGroup)
+    -- T.title("密碼保護" , sceneGroup)
+    T.bg(_parent)
+    titleBg = display.newImageRect( _parent, "images/bg_top@3x.png", W, H*0.07 )
+    titleBg.x , titleBg.y ,titleBg.anchorY= X, Y*0.07 , 0
 
-    back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
-    back:addEventListener( "tap", listener )
+    title = display.newText( _parent , "密碼保護" , X, Y*0.14, bold , H*0.032 )
+
+    -- back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
+    -- back:addEventListener( "tap", listener )
+    T.backBtn(sceneGroup,prevScene)
     createBtn()
     -- psdSwitchBtn:setLabel( "New Label" )
     readDb()
@@ -51,7 +59,8 @@ createBtn = function (  )
                         if alertText then
                             alertText:removeSelf( )
                         end
-                        alertText = display.newText( sceneGroup, "請先設置密碼", X, Y*0.85, font , H*0.028 )
+                        alertText = display.newText( sceneGroup, "請先設置密碼", X, Y*0.85, bold , H*0.028 )
+                        alertText:setFillColor( 0 )
                     end
                 end
                
@@ -67,6 +76,7 @@ createBtn = function (  )
         label = "開啟密碼保護",
         fontSize = H*0.03 ,
         shape = "roundedRect",
+        font = bold , 
         width = W*0.7,
         height = H*0.1,
         cornerRadius = H*0.028,
@@ -81,6 +91,7 @@ createBtn = function (  )
         label = "變更密碼保護",
         fontSize = H*0.03 ,
         shape = "roundedRect",
+        font = bold , 
         width = W*0.7,
         height = H*0.1,
         cornerRadius = H*0.028,

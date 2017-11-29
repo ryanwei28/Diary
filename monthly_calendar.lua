@@ -68,6 +68,14 @@ local duringNum = 0
 local paddingNum = 0 
 local paddingDays = 0
 local last
+local frontGroup = display.newGroup( )
+local backGroup = display.newGroup( )
+local blackTitle
+local bg1
+local bg2
+local removeListener 
+local removeSw = true
+local redRect 
 -- local bg 
 -- local titleBg
 composer.setVariable( "prevScene", "monthly_calendar" )
@@ -78,18 +86,30 @@ composer.setVariable( "prevScene", "monthly_calendar" )
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
     
-    -- bg = display.newImageRect( _parent, "images/bg_dot@3x.png", W, H )
+    -- bg = display.newRect( _parent, X, Y*1.07, W, H )
+    -- bg:setFillColor( 127/255, 215/255, 210/255 )
     -- bg.x , bg.y = X , Y*1.07
+    bg1 = display.newImageRect( _parent, "images/b.png", W, H*0.2 )
+    bg1.x , bg1.y = X , Y*0.35
+
+    bg2 = display.newImageRect( _parent, "images/b.png", W, H*0.2 )
+    bg2.x , bg2.y = X , Y*1.65
+
 
     -- titleBg = display.newImageRect( _parent, "images/bg_top@3x.png", W, H*0.07 )
     -- titleBg.x , titleBg.y ,titleBg.anchorY= X, Y*0.07 , 0
     -- title = display.newText( _parent, "月曆", X, Y*0.14, bold , H*0.032 )
-    T.title("月曆" , sceneGroup)
+    blackTitle = display.newRect( _parent, X, Y*0.07, W, H*0.07 )
+    blackTitle.anchorY = 1
+    blackTitle:setFillColor( 0 )
+
+    T.title("月曆" , frontGroup)
 
     judgeWeek()
     judge1stWeek()
-    dateText1 = display.newText( _parent, c..y.." 年 "..m.." 月" , X , Y*0.3 , font ,  H*0.04 )
-    wd = display.newText( _parent, "SUN   MON   TUE   WED   THU   FRI   SAT", X, Y*0.5 , font , H*0.022 )
+    dateText1 = display.newText( _parent, c..y.." 年 "..m.." 月" , X , Y*0.3 , bold ,  H*0.04 )
+    dateText1:setFillColor( 226/255,68/255,61/255 )
+    wd = display.newText( _parent, "SUN     MON     TUE     WED     THU     FRI     SAT", X, Y*0.5 , bold , H*0.022 )
     -- dateText2 = display.newText( _parent, c..y.."  "..week , X, Y*0.4, font , 30 )
     if m == 1 then 
         m = 13
@@ -158,6 +178,11 @@ end
 handleButtonEvent = function ( e )
     if ( "ended" == e.phase ) then
         if e.target.id == "leftBtn" then 
+             if removeSw == true  then
+                removeListener()
+            end
+
+            removeSw = false
             leftLeapYear()
 
             print( daysTable[14] )
@@ -203,12 +228,25 @@ handleButtonEvent = function ( e )
             judge1stWeek()
             print( daysTable[m]..":mDays" )
             print( firstW..":firstW" )
-            mGroup:removeSelf( )
-            readMonthDb()
-            creatMonthlyCalendar()
+            mGroup.y = mGroup.y - H*0.2
+            transition.to( mGroup, {time = 350 , y = H*0.005 , onComplete = function (  )
+                mGroup:removeSelf( )
+                readMonthDb()
+
+                creatMonthlyCalendar()
+                removeSw = true
+            end} )
+            -- mGroup:removeSelf( )
+            -- readMonthDb()
+            -- creatMonthlyCalendar()
             
 
         elseif e.target.id == "rightBtn" then 
+            if removeSw == true  then
+                removeListener()
+            end
+
+            removeSw = false
             rightLeapYear()
             print( daysTable[14] )
             -- d = d + 1 
@@ -252,9 +290,18 @@ handleButtonEvent = function ( e )
             judge1stWeek()
             print( daysTable[m]..":mDays" )
             print( firstW..":firstW" )
-            mGroup:removeSelf( )
-            readMonthDb()
-            creatMonthlyCalendar()
+            mGroup.y = mGroup.y + H*0.2
+            transition.to( mGroup, {time = 350 , y = -H*0.0005 , onComplete = function (  )
+                mGroup:removeSelf( )
+                readMonthDb()
+
+                creatMonthlyCalendar()
+                removeSw = true
+            end} )
+            -- mGroup:removeSelf( )
+            -- readMonthDb()
+
+            -- creatMonthlyCalendar()
 
         end
     end
@@ -345,6 +392,7 @@ backToday = function (  )
             
 
             creatMonthlyCalendar()
+
         end
     end
 
@@ -634,8 +682,11 @@ readDb = function (  )
 end
 
 creatMonthlyCalendar = function (  )
+    local mBg = display.newRect( backGroup, X, Y, W, H*0.45 ) 
     mGroup = display.newGroup( )
-    sceneGroup:insert(mGroup)
+    
+    backGroup:insert(mGroup)
+
     local s1 = c..yNum.."/"..string.format("%02d",mNum) .."/".."01"
     local mm = mNum+1 
     local yy = yNum
@@ -646,20 +697,34 @@ creatMonthlyCalendar = function (  )
     local e1 = c..yy.."/"..string.format("%02d",mm+1) .."/".."01"
     local dTable = {}
     local dNum = 0 
+
+    -- local cW = 
+    -- local cH = 
     -- for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay >= ']]..s1..[[' AND StartDay < ']]..e1..[[' ;]]) do
     --     -- print(row.StartDay.."***")
     --     dNum = dNum + 1
     --     dTable[dNum] = row.StartDay
     -- end 
+    
 
     for i = 1 , 5 do 
         for j = 1 , 7 do 
             k = i*7+j-7 
+            -- display.newLine( x1, y1, x2, y2 )
             if k <= daysTable[m] then 
+
+                local lineH = display.newLine( mGroup , X*0,  H*0.27+ i * H*0.075, X*2,  H*0.27+ i * H*0.075 )
+                lineH:setStrokeColor(127/255, 215/255, 210/255)
+                lineH.strokeWidth = H*0.008
+                local lineV = display.newLine( backGroup ,  -X*0.035+X*0.3*(j-1),  H*0.275 , -X*0.035+X*0.3*(j-1),  H*0.73 )
+                lineV:setStrokeColor( 127/255, 215/255, 210/255 )
+                lineV.strokeWidth = H*0.008
+
                 if (firstW + j -1 ) <= 6 then
-                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , X*0.1 + (firstW + j  ) * H*0.062, H*0.25+ i * H*0.075, font , H*0.028 )
+                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , -X*0.05 + (firstW + j  ) * W*0.135, H*0.25+ i * H*0.075, font , H*0.028 )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
+                    mCalendarTable[i*7+j-7]:setFillColor( 0 )
                     mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
                     periodTable[i*7+j-7] = display.newText( mGroup,"", X*0.1 + (firstW + j  ) * H*0.062, H*0.25+ i * H*0.075, native.systemFontBold , H*0.032 )
                     periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)
@@ -688,17 +753,17 @@ creatMonthlyCalendar = function (  )
 
                     for row in database:nrows([[SELECT * FROM Diary WHERE Date = ']]..mCalendarTable[i*7+j-7].id..[[' ]]) do
                         if row.Close ~= "" then
-                            local cc = display.newText( mGroup, "❤" ,  X*0.1 + (firstW + j  ) * H*0.06, H*0.25+ i * H*0.074, font , H*0.024 )
+                            local cc = display.newText( mGroup, "❤" ,  -X*0.05 + (firstW + j  ) * W*0.13, H*0.25+ i * H*0.074, font , H*0.024 )
                             cc:setFillColor( 0.9 , 0.1 , 0.1 )
                         end
 
                         if row.Temperature ~= "" then
-                            local dd = display.newText( mGroup, "◯" ,  X*0.1 + (firstW + j  ) * H*0.06, H*0.25+ i * H*0.076, font , H*0.024 )
+                            local dd = display.newText( mGroup, "◯" ,  -X*0.05 + (firstW + j  ) * W*0.13, H*0.25+ i * H*0.076, font , H*0.024 )
                             dd:setFillColor( 0.1 , 0.851 , 0.21 )
                         end
 
                         if row.Weight ~= "" then
-                            local ee = display.newText( mGroup, "▲" , X*0.1 + (firstW + j  ) * H*0.064, H*0.25+ i * H*0.076, font , H*0.024 )
+                            local ee = display.newText( mGroup, "▲" , -X*0.05 + (firstW + j  ) * W*0.14, H*0.25+ i * H*0.076, font , H*0.024 )
                             ee:setFillColor( 0.15 , 0.12 , 0.91 )
                         end
                     end
@@ -706,10 +771,11 @@ creatMonthlyCalendar = function (  )
                     -- print(mCalendarTable[i*7+j-7].id..":<6")
                 end
 
-                if (firstW + j -1 ) > 6 then
-                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , X*0.1 + -X*1.53 + (firstW + j  ) * H*0.062, H*0.25+ (i + 1) * H*0.075, font , H*0.028 )
+                if (firstW + j -1 ) > 6 then                       
+                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , -X*2 +  (firstW + j  ) * W*0.138, H*0.25+ (i + 1) * H*0.075, font , H*0.028 )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d", mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
+                    mCalendarTable[i*7+j-7]:setFillColor( 0 )
                     mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
                     
                     periodTable[i*7+j-7] = display.newText( mGroup, "" , X*0.1 + -X*1.53 + (firstW + j  ) * H*0.062, H*0.25+ (i + 1) * H*0.075, native.systemFontBold , H*0.032 )
@@ -739,27 +805,39 @@ creatMonthlyCalendar = function (  )
 
                     for row in database:nrows([[SELECT * FROM Diary WHERE Date = ']]..mCalendarTable[i*7+j-7].id..[[' ]]) do
                         if row.Close ~= "" then
-                            local cc = display.newText( mGroup, "❤" , X*0.1 + -X*1.53 + (firstW + j  ) * H*0.061, H*0.25+ (i + 1) * H*0.074, font ,  H*0.024 )
+                            local cc = display.newText( mGroup, "❤" , -X*2 +  (firstW + j  ) * W*0.138, H*0.25+ (i + 1) * H*0.074, font ,  H*0.024 )
                             cc:setFillColor( 0.9 , 0.1 , 0.1 )
                         end
 
                         if row.Temperature ~= "" then
-                            local dd = display.newText( mGroup, "◯" ,X*0.1 + -X*1.53 + (firstW + j  ) * H*0.061, H*0.25+ (i + 1) * H*0.076, font ,  H*0.024 )
+                            local dd = display.newText( mGroup, "◯" ,-X*2 +  (firstW + j  ) * W*0.138, H*0.25+ (i + 1) * H*0.076, font ,  H*0.024 )
                             dd:setFillColor( 0.1 , 0.851 , 0.21 )
                         end
 
                         if row.Weight ~= "" then
-                            local ee = display.newText( mGroup, "▲" , X*0.1 + -X*1.53 + (firstW + j  ) * H*0.062, H*0.25+ (i + 1) * H*0.076, font ,  H*0.024 )
+                            local ee = display.newText( mGroup, "▲" , -X*2 +  (firstW + j  ) * W*0.138, H*0.25+ (i + 1) * H*0.076, font ,  H*0.024 )
                             ee:setFillColor( 0.15 , 0.12 , 0.91 )
                         end
                     end
 
                      -- print(mCalendarTable[i*7+j-7].id..":>6")
                 end 
+
+
             end
         end
     end
     -- print( mCalendarTable[25].text..":yeeeeeeee" )
+    redRect = display.newRect( mGroup, X*1.017, Y*1.065, W*0.12, H*0.065 )
+    redRect:setFillColor(1,0,0,0) 
+    redRect.strokeWidth = H*0.009
+    redRect:setStrokeColor( 1,0,0 )
+end
+
+removeListener = function (  )
+    for i = 1 , daysTable[m] do 
+        mCalendarTable[i]:removeEventListener( "tap", listener )
+    end
 end
 
 listener = function ( e )
@@ -786,7 +864,9 @@ end
 -- create()
 function scene:create( event )
     sceneGroup = self.view
-    init(sceneGroup)
+    sceneGroup:insert(backGroup)
+    sceneGroup:insert(frontGroup)
+    init(frontGroup)
 end
  
 -- show()

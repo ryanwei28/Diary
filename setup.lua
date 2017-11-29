@@ -29,7 +29,24 @@ local prevScene = composer.getVariable( "prevScene" )
 local checkSwitchBtn 
 local setNum1 , setNum2 , setNum3 , setNum4 = 1,1,1,1
 local readDb
-
+local pinkRect 
+local whiteRect
+local psdRect 
+local setText 
+local createSwitch 
+local gr1 = display.newGroup( )
+local gr2 = display.newGroup( )
+local gr3 = display.newGroup( )
+local gr4 = display.newGroup( )
+local left 
+local right 
+local circle
+-- local switchListener
+-- local sw = 1
+local sw1 = 1
+local sw2 = 1
+local sw3 = 1 
+local sw4 = 1 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -37,38 +54,69 @@ local readDb
 init = function ( _parent )
     print( prevScene )
     -- title = display.newText( _parent, "設定", X, Y*0.2, font , H*0.045 )
+    T.bg(_parent)
     T.title("設定" , sceneGroup)
 
-    text1 = display.newText( _parent, "密碼保護", X*0.2, Y*0.4, font , H*0.043 )
+    pinkRect = display.newRoundedRect( _parent, X, Y*0.9, W*0.9, H*0.5, H*0.02 )
+    pinkRect:setFillColor( 254/255,118/255,118/255 )
+
+    whiteRect = display.newRoundedRect( _parent, X, Y*0.95, W*0.8, H*0.42, H*0.02 )
+    whiteRect:setFillColor( 1 )
+
+    psdRect = display.newRoundedRect( _parent , X, Y*0.3, W*0.9 , H*0.07 , H*0.02 )
+    psdRect.strokeWidth = H*0.005
+    psdRect:setStrokeColor( 254/255,118/255,118/255 )
+
+    setText = display.newText( _parent, "個人化通知設定", X, Y*0.47, bold , H*0.027 )
+    setText:setFillColor( 1 )
+
+    text1 = display.newText( _parent, "密碼保護", X*0.2, Y*0.3, bold , H*0.03 )
     text1.anchorX = 0
-    text2 = display.newText( _parent, "通知功能", X*0.2, Y*0.7, font , H*0.043 )
+    text1:setFillColor( 254/255,118/255,118/255 )
+    text2 = display.newText( _parent, "通知功能", X*0.3, Y*0.65, bold , H*0.03 )
+    text2:setFillColor( 0 )
     text2.anchorX = 0
-    text3 = display.newText( _parent, "通知時間", X*0.2, Y*0.9, font , H*0.043 )
+    text3 = display.newText( _parent, "通知時間", X*0.3, Y*0.85, bold , H*0.03 )
+    text3:setFillColor( 0 )
     text3.anchorX = 0
-    text4 = display.newText( _parent, "計畫", X*0.2, Y*1.1, font , H*0.043 )
+    text4 = display.newText( _parent, "計畫", X*0.3, Y*1.05, bold , H*0.03 )
+    text4:setFillColor( 0 )
     text4.anchorX = 0
-    text5 = display.newText( _parent, "性別", X*0.2, Y*1.3, font , H*0.043 )
+    text5 = display.newText( _parent, "性別", X*0.3, Y*1.25, bold , H*0.03 )
+    text5:setFillColor( 0 )
     text5.anchorX = 0
-    text6 = display.newText( _parent, "OFF", X*1.6, Y*0.4, font , H*0.028 )
-    text6.anchorX = 0 
-    text7 = display.newText( _parent, "ON", X*1.6, Y*0.7, font ,  H*0.028 )
-    text7.anchorX = 0 
-    text8 = display.newText( _parent, "想避孕", X*1.6, Y*1.1, font ,  H*0.028 )
-    text8.anchorX = 0 
-    text9 = display.newText( _parent, "女生", X*1.6, Y*1.3, font ,  H*0.028 )
-    text9.anchorX = 0 
+    -- text6 = display.newText( _parent, "OFF", X*1.6, Y*0.3, bold , H*0.028 )
+    -- text6:setFillColor( 0 )
+    -- text6.anchorX = 0 
+    -- text7 = display.newText( _parent, "ON", X*1.6, Y*0.7, bold ,  H*0.028 )
+    -- text7:setFillColor( 0 )
+    -- text7.anchorX = 0 
+    -- text8 = display.newText( _parent, "想避孕", X*1.6, Y*1.1, bold ,  H*0.028 )
+    -- text8:setFillColor( 0 )
+    -- text8.anchorX = 0 
+    -- text9 = display.newText( _parent, "女生", X*1.6, Y*1.3, bold ,  H*0.028 )
+    -- text9:setFillColor( 0 )
+    -- text9.anchorX = 0 
+
+    addDashedLine(Y*0.75)
+    addDashedLine(Y*0.95)
+    addDashedLine(Y*1.15)
 
     local predictSetBtn = widget.newButton({ 
         x = X*1 ,
-        y = Y*1.55,
+        y = Y*1.52,
         id = "predictSetBtn",
-        label = "行經日數及未來經期預測設定          ＞",
-        fontSize = H*0.026 ,
+        label = "行經日數及未來經期預測設定      >",
+        fontSize = H*0.03 ,
+        font = bold ,
         shape = "roundedRect",
         width = W*0.9,
         height = H*0.08,
         cornerRadius = H*0.017,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        strokeWidth = H*0.005 ,
+        strokeColor =  { default={254/255,118/255,118/255}, over={254/255,118/255,118/255} },
+        labelColor = { default={254/255,118/255,118/255}, over={254/255,118/255,118/255} },
+        fillColor = { default={1,1,1}, over={0.7,0.7,0.7,0.4} },
         onEvent = setBtnEvent 
     }) 
 
@@ -76,26 +124,180 @@ init = function ( _parent )
 
     local tallSetBtn = widget.newButton({ 
         x = X*1 ,
-        y = Y*1.75,
+        y = Y*1.72,
         id = "tallSetBtn",
-        label = "身高設定                                             ＞",
-        fontSize = H*0.026 ,
+        label = "身高設定                                    >",
+        fontSize = H*0.03 ,
+        font = bold , 
         shape = "roundedRect",
         width = W*0.9,
         height = H*0.08,
         cornerRadius = H*0.017,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        strokeWidth = H*0.005 ,
+        strokeColor =  { default={254/255,118/255,118/255}, over={254/255,118/255,118/255} },
+        labelColor = { default={254/255,118/255,118/255}, over={254/255,118/255,118/255} },
+        fillColor = { default={1,1,1}, over={0.7,0.7,0.7,0.4} },
         onEvent = setBtnEvent 
     })
 
     _parent:insert(tallSetBtn)
 
     -- createSwitch()
-    back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
-    back:addEventListener( "tap", listener )
+    -- back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
+    -- back:addEventListener( "tap", listener )
+    T.backBtn(_parent , "daily_calendar")
+    -- checkSwitchBtn()
+    -- readDb()
 
-    checkSwitchBtn()
-    readDb()
+    createSwitch(X*1.5,text1.y,"ON","OFF","psdPropect" ,gr1 )
+    createSwitch(X*1.4,text2.y,"ON","OFF","notification" , gr2 )
+    createSwitch(X*1.4,text4.y,"想懷孕","想避孕","plan" , gr3 )
+    createSwitch(X*1.4,text5.y,"女生","男生","sex" , gr4 )
+end
+
+
+createSwitch = function ( sX , sY ,t1 , t2 , id , gr )
+
+    -- gr = display.newGroup( )
+    gr.id = id 
+    sceneGroup:insert(gr)
+    -- rbg = display.newRect( X, Y, W, H )
+    -- rbg:setFillColor( 1,0,0 )
+
+    local left = display.newImageRect( gr, "images/radio_on@3x.png",  W*0.2, H*0.04 )
+    left.x , left.y = sX - 25 , sY
+
+    local leftText = display.newText( gr, t1, left.x-5, left.y, font ,H*0.03 )
+
+    local right = display.newImageRect( gr,"images/radio_off@3x.png",  W*0.2, H*0.04 )
+    right.x , right.y = sX + 25 , sY
+
+    local rightText = display.newText( gr, t2, right.x+5, right.y, font ,H*0.03 )
+
+    local circle = display.newImageRect( gr, "images/radio_btn@3x.png", H*0.05 , H*0.05 )
+    circle.x , circle.y = sX , sY 
+
+    local circleX = circle.x 
+    local circleW = circle.width
+    local leftW = left.width 
+
+
+    readDb(circleX , circleW, leftW , gr)
+    -- display.newLine( sX-(left.width - circle.width/2+ W*0.012), 0, sX-(left.width - circle.width/2+ W*0.012), H )
+    -- display.newLine( sX, 0, sX, H )
+    gr:addEventListener( 'tap', function ( e )
+        if e.target.id == "psdPropect" then
+            if sw1 == 0 then
+                composer.setVariable( "prevScene", "setup" )
+                composer.showOverlay("psdPropect")
+                print( e.target.id..sw1 )
+            else
+                composer.setVariable( "prevScene", "setup" )
+                composer.showOverlay("psdPropect")
+                print( e.target.id..sw1 )
+            end
+        elseif e.target.id == "notification" then
+            sw2 = 1 - sw2 
+            if sw2 == 0 then
+                database:exec([[UPDATE Setting SET Notification = "OFF" WHERE id = 1 ;]])
+                print( e.target.id..sw2 )
+                transition.to( e.target , {time = 200 , x = - (left.width - circle.width/2 + W*0.012)} )
+                -- sw2 = 0 
+            else
+                database:exec([[UPDATE Setting SET Notification = "ON" WHERE id = 1 ;]])
+                print( e.target.id..sw2 )
+                transition.to( e.target , {time = 200 , x = 0} )
+            end
+        elseif e.target.id == "plan" then
+            sw3 = 1 - sw3
+            if sw3 == 0 then
+                database:exec([[UPDATE Setting SET Plan = "想避孕" WHERE id = 1 ;]])
+                print( e.target.id..sw3)
+                transition.to( e.target , {time = 200 , x = - (left.width - circle.width/2 + W*0.012)} )
+            else
+                database:exec([[UPDATE Setting SET Plan = "想懷孕" WHERE id = 1 ;]])
+                print( e.target.id..sw3 )
+                transition.to( e.target , {time = 200 , x = 0} )
+            end
+        elseif e.target.id == "sex" then
+            sw4 = 1 - sw4
+            if sw4 == 0 then
+                database:exec([[UPDATE Setting SET Sex = "男生" WHERE id = 1 ;]])
+                print( e.target.id..sw4 )
+                transition.to( e.target , {time = 200 , x = - (left.width - circle.width/2 + W*0.012)} )
+            else
+                database:exec([[UPDATE Setting SET Sex = "女生" WHERE id = 1 ;]])
+                print( e.target.id..sw4 )
+                transition.to( e.target , {time = 200 , x = 0} )
+            end
+        end
+        -- sw = 1 - sw 
+        -- if sw == 0 then
+        --     transition.to( e.target , {time = 200 , x = - (left.width - circle.width/2 + W*0.012)} )
+        --     -- return sw 
+        --     if e.target.id == "psdPropect" then
+        --         composer.setVariable( "prevScene", "setup" )
+        --         composer.showOverlay("psdPropect")
+        --         print( e.target.id..sw )
+        --     elseif e.target.id == "notification" then
+        --         database:exec([[UPDATE Setting SET Notification = "OFF" WHERE id = 1 ;]])
+        --         print( e.target.id..sw )
+        --         sw2 = 0
+        --     elseif e.target.id == "plan" then
+        --         database:exec([[UPDATE Setting SET Plan = "想避孕" WHERE id = 1 ;]])
+        --         print( e.target.id..sw )
+        --         sw3 = 0 
+        --     elseif e.target.id == "sex" then
+        --         database:exec([[UPDATE Setting SET Sex = "男生" WHERE id = 1 ;]])
+        --         print( e.target.id..sw )
+        --         sw4 = 0
+        --     end
+        -- elseif sw == 1 then 
+        --     transition.to( e.target , {time = 200 , x = 0} )
+        --     -- return sw 
+        --     if e.target.id == "psdPropect" then
+        --         composer.setVariable( "prevScene", "setup" )
+        --         composer.showOverlay("psdPropect")
+        --         print( e.target.id..sw )
+        --     elseif e.target.id == "notification" then
+        --         database:exec([[UPDATE Setting SET Notification = "ON" WHERE id = 1 ;]])
+        --         print( e.target.id..sw )
+        --         sw2 = 1
+        --     elseif e.target.id == "plan" then
+        --         database:exec([[UPDATE Setting SET Plan = "想懷孕" WHERE id = 1 ;]])
+        --         print( e.target.id..sw )
+        --         sw3 = 1
+        --     elseif e.target.id == "sex" then
+        --         database:exec([[UPDATE Setting SET Sex = "女生" WHERE id = 1 ;]])
+        --         print( e.target.id..sw )
+        --         sw4 = 1
+        --     end
+        -- end 
+
+        -- print( sw2 )
+        -- readDb(circleX , circleW, leftW , gr)
+    end )
+
+    -- bg2 = display.newRect( X, Y, W, H )
+    -- bg2:setFillColor( 0.5 )
+end
+
+-- switchListener = function ( e )
+--     sw = 1 - sw 
+--     if sw == 0 then
+--         transition.to( e.target , {time = 200 , x = -80} )
+--         -- return sw 
+--     elseif sw == 1 then 
+--         transition.to( e.target , {time = 200 , x = 0} )
+--         -- return sw 
+--     end 
+
+-- end
+
+
+addDashedLine = function ( y )
+    dashedLine = display.newImageRect( sceneGroup, "images/line_dashed@3x.png", W*0.74, H*0.001499 )
+    dashedLine.x , dashedLine.y = X , y
 end
 
 listener = function ( e )
@@ -162,7 +364,7 @@ checkSwitchBtn = function (  )
 
     local psdProtectSwitch = widget.newButton({ 
         x = X*1.3,
-        y = Y*0.4,
+        y = Y*0.3,
         id = "psdProtectSwitch",
         label = "",
         fontSize = 30 ,
@@ -222,43 +424,60 @@ checkSwitchBtn = function (  )
     sceneGroup:insert(sexSwitch)
 end
  
-readDb = function (  )
+readDb = function ( circleX , circleW , leftW , gr )
     for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
-        text6.text = row.Protect 
-        text7.text = row.Notification
-        text8.text = row.Plan
-        text9.text = row.Sex
+        -- text6.text = row.Protect 
+        -- text7.text = row.Notification
+        -- text8.text = row.Plan
+        -- text9.text = row.Sex
 
         if row.Protect == "ON" then 
-            text6.text = "ON"
-            setNum1 = 0
+            gr1.x = 0
+        --     text6.text = "ON"
+        --     setNum1 = 0
+            -- gr.x = circleX - (leftW - circleW/2 + W*0.012)
+
         else
-            text6.text = "OFF"
-            setNum1 = 1
+            gr1.x = 0 - (leftW - circleW/2 + W*0.012)
+            -- gr.x = circleX
+        --     text6.text = "OFF"
+        --     setNum1 = 1
         end
 
         if row.Notification == "ON" then 
-            text7.text = "ON"
-            setNum2 = 0
+            gr2.x = 0
+            sw2 = 1
+        --     text7.text = "ON"
+        --     setNum2 = 0
         else
-            text7.text = "OFF"
-            setNum2 = 1
+            gr2.x = 0 - (leftW - circleW/2 + W*0.012)
+            sw2 = 0
+        --     text7.text = "OFF"
+        --     setNum2 = 1
         end
 
         if row.Plan == "想懷孕" then 
-            text8.text = "想懷孕"
-            setNum3 = 0
+            gr3.x = 0 
+            sw3 = 1
+        --     text8.text = "想懷孕"
+        --     setNum3 = 0
         else
-            text8.text = "想避孕"
-            setNum3 = 1
+            gr3.x = 0 - (leftW - circleW/2 + W*0.012)
+            sw3 = 0
+        --     text8.text = "想避孕"
+        --     setNum3 = 1
         end
 
-        if row.Sex == "男生" then 
-            text9.text = "男生"
-            setNum4 = 0
+        if row.Sex == "女生" then 
+            gr4.x = 0
+            sw4 = 1
+        --     text9.text = "男生"
+        --     setNum4 = 0
         else
-            text9.text = "女生"
-            setNum4 = 1
+            gr4.x = 0 - (leftW - circleW/2 + W*0.012)
+            sw4 = 0
+        --     text9.text = "女生"
+        --     setNum4 = 1
         end
     end
 end

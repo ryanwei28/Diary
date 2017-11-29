@@ -10,10 +10,12 @@
 
 --     date = 1 
 --     print(string.format("%02d", date))
+
+-- actualContentHeight
 -- -----------------------------------------------------------------------------------------
 X = display.contentCenterX
-Y = display.contentCenterY
-H = display.contentHeight
+Y = display.actualContentHeight*0.5
+H = display.actualContentHeight
 W = display.contentWidth 
 widget = require("widget")
 T = require("T")
