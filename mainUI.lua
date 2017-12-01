@@ -29,53 +29,53 @@ init = function ( _parent )
     -- Configure the tab buttons to appear within the bar
     local tabButtons = {
         {
-            label = "日曆",
+            label = "",
             id = "daily_calendar",
-            defaultFile = "images/tab_ico_day_press@3x.png" , 
-            overFile = "images/tab_ico_day@3x.png" , 
+            defaultFile = "images/tab_day@3x.png" , 
+            overFile = "images/tab_day_press@3x.png" , 
             width = W*0.2, 
-            height = H*0.1,
+            height = H*0.078,
             selected = true,
             size = tabFontSize,
             onPress = handleTabBarEvent
         },
         {
-            label = "月曆",
+            label = "",
             id = "monthly_calendar",
-            defaultFile = "images/tab_ico_month_press@3x.png" , 
-            overFile = "images/tab_ico_month@3x.png" , 
+            defaultFile = "images/tab_month@3x.png" , 
+            overFile = "images/tab_month_press@3x.png" , 
             width = W*0.2, 
-            height = H*0.1,
+            height = H*0.078,
             size = tabFontSize,
             onPress = handleTabBarEvent
         },
         {
-            label = "圖表",
+            label = "",
             id = "chart",
-            defaultFile = "images/tab_ico_chart_press@3x.png" , 
-            overFile = "images/tab_ico_chart@3x.png" , 
+            defaultFile = "images/tab_chart@3x.png" , 
+            overFile = "images/tab_chart_press@3x.png" , 
             width = W*0.2, 
-            height = H*0.1,
+            height = H*0.078,
             size = tabFontSize,
             onPress = handleTabBarEvent
         },
          {
-            label = "Hot News",
+            label = "",
             id = "hotNews",
-            defaultFile = "images/tab_ico_news_press@3x.png" , 
-            overFile = "images/tab_ico_news@3x.png" , 
+            defaultFile = "images/tab_news@3x.png" , 
+            overFile = "images/tab_news_press@3x.png" , 
             width = W*0.2, 
-            height = H*0.1,
+            height = H*0.078,
             size = tabFontSize,
             onPress = handleTabBarEvent
         },
          {
-            label = "Dr.DIY",
+            label = "",
             id = "DrDIY",
-            defaultFile = "images/tab_ico_diy_press@3x.png" , 
-            overFile = "images/tab_ico_diy@3x.png" , 
+            defaultFile = "images/tab_diy@3x.png" , 
+            overFile = "images/tab_diy_press@3x.png" , 
             width = W*0.2, 
-            height = H*0.1,
+            height = H*0.078,
             size = tabFontSize,
             onPress = handleTabBarEvent ,
             -- labelColor = { default={ 0.95, 1, 1 }, over={ 0.12, 0, 0, 0.5 } } ,
@@ -87,10 +87,10 @@ init = function ( _parent )
     -- Create the widget
     local tabBar = widget.newTabBar(
         {
-            top = Y*2*0.9,
+            top = H-H*0.078,
             left = 0 , 
             width = W,
-            height =  H*0.1 , 
+            height =  H*0.078 , 
             buttons = tabButtons ,
             labelColor = { default={ 0.95, 1, 1 }, over={ 0.12, 0, 0, 0.5 } } ,
             fillColor = { default={ 0.852, 0.2, 0.5, 0.7 }, over={ 0.14, 0.2, 0.5, 1 } }

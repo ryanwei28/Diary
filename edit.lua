@@ -35,6 +35,10 @@ local rightLeapYear
 local checkDb
 local text1 
 local text2 
+local text3
+local text4
+local text5
+local text6
 local createBtn
 local createBtnEvent
 local updateId
@@ -101,6 +105,15 @@ local duringDays
 local continuanceCount 
 local checkUpdate 
 local updateCount
+local bg_orange 
+local pinkRect 
+local checkbox_off1
+local checkbox_off2 
+local checkbox_on1
+local checkbox_on2
+local arrow
+local addImages 
+local bird 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -108,29 +121,82 @@ local updateCount
 init = function ( _parent )
 
     -- title = display.newText( _parent, "紀錄", X, Y*0.2, font , H*0.045 )
+    T.bg(_parent)
     T.title("紀錄" , sceneGroup)
 
-    text1 = display.newText( _parent, "今天經期開始", X*0.3, Y*0.6, font , H*0.035 )
+    bg_orange = display.newImageRect( _parent, "images/bg_orange@3x.png", W, H*0.602 )
+    bg_orange.x , bg_orange.y = X , H*0.646
+
+    pinkRect =  display.newRoundedRect( _parent, X, Y*0.991, W*0.92, H*0.538 ,H*0.015)
+    pinkRect:setFillColor( 254/255,118/255,118/255 )
+
+    text1 = display.newText( textGroup, "今天經期開始", W*0.194, H*0.279, bold , H*0.0254 )
     text1.anchorX = 0
-    text2 = display.newText( _parent, "今天經期結束", X*0.3, Y*0.8, font , H*0.035 )
+    text1:setFillColor( 0 )
+    checkbox_off1 = display.newImageRect( textGroup, "images/checkbox_off@3x.png", W*0.0586 , H*0.0329 )
+    checkbox_off1.x , checkbox_off1.y = W*0.877 , H*0.279
+    checkbox_on1 = display.newImageRect( textGroup, "images/checkbox_on@3x.png", W*0.0586 , H*0.0329 )
+    checkbox_on1.x , checkbox_on1.y = W*0.877 , H*0.279
+    checkbox_on1.alpha = 0
+
+    text2 = display.newText( textGroup, "今天經期結束", W*0.194, H*0.3628, bold , H*0.0254 )
     text2.anchorX = 0
-    
-    statusText = display.newText( _parent, "今天是安全期", X, Y*0.5, font , H*0.025 )
-    statusText:setFillColor( 0.88 , 0.33 , 0.342 )
+    text2:setFillColor( 0 )
+    checkbox_off2 = display.newImageRect( textGroup, "images/checkbox_off@3x.png", W*0.0586 , H*0.0329 )
+    checkbox_off2.x , checkbox_off2.y = W*0.877 , H*0.3628
+    checkbox_on2 = display.newImageRect( textGroup, "images/checkbox_on@3x.png", W*0.0586 , H*0.0329 )
+    checkbox_on2.x , checkbox_on2.y = W*0.877 , H*0.3628
+    checkbox_on2.alpha = 0
 
-    closeText = display.newText( textGroup, "text", X*1.2, Y*1 , font , H*0.025 )
-    closeText.anchorX = 0
-    temperatureText = display.newText( textGroup, "text", X*1.2, Y*1.2 , font , H*0.025 )
-    temperatureText.anchorX = 0
-    weightText = display.newText( textGroup, "text", X*1.2, Y*1.4 , font , H*0.025 )
-    weightText.anchorX = 0
-    noticText = display.newText( textGroup, "text", X*1.2, Y*1.6 , font , H*0.025 )
-    noticText.anchorX = 0
 
+    text3 = display.newText( textGroup, "親密行為", W*0.194, H*0.449, bold , H*0.0254 )
+    text3.anchorX = 0
+    text3:setFillColor( 0 )
+    text4 = display.newText( textGroup, "基礎體溫°C", W*0.194, H*0.536, bold , H*0.0254 )
+    text4.anchorX = 0
+    text4:setFillColor( 0 )
+    text5 = display.newText( textGroup, "體重KG", W*0.194, H*0.623, bold , H*0.0254 )
+    text5.anchorX = 0
+    text5:setFillColor( 0 )
+    text6 = display.newText( textGroup, "Notes", W*0.194, H*0.710, bold , H*0.0254 )
+    text6.anchorX = 0
+    text6:setFillColor( 0 )
+
+    statusText = display.newText( _parent, "今天是安全期", X, H*0.186, bold , H*0.0254 )
+    statusText:setFillColor( 226/255,68/255,61/255  )
+
+    closeText = display.newText( textGroup, "text", W*0.816, text3.y , bold , H*0.025 )
+    closeText.anchorX = 1
+    closeText:setFillColor( 254/255,118/255,118/255 )
+    temperatureText = display.newText( textGroup, "text", W*0.816, text4.y , bold , H*0.025 )
+    temperatureText.anchorX = 1
+    temperatureText:setFillColor( 254/255,118/255,118/255 )
+    weightText = display.newText( textGroup, "text", W*0.816, text5.y , bold , H*0.025 )
+    weightText.anchorX = 1
+    weightText:setFillColor( 254/255,118/255,118/255 )
+    noticText = display.newText( textGroup, "text", W*0.816, text6.y , bold , H*0.025 )
+    noticText.anchorX = 1
+    noticText:setFillColor( 254/255,118/255,118/255 )
+    arrow(text3.y)
+    arrow(text4.y)
+    arrow(text5.y)
+    arrow(text6.y)
+    addImages("images/ico_mc_start@3x.png",text1.y)
+    addImages("images/ico_mc_end@3x.png",text2.y)
+    addImages("images/ico_lip@3x.png",text3.y)
+    addImages("images/ico_temp@3x.png",text4.y)
+    addImages("images/ico_weight@3x.png",text5.y)
+    addImages("images/ico_note@3x.png",text6.y)
+
+    bird = display.newImageRect( textGroup, "images/bird_2@3x.png", W*0.12, H*0.0824 )
+    bird.x , bird.y = W*0.897 , H*0.195
+    -- ch1Text = display.newText( textGroup , "" , X*1.4 , Y*0.6, font , H*0.045 )
+    -- ch2Text = display.newText( textGroup , "" , X*1.4 , Y*0.8, font , H*0.045 )
     createBtn()
     -- createPickerWheel()
     judgeWeek()
-    dateText1 = display.newText( _parent, c..y.."/"..m.."/"..d , X , Y*0.4 , font , H*0.038 )
+    dateText1 = display.newText( _parent, c..y.."/"..m.."/"..d , X , H*0.15 , bold , H*0.032 )
+    dateText1:setFillColor( 226/255,68/255,61/255 )
     -- dateText2 = display.newText( _parent, c..y.."  "..week , X, Y*0.4, font , 30 )
     if m == 1 then 
         m = 13
@@ -141,26 +207,29 @@ init = function ( _parent )
     end
 
     leftBtn = widget.newButton({ 
-        x = X*0.55,
-        y = Y*0.4,
+        x = W*0.277,
+        y = H*0.15,
         id = "leftBtn",
-        label = "<",
-        fontSize = H*0.025 ,
-        shape = "circle",
-        radius = H*0.025 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = H*0.033,
+        height = H*0.033,
+        defaultFile = "images/btn_prev_r@3x.png",
+        overFile = "images/btn_prev_r_press@3x.png",
+        -- label = "<",
+        -- fontSize = H*0.025 ,
+        -- shape = "circle",
+        -- radius = H*0.025 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
         onEvent = handleButtonEvent 
     })
 
     rightBtn = widget.newButton({ 
-        x = X*1.45,
-        y = Y*0.4,
+        x = W*0.722,
+        y = H*0.15,
         id = "rightBtn",
-        label = ">",
-        fontSize = H*0.025 ,
-        shape = "circle",
-        radius = H*0.025 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = H*0.033,
+        height = H*0.033,
+        defaultFile = "images/btn_next_r@3x.png",
+        overFile = "images/btn_next_r_press@3x.png",
         onEvent = handleButtonEvent 
     })
 
@@ -168,10 +237,20 @@ init = function ( _parent )
     _parent:insert(rightBtn)
 
     checkDb()
-    checkBoxBtn()
+    -- checkBoxBtn()
     readDb()
     -- statisticalDays()
     
+end
+
+arrow = function ( arrowY )
+    local arrowImge = display.newImageRect( textGroup, "images/cell_arrow_red@3x.png", W*0.0266, H*0.025 )
+    arrowImge.x , arrowImge.y = W*0.877 , arrowY
+end
+
+addImages = function ( file , iconY )
+    local icons = display.newImageRect( textGroup, file , H*0.036, H*0.036 )
+    icons.x , icons.y = W*0.13 , iconY
 end
 
 listener = function ( e )
@@ -306,57 +385,6 @@ rightLeapYear = function (  )
     end
 end
 
--- writeDb = function (  )
---     for i = 1 , daysTable[m] do 
---         local tablesetup =  [[
---                             INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
---                         ]]
---                         -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
---         database:exec(tablesetup)
---     end
--- end
-
-
--- writeDb = function (  )
---     for row in database:nrows([[SELECT COUNT(*) FROM Diary ; ]]) do
---         firstRow = row['COUNT(*)']
---     end
-
---     if firstRow <= 10 then 
---         for row in database:nrows([[SELECT * FROM Diary WHERE Start = 1 ;]]) do
---             firstStart = row.Date
---         end
-
---         for row in database:nrows([[SELECT * FROM Diary WHERE End = 1 ;]]) do
---             firstEnd = row.Date
---         end
-
---          for i = 1 , daysTable[m] do 
---             local firstDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
-            
---             if firstDate < firstStart or firstDate > firstEnd then
-
---                 local tablesetup =  [[
---                                     INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
---                                 ]]
---                                 -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
---                 database:exec(tablesetup)
---             else
-
---             end
---         end
---     else
---         for i = 1 , daysTable[m] do 
---             local tablesetup =  [[
---                                 INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","");
---                             ]]
---                             -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
---             database:exec(tablesetup)
---         end
-
---     end
--- end
-
 
 writeDb = function (  )
     for row in database:nrows([[SELECT COUNT(*) FROM Diary ; ]]) do
@@ -447,75 +475,112 @@ createBtn = function (  )
         end
     end
 
-    local closeBtn = widget.newButton({ 
+    local startBtn = widget.newButton({ 
         x = X*1,
-        y = Y*1,
-        id = "close",
-        label = "親密行為                                            ＞",
+        y = H*0.279,
+        id = "start",
+        label = "",
         fontSize = H*0.022 ,
         shape = "roundedRect",
-        width = W*0.8,
-        height = H*0.08,
-        cornerRadius = H*0.015,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.866,
+        height = H*0.072,
+        font = bold ,
+        cornerRadius = H*0.009,
+        fillColor = { default={1,1,1}, over={1,1,1} },
+        onEvent = checkBoxBtnEvent 
+    })
+
+    local endBtn = widget.newButton({ 
+        x = X*1,
+        y = H*0.3628,
+        id = "end",
+        label = "",
+        fontSize = H*0.022 ,
+        shape = "roundedRect",
+        width = W*0.866,
+        height = H*0.072,
+        font = bold ,
+        cornerRadius = H*0.009,
+        fillColor = { default={1,1,1}, over={1,1,1} },
+        onEvent = checkBoxBtnEvent 
+    })
+
+    local closeBtn = widget.newButton({ 
+        x = X*1,
+        y = H*0.449,
+        id = "close",
+        label = "",
+        fontSize = H*0.022 ,
+        shape = "roundedRect",
+        width = W*0.866,
+        height = H*0.072,
+        font = bold ,
+        cornerRadius = H*0.009,
+        fillColor = { default={1,1,1}, over={1,1,1} },
         onEvent = createBtnEvent 
     })
 
     local temperatureBtn = widget.newButton({ 
         x = X*1,
-        y = Y*1.2,
+        y = H*0.536,
         id = "temperature",
-        label = "基礎體溫                                            ＞",
+        label = "",
         fontSize = H*0.022 ,
         shape = "roundedRect",
-        width = W*0.8,
-        height = H*0.08,
-        cornerRadius = H*0.015,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.866,
+        height = H*0.072,
+        font = bold ,
+        cornerRadius = H*0.009,
+        fillColor = { default={1,1,1}, over={1,1,1} },
         onEvent = createBtnEvent 
     })
 
     local weightBtn = widget.newButton({ 
         x = X*1,
-        y = Y*1.4,
+        y = H*0.623,
         id = "weight",
-        label = "體重KG                                            ＞",
-        fontSize = H*0.022 ,
+        label = "",
+         fontSize = H*0.022 ,
         shape = "roundedRect",
-        width = W*0.8,
-        height = H*0.08,
-        cornerRadius = H*0.015,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.866,
+        height = H*0.072,
+        font = bold ,
+        cornerRadius = H*0.009,
+        fillColor = { default={1,1,1}, over={1,1,1} },
         onEvent = createBtnEvent 
     })
 
     local notesBtn = widget.newButton({ 
         x = X*1,
-        y = Y*1.6,
+        y = H*0.710,
         id = "notes",
-        label = "Notes                                            ＞",
-        fontSize = H*0.022 ,
+        label = "",
+         fontSize = H*0.022 ,
         shape = "roundedRect",
-        width = W*0.8,
-        height = H*0.08,
-        cornerRadius = H*0.015,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.866,
+        height = H*0.072,
+        font = bold ,
+        cornerRadius = H*0.009,
+        fillColor = { default={1,1,1}, over={1,1,1} },
         onEvent = createBtnEvent 
     })
 
     local backBtn = widget.newButton({
-        label = "<",
+        -- label = "<",
         onEvent = listener,
-        left = X*0.02 ,
-        top = Y*0.07, 
-        shape = "rect",
-        width = W*0.1,
-        height = H*0.07,
-        fontSize = H*0.05 ,
-        font = bold ,
-        fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
-        labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
-        } )
+         left = W*0.032 ,
+        top = H*0.05, 
+        -- shape = "rect",
+        width = W*0.032,
+        height = H*0.036,
+        -- fontSize = H*0.05 ,
+        -- font = bold ,
+        -- fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
+        -- labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
+        -- } )
+        defaultFile = "images/nav_back@3x.png" , 
+        -- overFile = "" , 
+        })
 
     -- back = display.newCircle(  X*0.2, Y*0.2, H*0.045 )
     -- back:addEventListener( "tap", listener )
@@ -527,7 +592,8 @@ createBtn = function (  )
     btnGroup:insert(temperatureBtn)
     btnGroup:insert(weightBtn)
     btnGroup:insert(notesBtn)
-
+    btnGroup:insert(startBtn)
+    btnGroup:insert(endBtn)
 end
 
 createPickerWheel = function ( btnId )
@@ -566,7 +632,7 @@ createPickerWheel = function ( btnId )
                 labelPadding = 10,
                 width = H*0.075,
                 startIndex = 1,
-                labels = { "度C" }
+                labels = { "°C" }
             }
         }
     elseif btnId == "weight" then 
@@ -696,25 +762,37 @@ end
 readDb = function (  )
     for row in database:nrows([[SELECT * FROM Diary WHERE Date = ']]..dbDate..[[']]) do
         closeText.text = row.Close 
-        temperatureText.text = row.Temperature
-        weightText.text = row.Weight
+        temperatureText.text = string.sub(row.Temperature,1,5)
+        weightText.text = string.sub(row.Weight,1,4)
         noticText.text = row.Notes
+
+        if #row.Close >= 12 then
+            closeText.text = string.sub( row.Close, 1 , 9 ).."..."
+        end
+
+         if #row.Notes >= 12 then
+            noticText.text = string.sub( row.Notes, 1 , 9 ).."..."
+        end
 
         local start = tostring(row.Start)
         if start == "1" then 
-            ch1Text.text = "V"
+            -- ch1Text.text = "V"
+            checkbox_on1.alpha = 1
             ch1 = 0
         else
-            ch1Text.text = ""
+            checkbox_on1.alpha = 0
+            -- ch1Text.text = ""
             ch1 = 1
         end
 
         local endd = tostring(row.End)
         if endd == "1" then 
-            ch2Text.text = "V"
+            -- ch2Text.text = "V"
+            checkbox_on2.alpha = 1
             ch2 = 0
         else
-            ch2Text.text = ""
+            -- ch2Text.text = ""
+            checkbox_on2.alpha = 0
             ch2 = 1
         end
 
@@ -790,159 +868,122 @@ checkUpdate = function (  )
     end
 end
 
-checkBoxBtn = function (  )
-    checkBoxBtnEvent = function ( e )
-        judgeReadDb()
-        if ( "ended" == e.phase ) then
-            if e.target.id == "checkBox1" then 
-                ch1 = 1 - ch1
-                if ch1 == 0 then 
-                    if judgeDayStart == "" then
-                        ch1Text.text = "V"
-                        for row in database:nrows([[SELECT COUNT(*) FROM Diary WHERE Start != "" ;]]) do
-                            startCount = row['COUNT(*)'] + 1
-                            -- print( row['COUNT(*)'].."?????" )
-                        end
-                        -- print(startCount.."????")
-                        database:exec([[UPDATE Diary SET Start = 1 WHERE date =']]..dbDate..[[';]])
-                        sD = tonumber( string.sub( dbDate, 9 , 10 ) )
-                        sM = tonumber( string.sub( dbDate, 6 , 7 ) )
-                        sY = tonumber( string.sub( dbDate, 1 , 4 ) )
-                        -- sDate = sY.."/"..sM.."/"..sD
-                        sDate = sY.."/"..string.format("%02d",sM).."/"..string.format("%02d",sD)
-                        for i = 1 , nextTime do 
-                            checkUpdate()
-
+checkBoxBtnEvent = function ( e )
+    judgeReadDb()
+    if ( "ended" == e.phase ) then
+        if e.target.id == "start" then 
+            ch1 = 1 - ch1
+            if ch1 == 0 then 
+                if judgeDayStart == "" then
+                    -- ch1Text.text = "V"
+                    checkbox_on1.alpha = 1
+                    for row in database:nrows([[SELECT COUNT(*) FROM Diary WHERE Start != "" ;]]) do
+                        startCount = row['COUNT(*)'] + 1
+                        -- print( row['COUNT(*)'].."?????" )
+                    end
+                    -- print(startCount.."????")
+                    database:exec([[UPDATE Diary SET Start = 1 WHERE date =']]..dbDate..[[';]])
+                    sD = tonumber( string.sub( dbDate, 9 , 10 ) )
+                    sM = tonumber( string.sub( dbDate, 6 , 7 ) )
+                    sY = tonumber( string.sub( dbDate, 1 , 4 ) )
+                    -- sDate = sY.."/"..sM.."/"..sD
+                    sDate = sY.."/"..string.format("%02d",sM).."/"..string.format("%02d",sD)
+                    for i = 1 , nextTime do 
+                        checkUpdate( )
+                        if updateCount < 1 then 
+                            database:exec([[INSERT INTO Diary VALUES ( NULL , ']]..sDate..[[' , "" , "" , "" , "" ,"" , "" , ']]..i..[[' , "" );]])
+                        elseif updateCount > 0 then 
+                            database:exec([[UPDATE Diary SET StartDays = ']]..i..[[' WHERE date = ']]..sDate..[[';]])                            
+                        end 
+                        statisticCount( )
+                        if i == nextTime-1 then
                             if updateCount < 1 then 
-                                database:exec([[INSERT INTO Diary VALUES ( NULL , ']]..sDate..[[' , "" , "" , "" , "" ,"" , "" , ']]..i..[[' , "" );]])
+                                database:exec([[INSERT INTO Diary VALUES ( NULL , ']]..sDate..[[' , "" , 1 , "" , "" ,"" , "" , "" , "" );]])
                             elseif updateCount > 0 then 
-                                database:exec([[UPDATE Diary SET StartDays = ']]..i..[[' WHERE date = ']]..sDate..[[';]])                            
+                                database:exec([[UPDATE Diary SET End = 1 WHERE date = ']]..sDate..[[';]])
                             end
-
-                            statisticCount()
-
-                            if i == nextTime-1 then
-                                if updateCount < 1 then 
-                                    database:exec([[INSERT INTO Diary VALUES ( NULL , ']]..sDate..[[' , "" , 1 , "" , "" ,"" , "" , "" , "" );]])
-                                elseif updateCount > 0 then 
-                                    database:exec([[UPDATE Diary SET End = 1 WHERE date = ']]..sDate..[[';]])
-                                end
-                            end 
-                        end
-                        addPeriodDay()
-                        startStatisticalDays()
-                    elseif judgeDayStart == "tooClose" then
-                        print( judgeDayStart..":jjjday" )
-                        T.alert("tooClose")
-                    elseif judgeDayStart == "future" then
-                        print( judgeDayStart..":jjjday" )
-                        T.alert("future")
-                    else
-                        print( judgeDayStart..":jjjday" )
-                        T.alert("already")
+                        end 
                     end
+                    addPeriodDay()
+                    startStatisticalDays()
+                elseif judgeDayStart == "tooClose" then
+                    print( judgeDayStart..":jjjday" )
+                    T.alert("tooClose")
+                elseif judgeDayStart == "future" then
+                    print( judgeDayStart..":jjjday" )
+                    T.alert("future")
                 else
-                    function onCompleteee( event )
-                        if ( event.action == "clicked" ) then
-                            local i = event.index
-                            if ( i == 1 ) then
-                                -- Do nothing; dialog will simply dismiss
-                            elseif ( i == 2 ) then
-                                for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay = ']]..dbDate..[[']]) do
-                                    deleteNum = row.Continuance 
-                                end
-
-                                sD = tonumber( string.sub( dbDate, 9 , 10 ) )
-                                sM = tonumber( string.sub( dbDate, 6 , 7 ) )
-                                sY = tonumber( string.sub( dbDate, 1 , 4 ) )
-                                sDate = sY.."/"..sM.."/"..sD
-
-                                for i = 1 , deleteNum do 
-                                    database:exec([[UPDATE Diary SET StartDays = "" WHERE date =']]..sDate..[[';]])
-                                    statisticCount()
-                                    if i == deleteNum-1 then 
-                                        database:exec([[UPDATE Diary SET End = "" WHERE date =']]..sDate..[[';]])
-                                    end
-                                end
-                                ch1Text.text = ""
-                                database:exec([[UPDATE Diary SET Start = "" , StartDays = "" WHERE date =']]..dbDate..[[';]])
-                                database:exec([[DELETE FROM Statistics WHERE StartDay =']]..dbDate..[[';]])
-                                readDb()
-                                -- judgeDayEnd = "startDelete"
+                    print( judgeDayStart..":jjjday" )
+                    T.alert("already")
+                end
+            else
+                function onCompleteee( event )
+                    if ( event.action == "clicked" ) then
+                        local i = event.index
+                        if ( i == 1 ) then
+                            -- Do nothing; dialog will simply dismiss
+                        elseif ( i == 2 ) then
+                            for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay = ']]..dbDate..[[']]) do
+                                deleteNum = row.Continuance 
                             end
+                            sD = tonumber( string.sub( dbDate, 9 , 10 ) )
+                            sM = tonumber( string.sub( dbDate, 6 , 7 ) )
+                            sY = tonumber( string.sub( dbDate, 1 , 4 ) )
+                            sDate = sY.."/"..sM.."/"..sD 
+                            for i = 1 , deleteNum do 
+                                database:exec([[UPDATE Diary SET StartDays = "" WHERE date =']]..sDate..[[';]])
+                                statisticCount()
+                                if i == deleteNum-1 then 
+                                    database:exec([[UPDATE Diary SET End = "" WHERE date =']]..sDate..[[';]])
+                                end
+                            end
+                            -- ch1Text.text = ""
+                            checkbox_on1.alpha = 0
+                            database:exec([[UPDATE Diary SET Start = "" , StartDays = "" WHERE date =']]..dbDate..[[';]])
+                            database:exec([[DELETE FROM Statistics WHERE StartDay =']]..dbDate..[[';]])
+                            readDb()
+                            -- judgeDayEnd = "startDelete"
                         end
                     end
-                  
-                    local alert = native.showAlert( "","確定刪除此筆經期資料?", { "NO" , "YES" }, onCompleteee )
-                    
                 end
-            elseif e.target.id == "checkBox2" then 
-                ch2 = 1 - ch2
-                if ch2 == 0 then 
-                    -- print(judgeDayEnd.."PPPPPPPP" )
-                    if judgeDayEnd == "" then
-                        ch2Text.text = "V"
-                        -- database:exec([[UPDATE Diary SET End = 1 WHERE date =']]..dbDate..[[';]])XXX
-                        endStatisticalDays()
-                    elseif judgeDayEnd == "future" then
-                        print( judgeDayEnd..":jjjday" )
-                        T.alert("future")
-                    elseif judgeDayEnd == "firstDay" then
-                        print( judgeDayEnd..":jjjday" )
-                        T.alert("firstDay") 
-                    elseif judgeDayEnd == "noStart" then
-                        print( judgeDayEnd..":jjjday" )
-                        T.alert("noStart") 
-                    else
-                        print( judgeDayEnd..":jjjday" )
-                    end
+              
+                local alert = native.showAlert( "","確定刪除此筆經期資料?", { "NO" , "YES" }, onCompleteee )
+                
+            end
+        elseif e.target.id == "end" then 
+            ch2 = 1 - ch2
+            if ch2 == 0 then 
+                -- print(judgeDayEnd.."PPPPPPPP" )
+                if judgeDayEnd == "" then
+                    -- ch2Text.text = "V"
+                    checkbox_on2.alpha = 1
+                    -- database:exec([[UPDATE Diary SET End = 1 WHERE date =']]..dbDate..[[';]])XXX
+                    endStatisticalDays()
+                elseif judgeDayEnd == "future" then
+                    print( judgeDayEnd..":jjjday" )
+                    T.alert("future")
+                elseif judgeDayEnd == "firstDay" then
+                    print( judgeDayEnd..":jjjday" )
+                    T.alert("firstDay") 
+                elseif judgeDayEnd == "noStart" then
+                    print( judgeDayEnd..":jjjday" )
+                    T.alert("noStart") 
                 else
-                    -- ch2Text.text = ""
-                    -- database:exec([[UPDATE Diary SET End = "" WHERE date =']]..dbDate..[[';]])
-                    T.alert("notToday")
+                    print( judgeDayEnd..":jjjday" )
                 end
-            end            
-        end
-        
-        -- newStatisticalDays()
-        -- statisticalDays()
-        readDb()
+            else
+                -- ch2Text.text = ""
+                -- database:exec([[UPDATE Diary SET End = "" WHERE date =']]..dbDate..[[';]])
+                T.alert("notToday")
+            end
+        end            
     end
-
-    checkBox1 = widget.newButton({ 
-        x = X*1.4,
-        y = Y*0.6,
-        id = "checkBox1",
-        label = "",
-        fontSize = H*0.025 ,
-        shape = "rect",
-        width = W*0.1 ,
-        height = H*0.05 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
-        onEvent = checkBoxBtnEvent 
-    })
-
-    checkBox2 = widget.newButton({ 
-        x = X*1.4,
-        y = Y*0.8,
-        id = "checkBox2",
-        label = "",
-        fontSize = H*0.025 ,
-        shape = "rect",
-        width = W*0.1 ,
-        height = H*0.05 ,
-        radius = 30 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
-        onEvent = checkBoxBtnEvent 
-    })
-
-    ch1Text = display.newText( textGroup , "" , X*1.4 , Y*0.6, font , H*0.045 )
-    ch2Text = display.newText( textGroup , "" , X*1.4 , Y*0.8, font , H*0.045 )
-
-    sceneGroup:insert(checkBox1)
-    sceneGroup:insert(checkBox2)
-
+    
+    -- newStatisticalDays()
+    -- statisticalDays()
+    readDb()
 end
+
 
 addPeriodDay = function (  )
     --找出前面日期

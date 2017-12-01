@@ -80,6 +80,13 @@ local noteImg
 local addDashedLine
 local dashedLine
 local bird 
+local stringNum 
+local notejoin 
+local helpBtnEvent 
+local maskGroup = display.newGroup( ) 
+local helpImg
+local helpImgX
+local mask 
 
 composer.setVariable( "prevScene", "daily_calendar" )
 
@@ -209,6 +216,7 @@ init = function ( _parent )
 
     _parent:insert(leftBtn)
     _parent:insert(rightBtn)
+
     -- _parent:insert(year)
     -- _parent:insert(month)
     -- _parent:insert(day)
@@ -226,6 +234,7 @@ init = function ( _parent )
     -- print( os.date( "%w" ).."w" )
     -- print( os.date( "%Y" ).."y" )
     -- print( os.date( "%m" ).."m" )
+    -- notejoin()
     backToday()
     setBtn()
     readDb()
@@ -248,6 +257,71 @@ init = function ( _parent )
 
     -- print(a2 == a5)
     sceneGroup:addEventListener("touch" , sceneGroupListener)
+end
+
+maskListener = function ( e )
+    if e.phase == "began" then
+        display.getCurrentStage():setFocus( e.target )
+    elseif e.phase == "ended" then
+        display.getCurrentStage():setFocus(nil)
+    end
+
+    return true
+end
+
+createMask = function (  )
+    mask = display.newRect( maskGroup, X, Y*0.9, W, H )
+    mask:setFillColor( 0 )
+    mask.alpha = 0.5
+    mask:addEventListener( "touch", maskListener )
+end
+
+helpBtnEvent = function ( e )
+    if e.phase == "ended" then
+        createMask()
+
+        local function helpImgEvent ( e )
+            if e.phase == "ended" then 
+                mask:removeSelf( )
+                helpImg:removeSelf( )
+                helpImgX:removeSelf( )
+            end     
+        end
+
+        helpImg = widget.newButton({
+            x = X ,
+            y = Y*0.91 , 
+            width = W*0.661,
+            height = H*0.337, 
+            defaultFile = "images/modal_bmi@3x.png" , 
+            overFile = "images/modal_bmi@3x.png" , 
+            onEvent = helpImgEvent , 
+            })
+
+        maskGroup:insert(helpImg)
+
+        helpImgX = display.newImageRect( maskGroup, "images/nav_close@3x.png", H*0.036 , H*0.036 )
+        helpImgX.x , helpImgX.y = W*0.77 , H*0.318
+
+    end
+end
+
+notejoin = function (  )
+    
+    for row in database:nrows([[SELECT * FROM Diary WHERE Date = ']]..dbDate..[[']]) do
+        stringNum = #row.Notes 
+        notesContent = row.Notes
+    end
+
+    print( stringNum..":string" )
+
+    if stringNum >= 60 then 
+        noticText:removeSelf( )
+        noticText = display.newText( sceneGroup , "notesContent", X*2*0.2026, Y*1.435 ,W*0.7 , W*0.045*stringNum/4 , bold , W*0.045 )
+        noticText:setFillColor(  170/255 )
+        noticText.anchorX = 0
+        noticText.anchorY = 0
+    end 
 end
 
 addDashedLine = function ( y )
@@ -619,7 +693,7 @@ setBtn = function (  )
         height = H*0.0329,
         defaultFile = "images/btn_help@3x.png" , 
         overFile = "images/btn_help_press@3x.png" ,
-        onEvent = setBtnEvent 
+        onEvent = helpBtnEvent 
     })
     sceneGroup:insert(disclaimerBtn)
     sceneGroup:insert(statisticsBtn)
@@ -768,6 +842,7 @@ end
 function scene:create( event )
     sceneGroup = self.view
     init(sceneGroup)
+    sceneGroup:insert(maskGroup)
 end
  
 -- show()

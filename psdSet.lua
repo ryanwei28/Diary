@@ -38,18 +38,21 @@ init = function ( _parent )
     title = display.newText( _parent , "密碼設定" , X, Y*0.14, bold , H*0.032 )
 
     backBtn = widget.newButton({
-        label = "<",
+        -- label = "<",
         onEvent = listener,
-        left = X*0.02 ,
-        top = Y*0.07, 
-        shape = "rect",
-        width = W*0.1,
-        height = H*0.07,
-        fontSize = H*0.05 ,
-        font = bold ,
-        fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
-        labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
-        } )
+         left = W*0.032 ,
+        top = H*0.05, 
+        -- shape = "rect",
+        width = W*0.032,
+        height = H*0.036,
+        -- fontSize = H*0.05 ,
+        -- font = bold ,
+        -- fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
+        -- labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
+        -- } )
+        defaultFile = "images/nav_back@3x.png" , 
+        -- overFile = "" , 
+        })
 
     sceneGroup:insert( backBtn)
     -- back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )

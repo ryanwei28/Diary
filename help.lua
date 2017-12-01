@@ -12,78 +12,33 @@ local sceneGroup
 local tableView
 local onRowRender
 local bg 
+local btnX 
+local btnXListener 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    bg = display.newRect( _parent, X, Y*1.07, W, H )
-    bg:setFillColor( 0.1,0.75,0.8 )
-    T.title("Dr. DIY" , _parent)
+    T.bg(_parent)
+    T.title("『個人化通知設定』說明" , _parent)
 
-    display.newText( _parent, "DIY", X, Y, font , 50 )
+    btnX = widget.newButton({
+        x = W*0.936,
+        y = H*0.068,
+        width = H*0.036,
+        height = H*0.036,
+        defaultFile = "images/nav_close@3x.png" , 
+        overFile = "images/nav_close_press@3x.png" , 
+        onRelease = btnXListener , 
+    })
 
-    -- tableView = widget.newTableView(
-    -- {
-    --     left = 0,
-    --     top = 200,
-    --     height = H*0.7,
-    --     width = W,
-    --     onRowRender = onRowRender,
-    --     onRowTouch = onRowTouch,
-    --     listener = scrollListener,
-    --     scrollBarOptions = {
-    --         sheet = scrollBarSheet,
-    --         topFrame = 1,
-    --         middleFrame = 2,
-    --         bottomFrame = 3
-    --         }
-    -- })
- 
-    -- -- Insert 40 rows
-    -- for i = 1, 10 do
-     
-    --     -- Insert a row into the tableView
-    --     tableView:insertRow(
-    --         {
-    --             isCategory = false,
-    --             rowHeight = 100,
-    --             rowColor = { default={1,1,1}, over={1,0.5,0,0.2} },
-    --             lineColor = { 0.5, 0.5, 0.5 }
-    --         }
-    --     )
-    -- end
-
-    -- _parent:insert(tableView)
+    sceneGroup:insert(btnX)
 end
 
-
-onRowRender = function( event )
- 
-    local row = event.row
- 
-    local rowHeight = row.contentHeight
-    local rowWidth = row.contentWidth
- 
-    local rowTitle = display.newText( row, "Row " .. row.index, 0, 0, nil, 30 )
-    rowTitle:setFillColor( 0 )
- 
-    -- Align the label left and vertically centered
-    rowTitle.anchorX = 0
-    rowTitle.x = 0
-    rowTitle.y = rowHeight * 0.5
+btnXListener = function ( e )
+    -- composer.hideOverlay( )
+    composer.showOverlay( "setup" )
 end
-
-onRowTouch = function ( e )
-    local row = e.row.index
-    print( row )
-    composer.showOverlay( "newsDIY" )
-end
-
- 
-      
-
-
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -118,7 +73,7 @@ function scene:hide( event )
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
         
-        composer.recycleOnSceneChange = true
+        -- composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
  

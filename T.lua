@@ -13,18 +13,21 @@ function M.backBtn( sceneGroup , prevScene )
     end
 
     local backBtn = widget.newButton({
-        label = "<",
+        -- label = "<",
         onEvent = backBtnListener,
-        left = X*0.02 ,
-        top = Y*0.07, 
-        shape = "rect",
-        width = W*0.1,
-        height = H*0.07,
-        fontSize = H*0.05 ,
-        font = bold ,
-        fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
-        labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
-        } )
+        left = W*0.032 ,
+        top = H*0.05, 
+        -- shape = "rect",
+        width = W*0.032,
+        height = H*0.036,
+        -- fontSize = H*0.05 ,
+        -- font = bold ,
+        -- fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
+        -- labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
+        -- } )
+        defaultFile = "images/nav_back@3x.png" , 
+        -- overFile = "" , 
+        })
 
     sceneGroup:insert( backBtn)
 end

@@ -141,7 +141,7 @@ taplistener = function ( e )
            if e.index == 1 then
                 print( 1 )
             elseif e.index == 2 then 
-                system.openURL( "tel:+886227488299p323" )
+                system.openURL( "tel:+886227488299" )
                 print( 2 )
             end
        end

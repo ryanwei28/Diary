@@ -34,14 +34,27 @@ local sD
 local bg 
 local titleBg 
 local bird 
+local createCircle 
+local sGroup = display.newGroup( )
+local cGroup = display.newGroup( )
+local midGroup = display.newGroup( )
+local sw = 1
+local circle 
+local readDb
+local blackTitle
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
+    createCircle(X*1.397,Y*0.953)
+    createSwitch()
+    bg = display.newImageRect( _parent, "images/radio_mask_1@3x.png", W, H )
+    bg.x , bg.y = X , Y*1.0
 
-    bg = display.newImageRect( _parent, "images/bg_dot@3x.png", W, H )
-    bg.x , bg.y = X , Y*1.07
+    blackTitle = display.newRect( _parent, X, Y*0.07, W, H*0.07 )
+    blackTitle.anchorY = 1
+    blackTitle:setFillColor( 0 )
 
     titleBg = display.newImageRect( _parent, "images/bg_top@3x.png", W, H*0.07 )
     titleBg.x , titleBg.y ,titleBg.anchorY= X, Y*0.07 , 0
@@ -51,16 +64,16 @@ init = function ( _parent )
 
     title = display.newText( _parent, "初次使用設定", X, Y*0.14, bold , H*0.032 )
 
-    text1 = display.newText( _parent, "上次月經開始...", X*0.96, Y*0.6, bold , H*0.027 )
+    text1 = display.newText( _parent, "上次月經開始...", X*0.96, Y*0.53, bold , H*0.027 )
     text1.anchorX = 1 
     text1:setFillColor( 226/255,68/255,61/255 )
-    text2 = display.newText( _parent, "月經週期", X*0.96, Y*0.8, bold , H*0.027 )
+    text2 = display.newText( _parent, "月經週期", X*0.96, Y*0.665, bold , H*0.027 )
     text2.anchorX = 1 
     text2:setFillColor( 0.85,0.22,0.23 )
-    text3 = display.newText( _parent, "經期長度", X*0.96, Y*1.0, bold , H*0.027 )
+    text3 = display.newText( _parent, "經期長度", X*0.96, Y*0.795, bold , H*0.027 )
     text3.anchorX = 1 
     text3:setFillColor( 0.85,0.22,0.23 )
-    text4 = display.newText( _parent, "性別", X*0.96, Y*1.2, bold , H*0.027 )
+    text4 = display.newText( _parent, "性別", X*0.96, Y*0.955, bold , H*0.027 )
     text4.anchorX = 1 
     text4:setFillColor( 0.85,0.22,0.23 )
 
@@ -71,8 +84,74 @@ init = function ( _parent )
             composer.gotoScene( "enterPassword" )
         end
     end 
+
+    
 end
 
+createCircle = function ( sX , sY , gr )
+    circle = display.newImageRect( cGroup, "images/radio_btn@3x.png", H*0.057 , H*0.057 )
+    circle.x , circle.y = sX , sY 
+end
+
+createSwitch = function (  )
+
+    local left = display.newImageRect(  sGroup , "images/radio_on@3x.png",  W*0.23, H*0.04797 )
+    left.x , left.y = X*1.27 , Y*0.953
+
+    local leftTextShadow = display.newText( sGroup, "女生", left.x - W*0.028 , left.y + W*0.002, bold , H*0.025 )
+    leftTextShadow:setFillColor( 0.5 )
+    local leftText = display.newText( sGroup, "女生", left.x - W*0.03, left.y, bold , H*0.025 )
+
+
+    local right = display.newImageRect( sGroup, "images/radio_off@3x.png",  W*0.23, H*0.04797 )
+    right.x , right.y = W*0.77 , Y*0.953
+
+    local rightTextShadow = display.newText( sGroup, "男生", right.x + W*0.032 , right.y + W*0.002, bold , H*0.025 )
+    rightTextShadow:setFillColor( 0.5 )
+    local rightText = display.newText( sGroup, "男生", right.x + W*0.03, right.y, bold , H*0.025 )
+    
+    readDb() 
+
+    sGroup:addEventListener( "tap", function (  )
+        sw = 1 - sw 
+        print( sw )
+        if sw == 0 then
+             database:exec([[UPDATE Setting SET Sex = "男生" WHERE id = 1 ;]])
+            transition.to( circle, {time = 200 , x = X*1.14} )
+            transition.to(sGroup, {time = 200 , x = -W*0.1333})
+        elseif sw == 1 then 
+             database:exec([[UPDATE Setting SET Sex = "女生" WHERE id = 1 ;]])
+            transition.to( circle, {time = 200 , x = X*1.397} )
+            transition.to(sGroup, {time = 200 , x = 0})
+        end 
+    end )
+end
+
+readDb = function (  )
+    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+        -- text6.text = row.Protect 
+        -- text7.text = row.Notification
+        -- text8.text = row.Plan
+        -- text9.text = row.Sex
+
+        if row.Sex == "女生" then 
+            sGroup.x = 0
+            circle.x = X*1.397
+            sw = 1
+        --     text6.text = "ON"
+        --     setNum1 = 0
+            -- gr.x = circleX - (leftW - circleW/2 + W*0.012)
+
+        else
+            sGroup.x = -W*0.1333
+            circle.x = X*1.14
+            sw = 0
+            -- gr.x = circleX
+        --     text6.text = "OFF"
+        --     setNum1 = 1
+        end
+    end
+end
 
 createPickerWheel = function ( btnId )
     local columnData 
@@ -232,7 +311,7 @@ end
 addBtn = function (  )
     btn1 = widget.newButton( {
         left = X*1.07 , 
-        top = Y*0.55 , 
+        top = Y*0.48 , 
         id = "btn1" ,
         -- shape = "roundedRect",
         width = W*0.373,
@@ -251,7 +330,7 @@ addBtn = function (  )
 
     btn2 = widget.newButton( {
         left = X*1.07 , 
-        top = Y*0.75 , 
+        top = Y*0.61 , 
         id = "btn2" ,
         -- shape = "roundedRect",
         width = W*0.213,
@@ -267,7 +346,7 @@ addBtn = function (  )
 
     btn3 = widget.newButton( {
         left = X*1.07 , 
-        top = Y*0.95 , 
+        top = Y*0.745 , 
         id = "btn3" ,
         -- shape = "roundedRect",
         width = W*0.213,
@@ -283,7 +362,7 @@ addBtn = function (  )
 
     btnNext = widget.newButton( {
         x = X*1 , 
-        y = Y*1.45 , 
+        y = Y*1.13 , 
         id = "btnNext" ,
         shape = "Rect",
         width = W*0.4,
@@ -383,7 +462,11 @@ end
 -- create()
 function scene:create( event )
     sceneGroup = self.view
-    init(sceneGroup)
+    sceneGroup:insert( sGroup )
+    sceneGroup:insert( midGroup )
+    sceneGroup:insert( cGroup )
+    init(midGroup)
+
     sceneGroup:insert( maskGroup )
     sceneGroup:insert(topGroup)
 end

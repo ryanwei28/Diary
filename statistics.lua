@@ -12,7 +12,9 @@ local sceneGroup
 local title
 local back
 local prevScene = composer.getVariable( "prevScene" )
-local text
+local text1
+local text2 
+local text3 
 local readDb 
 local dbData = {}
 local dataNum = 0
@@ -47,6 +49,9 @@ local duringNum = 0
 local paddingDays = 0
 local paddingNum = 0
 local line 
+local noticeText 
+local noticeT = "注意：「平均週期」與「平均天數」為前12月之週期平均值，如不足個月，以實際紀錄之月份數來計算平均天數。"
+local product 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -56,22 +61,33 @@ init = function ( _parent )
     T.bg(sceneGroup)
     T.title("經期資料統計" , sceneGroup)
 
-    text = display.newText( _parent, "月經開始日    持續天數    間隔", X*1.1, Y*0.35, bold , H*0.032 )
-    text:setFillColor( 226/255,68/255,61/255 )
+    text1 = display.newText( _parent, "月經開始日", W*0.294 , H*0.14, bold , H*0.0254 )
+    text1:setFillColor( 226/255,68/255,61/255 )
 
-    line = display.newImageRect( sceneGroup , "images/line_dashed@3x.png" ,W*0.83 , H*0.001499 )
-    line.x , line.y =  X*1.06, Y*0.445
+    text2 = display.newText( _parent, "持續天數", W*0.637 , H*0.14, bold , H*0.0254 )
+    text2:setFillColor( 226/255,68/255,61/255 )
 
+    text3 = display.newText( _parent, "間隔", W*0.914, H*0.14, bold , H*0.0254 )
+    text3:setFillColor( 226/255,68/255,61/255 )
+
+    line = display.newImageRect( sceneGroup , "images/line_dashed@3x.png" ,W*0.805 , H*0.001499 )
+    line.x , line.y =  W*0.570, H*0.166
+
+    noticeText = display.newText( sceneGroup, noticeT, X, H*0.79 , W*0.936 , H*0.0853 , bold , H*0.0165 )
+    noticeText:setFillColor( 0.56 )
+
+    product = display.newImageRect( sceneGroup, "images/product@3x.png", W*0.114, H*0.129 )
+    product.x , product.y = W*0.084 , H*0.199 
     -- back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.04 )
     -- back:addEventListener( "tap", listener )
     T.backBtn(_parent , prevScene)
 
     scrollView = widget.newScrollView(
         {
-            top = X*0.8,
-            left = X*0.2,
-            width = W*0.85,
-            height = H*0.5,
+            top =H*0.167,
+            left = W*0.168 ,
+            width = W*0.805,
+            height = H*0.556,
             hideBackground = true ,
             scrollWidth = 600,
             scrollHeight = 800,
@@ -103,27 +119,27 @@ init = function ( _parent )
 end
 
 fourSqrare = function (  )
-    square1 = display.newRect( sceneGroup, X*0.25, Y*1.7, W*0.25, H*0.15 )
-    square1:setFillColor( 0.92,0.3,0.41 )
-    square2 = display.newRect( sceneGroup, X*0.75, Y*1.7, W*0.25, H*0.15 )
-    square2:setFillColor( 0.3,0.93,0.41 )
-    square3 = display.newRect( sceneGroup, X*1.25, Y*1.7, W*0.25, H*0.15 )
-    square3:setFillColor( 0.92,0.83,0.41 )
-    square4 = display.newRect( sceneGroup, X*1.75, Y*1.7, W*0.25, H*0.15 )
-    square4:setFillColor( 0.1,0.3,0.841 )
+    square1 = display.newRect( sceneGroup, X*0.25, H*0.866, W*0.25, H*0.12 )
+    square1:setFillColor( 254/255,187/255,108/255 )
+    square2 = display.newRect( sceneGroup, X*0.75, H*0.866, W*0.25, H*0.12 )
+    square2:setFillColor( 140/255,200/255,100/255 )
+    square3 = display.newRect( sceneGroup, X*1.25, H*0.866, W*0.25, H*0.12 )
+    square3:setFillColor( 145/255,215/255,215/255 )
+    square4 = display.newRect( sceneGroup, X*1.75, H*0.866, W*0.25, H*0.12 )
+    square4:setFillColor( 254/255,118/255,118/255 )
 
-    tText1 = display.newText( sceneGroup, "上次月經開始", square1.x , Y*1.82 , native.systemFontBold , H*0.02 )
-    tText2 = display.newText( sceneGroup, "下次月經預測", square2.x , Y*1.82 , native.systemFontBold , H*0.02 )
-    tText3 = display.newText( sceneGroup, "平均週期", square3.x , Y*1.82 , native.systemFontBold , H*0.02 )
-    tText4 = display.newText( sceneGroup, "平均天數", square4.x , Y*1.82 , native.systemFontBold , H*0.02 )
-    sText1 = display.newText( sceneGroup, "", square1.x , Y*1.75 , native.systemFontBold , H*0.05 )
-    sText1Year = display.newText( sceneGroup, "", square1.x , Y*1.65 , native.systemFontBold , H*0.047 )
-    sText2 = display.newText( sceneGroup, "", square2.x , Y*1.75 , native.systemFontBold , H*0.05 )
-    sText2Year = display.newText( sceneGroup, "", square2.x , Y*1.65 , native.systemFontBold , H*0.047 )
-    sText3 = display.newText( sceneGroup, "", square3.x , Y*1.75 , native.systemFontBold , H*0.07 )
-    sText3Day = display.newText( sceneGroup, "天", square3.x + X*0.13 , Y*1.75 , native.systemFontBold , H*0.02 )
-    sText4 = display.newText( sceneGroup, "", square4.x , Y*1.75 , native.systemFontBold , H*0.07 )
-    sText4Day = display.newText( sceneGroup, "天", square4.x + X*0.13 , Y*1.75 , native.systemFontBold , H*0.02 )
+    tText1 = display.newText( sceneGroup, "上次月經開始", square1.x , Y*1.82 , bold , H*0.018 )
+    tText2 = display.newText( sceneGroup, "下次月經預測", square2.x , Y*1.82 , bold , H*0.018 )
+    tText3 = display.newText( sceneGroup, "平均週期", square3.x , Y*1.82 , bold , H*0.018 )
+    tText4 = display.newText( sceneGroup, "平均天數", square4.x , Y*1.82 , bold , H*0.018 )
+    sText1 = display.newText( sceneGroup, "", square1.x , Y*1.75 , bold , H*0.036 )
+    sText1Year = display.newText( sceneGroup, "", square1.x , Y*1.66 , bold , H*0.02 )
+    sText2 = display.newText( sceneGroup, "", square2.x , Y*1.75 , bold , H*0.036 )
+    sText2Year = display.newText( sceneGroup, "", square2.x , Y*1.66 , bold , H*0.02 )
+    sText3 = display.newText( sceneGroup, "", square3.x , Y*1.75 , bold , H*0.051 )
+    sText3Day = display.newText( sceneGroup, "天", square3.x + X*0.16 , Y*1.75 , bold , H*0.02 )
+    sText4 = display.newText( sceneGroup, "", square4.x , Y*1.75 , bold , H*0.051)
+    sText4Day = display.newText( sceneGroup, "天", square4.x + X*0.13 , Y*1.75 , bold , H*0.02 )
 
     for row in database:nrows([[SELECT * FROM Statistics ORDER BY StartDay ASC ;]]) do
         last = row.StartDay
@@ -221,11 +237,11 @@ end
 
 createRows = function (  )
     for i = 1 , rows do 
-        rowTable[i] = display.newText( sceneGroup , dbData[i].StartDay.."           "..dbData[i].Continuance.."            "..dbData[i].Padding , X*0.1, Y*-0.1 + i*Y*0.2, font , H*0.032 )
+        rowTable[i] = display.newText( sceneGroup , dbData[i].StartDay.."               "..dbData[i].Continuance.."                "..dbData[i].Padding , X*0.0133, Y*-0.07 + i*Y*0.16, bold , H*0.0254 )
         rowTable[i]:setFillColor( 0.18 )
         rowTable[i].anchorX = 0
         lineTable[i] = display.newImageRect( sceneGroup , "images/line_dashed@3x.png" ,W*0.9 , H*0.001499 )
-        lineTable[i].x , lineTable[i].y =  X*0.8, Y*-0.03 + i*Y*0.2
+        lineTable[i].x , lineTable[i].y =  X*0.8, Y*0 + i*Y*0.16
         -- lineTable[i] = display.newText( sceneGroup , "-------------------------------------------------------------" , X*0.6, Y*-0.03 + i*Y*0.2, font , H*0.032 )
         -- lineTable[i]:setFillColor(0)
         scrollView:insert( rowTable[i] )

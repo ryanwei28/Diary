@@ -14,8 +14,8 @@
 -- actualContentHeight
 -- -----------------------------------------------------------------------------------------
 X = display.contentCenterX
-Y = display.actualContentHeight*0.5
-H = display.actualContentHeight
+Y = display.contentCenterY
+H = display.contentHeight
 W = display.contentWidth 
 widget = require("widget")
 T = require("T")
@@ -32,6 +32,8 @@ local checkDb
 local ttt 
 
 main = function (  )
+
+
     local function onSystemEvent( event )
         if event.type == "applicationExit" then
             database:close()
@@ -51,14 +53,7 @@ main = function (  )
 
     composer.gotoScene( "initSetting" )
 
-     -- local tablesetup =  [[
-     --                    INSERT INTO Diary VALUES ( NULL , "" ,  , "End" , "Close" , "Temperature" , "Weight" , "Notes");
-     --                ]]
-     --                -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
 
-     --        database:exec(tablesetup)
-
-    -- print( ttt("04/23/2015 17:43:12" , "04/25/2015 17:43:12") )
 end
 
 writeDb = function (  )
