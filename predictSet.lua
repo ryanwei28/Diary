@@ -33,6 +33,11 @@ local avgCycle
 local regularCycle
 local setSwitch
 local duringRect 
+local chkOff1 
+local chkOff2 
+local chkOn1 
+local chkOn2 
+local onKeyEvent 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -42,29 +47,44 @@ init = function ( _parent )
     T.bg(_parent)
     T.title("週期設定" , sceneGroup)
 
-    bg1 = display.newRect( _parent, X, Y*0.55 , W*0.9, H*0.25 )
+    bg1 = display.newRect( _parent, X, H*0.266 , W*0.92, H*0.267 )
     bg1.id = "bg1"
     bg1:setFillColor( 254/255,118/255,118/255 )
     bg1:addEventListener( "touch", touchlistener )
-    bg2 = display.newRect( _parent, X, Y*1, W*0.9 , H*0.15 )
+
+    bg2 = display.newRect( _parent, X, H*0.463, W*0.92 , H*0.103 )
     bg2.id = "bg2"
-    bg2:setFillColor( 0.2 )
+    bg2:setFillColor( 0.78 )
     bg2:addEventListener( "touch", touchlistener )
 
-    duringRect = display.newRect( _parent, X, Y*1.5, W*0.9, H*0.25 )
+    duringRect = display.newRect( _parent, X, H*0.665, W*0.92, H*0.267 )
     duringRect:setFillColor(  254/255,118/255,118/255 )
     -- back = display.newCircle( _ parent, X*0.2, Y*0.2, H*0.045 )
     -- back:addEventListener( "tap", listener )
     T.backBtn(sceneGroup,"setup")
 
-    text1 = display.newText( _parent, "採用固定周期", X*0.37, Y*0.55, bold ,H*0.035 )
+    text1 = display.newText( _parent, "採用固定周期", X*0.37, H*0.266, bold ,H*0.027 )
     text1.anchorX = 0
-    text2 = display.newText( _parent, "採用平均週期", X*0.37, Y*1, bold,H*0.035 )
+    text2 = display.newText( _parent, "採用平均週期", X*0.37, H*0.463, bold,H*0.027 )
     text2.anchorX = 0
-    text2Day = display.newText( _parent, "    天", X*1.8, Y*1, bold,H*0.035 )
+    text2Day = display.newText( _parent, "    天", X*1.8, H*0.463, bold,H*0.027 )
     text2Day.anchorX = 1
-    text3 = display.newText( _parent, "每次行經日數", X*0.27, Y*1.5, bold,H*0.035 )
+    text3 = display.newText( _parent, "每次行經日數", W*0.0666, H*0.665, bold,H*0.027 )
     text3.anchorX = 0
+
+    chkOff1 = display.newImageRect( _parent, "images/checkbox_w_off@3x.png", H*0.033, H*0.033 )
+    chkOff1.x , chkOff1.y = W*0.096 , H*0.266
+
+    chkOff2 = display.newImageRect( _parent, "images/checkbox_w_off@3x.png", H*0.033, H*0.033 )
+    chkOff2.x , chkOff2.y = W*0.096 , H*0.463
+
+    chkOn1 = display.newImageRect(_parent, "images/checkbox_w_on@3x.png", H*0.033, H*0.033 )
+    chkOn1.x , chkOn1.y = W*0.096 , H*0.266
+    chkOn1.alpha = 0
+
+    chkOn2 = display.newImageRect(_parent, "images/checkbox_w_on@3x.png", H*0.033, H*0.033 )
+    chkOn2.x , chkOn2.y = W*0.096 ,  H*0.463
+    chkOn2.alpha = 0
 
     for row in database:nrows([[SELECT * FROM Statistics ;]]) do
         paddingDays = paddingDays + row.Padding
@@ -101,13 +121,31 @@ init = function ( _parent )
     pickerWheel = widget.newPickerWheel(
     {
         x = X*1.6 ,
-        y = Y*0.55 ,
+        y = H*0.266 ,
         columns = columnData,
         style = "resizable",
-        width = W*0.3,
-        rowHeight = H*0.05,
+        width = W*0.28,
+        rowHeight = H*0.04875,
         fontSize = H*0.042,
+        font = bold , 
         onValueSelected = onValueSelected,
+
+        sheet = T.pickerWheelSheet,
+        topLeftFrame = 1,
+        topMiddleFrame = 2,
+        topRightFrame = 3,
+        middleLeftFrame = 4,
+        middleRightFrame = 5,
+        bottomLeftFrame = 6,
+        bottomMiddleFrame = 7,
+        bottomRightFrame = 8,
+        topFadeFrame = 9,
+        bottomFadeFrame = 10,
+        middleSpanTopFrame = 11,
+        middleSpanBottomFrame = 12,
+        separatorFrame = 13,
+        middleSpanOffset = 4,
+        borderPadding = 8
     })
  
     _parent:insert(pickerWheel)
@@ -131,13 +169,31 @@ init = function ( _parent )
     pickerWheel2 = widget.newPickerWheel(
     {
         x = X*1.6 ,
-        y = Y*1.5 ,
+        y = H*0.665 ,
         columns = columnData2,
         style = "resizable",
-        width = W*0.3,
-        rowHeight = H*0.05,
+        width = W*0.28,
+        rowHeight = H*0.04875,
         fontSize = H*0.042,
+        font = bold , 
         onValueSelected = onValueSelected2,
+
+        sheet = T.pickerWheelSheet,
+        topLeftFrame = 1,
+        topMiddleFrame = 2,
+        topRightFrame = 3,
+        middleLeftFrame = 4,
+        middleRightFrame = 5,
+        bottomLeftFrame = 6,
+        bottomMiddleFrame = 7,
+        bottomRightFrame = 8,
+        topFadeFrame = 9,
+        bottomFadeFrame = 10,
+        middleSpanTopFrame = 11,
+        middleSpanBottomFrame = 12,
+        separatorFrame = 13,
+        middleSpanOffset = 4,
+        borderPadding = 8
     })
  
     _parent:insert(pickerWheel2)
@@ -149,12 +205,47 @@ init = function ( _parent )
     end
 
     if setSwitch == 1 then 
+        chkOn1.alpha = 1
+        chkOn2.alpha = 0
         bg1:setFillColor( 254/255,118/255,118/255 )
-        bg2:setFillColor( 0.2 )
+        bg2:setFillColor( 0.78 )
     elseif setSwitch == 2 then 
-        bg1:setFillColor( 0.2 )
+        chkOn1.alpha = 0
+        chkOn2.alpha = 1
+        bg1:setFillColor( 0.78 )
         bg2:setFillColor( 254/255,118/255,118/255 )
     end 
+
+    timer.performWithDelay( 1, function (  )
+        Runtime:addEventListener( "key", onKeyEvent )
+    end  )
+    
+end
+
+onKeyEvent = function( event )
+
+    -- Print which key was pressed down/up
+    local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
+    print( message )
+ 
+    -- If the "back" key was pressed on Android, prevent it from backing out of the app
+    if (event.phase == "down" and event.keyName == "back") then
+        --Here the key was pressed      
+        downPress = true
+        return true
+    else 
+        if ( event.keyName == "back" and event.phase == "up" and downPress ) then
+            if ( system.getInfo("platform") == "android" ) then
+                composer.showOverlay( "setup" )
+                Runtime:removeEventListener( "key", onKeyEvent )
+                return true
+            end
+        end
+    end
+ 
+    -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+    -- This lets the operating system execute its default handling of the key
+    return true
 end
 
 listener = function ( e )
@@ -170,7 +261,9 @@ onValueSelected = function (  )
         database:exec([[UPDATE Setting SET setSwitch = 1 WHERE id = 1 ;]])
         -- print( v1 )
         bg1:setFillColor( 254/255,118/255,118/255 )
-        bg2:setFillColor( 0.2 )
+        bg2:setFillColor( 0.78 )
+        chkOn1.alpha = 1
+        chkOn2.alpha = 0
         print(regularCycle)
     end  )
    
@@ -190,14 +283,18 @@ end
 touchlistener = function ( e )
     if e.phase == "ended" then
         if e.target.id == "bg1" then
+            chkOn1.alpha = 1
+            chkOn2.alpha = 0
             bg1:setFillColor( 254/255,118/255,118/255 )
-            bg2:setFillColor( 0.2 )
+            bg2:setFillColor( 0.78 )
             if regularCycle then
                 database:exec([[UPDATE Setting SET Cycle = ']]..regularCycle..[[' , regularCycle = ']]..regularCycle..[[' WHERE id = 1 ;]])
                 database:exec([[UPDATE Setting SET setSwitch = 1 WHERE id = 1 ;]])
             end
         elseif e.target.id == "bg2" then
-            bg1:setFillColor( 0.2 )
+            chkOn1.alpha = 0
+            chkOn2.alpha = 1
+            bg1:setFillColor( 0.78 )
             bg2:setFillColor( 254/255,118/255,118/255 )
             database:exec([[UPDATE Setting SET Cycle = ']]..avgCycle..[[' WHERE id = 1 ;]])
             database:exec([[UPDATE Setting SET setSwitch = 2 WHERE id = 1 ;]])
@@ -240,7 +337,7 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        
+        Runtime:removeEventListener( "key", onKeyEvent )
         composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen

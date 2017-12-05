@@ -44,6 +44,7 @@ local tPhone = [[+886227488299 ext.323]]
 local tAddress = [[105台北市松山區東興路8號7樓 ]]
 local tCompany = [[統一藥品股份有限公司]]
 local taplistener 
+local onKeyEvent
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -120,6 +121,34 @@ init = function ( _parent )
     textPhone:addEventListener( "tap", taplistener )
     textAddress:addEventListener( "tap", taplistener )
 
+    Runtime:addEventListener( "key", onKeyEvent )
+end
+
+onKeyEvent = function( event )
+
+    -- Print which key was pressed down/up
+    local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
+    print( message )
+ 
+    -- If the "back" key was pressed on Android, prevent it from backing out of the app
+    if (event.phase == "down" and event.keyName == "back") then
+        --Here the key was pressed      
+        downPress = true
+        return true
+    else 
+        if ( event.keyName == "back" and event.phase == "up" and downPress ) then
+            if ( system.getInfo("platform") == "android" ) then
+                composer.showOverlay( prevScene )
+                Runtime:removeEventListener( "key", onKeyEvent )
+
+                return true
+            end
+        end
+    end
+ 
+    -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+    -- This lets the operating system execute its default handling of the key
+    return true
 end
 
 taplistener = function ( e )
@@ -196,7 +225,7 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        
+        Runtime:removeEventListener( "key", onKeyEvent )
         composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen

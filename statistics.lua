@@ -52,6 +52,7 @@ local line
 local noticeText 
 local noticeT = "注意：「平均週期」與「平均天數」為前12月之週期平均值，如不足個月，以實際紀錄之月份數來計算平均天數。"
 local product 
+local onKeyEvent 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -116,6 +117,34 @@ init = function ( _parent )
     -- end
 
     fourSqrare()
+
+    Runtime:addEventListener( "key", onKeyEvent )
+end
+
+onKeyEvent = function( event )
+
+    -- Print which key was pressed down/up
+    local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
+    print( message )
+ 
+    -- If the "back" key was pressed on Android, prevent it from backing out of the app
+    if (event.phase == "down" and event.keyName == "back") then
+        --Here the key was pressed      
+        downPress = true
+        return true
+    else 
+        if ( event.keyName == "back" and event.phase == "up" and downPress ) then
+            if ( system.getInfo("platform") == "android" ) then
+                composer.showOverlay( prevScene )
+                Runtime:removeEventListener( "key", onKeyEvent )
+                return true
+            end
+        end
+    end
+ 
+    -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+    -- This lets the operating system execute its default handling of the key
+    return true
 end
 
 fourSqrare = function (  )
@@ -272,7 +301,7 @@ function scene:show( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-      
+        
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
  
@@ -287,7 +316,7 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        
+        Runtime:removeEventListener( "key", onKeyEvent )
         composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen

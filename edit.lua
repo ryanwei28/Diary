@@ -114,6 +114,8 @@ local checkbox_on2
 local arrow
 local addImages 
 local bird 
+local onKeyEvent
+local onKeyEvent2
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -240,7 +242,71 @@ init = function ( _parent )
     -- checkBoxBtn()
     readDb()
     -- statisticalDays()
+    timer.performWithDelay( 1, function (  )
+        Runtime:addEventListener( "key", onKeyEvent2 )
+    end )
     
+    -- Runtime:removeEventListener( "key", onKeyEvent2 )
+end
+
+onKeyEvent = function( event )
+
+    -- Print which key was pressed down/up
+    local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
+    print( message )
+ 
+    -- If the "back" key was pressed on Android, prevent it from backing out of the app
+    if (event.phase == "down" and event.keyName == "back") then
+        --Here the key was pressed      
+        downPress = true
+        return true
+    else 
+        if ( event.keyName == "back" and event.phase == "up" and downPress ) then
+            if ( system.getInfo("platform") == "android" ) then
+                pickerWheel:removeSelf( )
+                clearPickerWheelBtn:removeSelf( )
+                chkPickerWheelBtn:removeSelf( )
+                mask:removeSelf( )
+                Runtime:removeEventListener( "key", onKeyEvent )
+                timer.performWithDelay( 1, function ( )
+                    Runtime:addEventListener( "key", onKeyEvent2 )
+                end )
+            
+                return true
+            end
+        end
+    end
+ 
+    -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+    -- This lets the operating system execute its default handling of the key
+    return true
+end
+
+onKeyEvent2 = function( event )
+
+    -- Print which key was pressed down/up
+    local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
+    print( message )
+ 
+    -- If the "back" key was pressed on Android, prevent it from backing out of the app
+    if (event.phase == "down" and event.keyName == "back") then
+        --Here the key was pressed      
+        downPress = true
+        return true
+    else 
+        if ( event.keyName == "back" and event.phase == "up" and downPress ) then
+            if ( system.getInfo("platform") == "android" ) then
+                composer.showOverlay( prevScene )
+                Runtime:removeEventListener( "key", onKeyEvent2 )
+
+                return true
+            end
+        end
+    end
+ 
+    -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+    -- This lets the operating system execute its default handling of the key
+    return true
 end
 
 arrow = function ( arrowY )
@@ -391,47 +457,22 @@ writeDb = function (  )
         firstRow = row['COUNT(*)']
     end
 
-    -- if firstRow <= 10 then 
-    --     for row in database:nrows([[SELECT * FROM Diary WHERE Start = 1 ;]]) do
-    --         firstStart = row.Date
-    --     end
+    for i = 1 , daysTable[m] do 
+        local uu 
+        local uuDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
 
-    --     for row in database:nrows([[SELECT * FROM Diary WHERE End = 1 ;]]) do
-    --         firstEnd = row.Date
-    --     end
-
-    --      for i = 1 , daysTable[m] do 
-    --         local firstDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
-            
-    --         if firstDate < firstStart or firstDate > firstEnd then
-
-    --             local tablesetup =  [[
-    --                                 INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","" , "");
-    --                             ]]
-    --                             -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
-    --             database:exec(tablesetup)
-    --         else
-
-    --         end
-    --     end
-    -- else
-        for i = 1 , daysTable[m] do 
-            local uu 
-            local uuDate = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i) 
-
-            for row in database:nrows([[SELECT COUNT(*) FROM Diary WHERE date =  ']]..uuDate..[[' ; ]]) do
-                uu = row['COUNT(*)']
-            end
-
-            if uu < 1 then 
-                local tablesetup =  [[
-                                    INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","" , "");
-                                ]]
-                                -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
-                database:exec(tablesetup)
-            end
+        for row in database:nrows([[SELECT COUNT(*) FROM Diary WHERE date =  ']]..uuDate..[[' ; ]]) do
+            uu = row['COUNT(*)']
         end
-    -- end
+
+        if uu < 1 then 
+            local tablesetup =  [[
+                                INSERT INTO Diary VALUES ( NULL , ']]..c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i)..[[' , "" , "" , "" , "" , "" , "","" , "");
+                            ]]
+                            -- CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Data , Start , End , Close , Temperature , Weight , Notes);
+            database:exec(tablesetup)
+        end
+    end
 end
 
 checkDb = function (  )
@@ -442,7 +483,6 @@ checkDb = function (  )
     if rows < 1 then 
         writeDb()
     end
-    -- print("rrrr:"..rows)
 end
  
 
@@ -459,6 +499,7 @@ createBtn = function (  )
                     createPickerWheelBtn("close")
                     createPickerWheel("close")
                     createMask()
+                    Runtime:removeEventListener( "key", onKeyEvent2 )
                 elseif e.target.id == "temperature" then 
                     createPickerWheelBtn("temperature")
                     createPickerWheel("temperature")
@@ -566,26 +607,25 @@ createBtn = function (  )
     })
 
     local backBtn = widget.newButton({
-        -- label = "<",
+        label = "",
         onEvent = listener,
-         left = W*0.032 ,
-        top = H*0.05, 
-        -- shape = "rect",
-        width = W*0.032,
-        height = H*0.036,
-        -- fontSize = H*0.05 ,
+        left = W*0.032 ,
+        top = H*0.035, 
+        shape = "rect",
+        width = W*0.1,
+        height = H*0.06,
+        fontSize = H*0.05 ,
         -- font = bold ,
-        -- fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
+        fillColor = { default={254/255,118/255,118/255,0.1}, over={1,0.1,0.7,0} },
         -- labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
         -- } )
-        defaultFile = "images/nav_back@3x.png" , 
+        -- defaultFile = "images/nav_back@3x.png" , 
         -- overFile = "" , 
         })
 
-    -- back = display.newCircle(  X*0.2, Y*0.2, H*0.045 )
-    -- back:addEventListener( "tap", listener )
-
-
+    local backBtnImg = display.newImageRect( sceneGroup, "images/nav_back@3x.png", W*0.032, H*0.036 )
+    backBtnImg.x , backBtnImg.y = W*0.032 , H*0.05 
+    backBtnImg.anchorX , backBtnImg.anchorY = 0 , 0
 
     btnGroup:insert(backBtn)
     btnGroup:insert(closeBtn)
@@ -597,14 +637,15 @@ createBtn = function (  )
 end
 
 createPickerWheel = function ( btnId )
+    
     local columnData 
 
     if btnId == "close" then 
          columnData =
         {
             {
-                align = "left",
-                width = H*0.19,
+                align = "center",
+                width = W*0.72,
                 startIndex = 2,
                 labelPadding = 1,
                 labels = { "有避孕", "沒避孕", "不知道是否有避孕", }
@@ -614,23 +655,23 @@ createPickerWheel = function ( btnId )
         columnData =
         {
             {
-                align = "left",
-                width = H*0.075,
+                align = "center",
+                width = W*0.24,
                 startIndex = 2,
                 labelPadding = 10,
                 labels = { "35", "36", "37", "38" }
             },
             {
-                align = "left",
-                width = H*0.075,
+                align = "center",
+                width = W*0.24,
                 labelPadding = 10,
                 startIndex = 1,
                 labels = { ".00", ".01", ".02",".03",".04",".05",".06", }
             },
             {
-                align = "left",
+                align = "center",
                 labelPadding = 10,
-                width = H*0.075,
+                width = W*0.24,
                 startIndex = 1,
                 labels = { "°C" }
             }
@@ -639,23 +680,23 @@ createPickerWheel = function ( btnId )
         columnData =
         {
             {
-                align = "left",
-                width = H*0.075,
+                align = "center",
+                width = W*0.24,
                 startIndex = 2,
                 labelPadding = 10,
                 labels = { "35", "36", "37", "38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99",}
             },
             {
-                align = "left",
-                width = H*0.075,
+                align = "center",
+                width = W*0.24,
                 labelPadding = 10,
                 startIndex = 1,
                 labels = { ".0", ".1", ".2",".3",".4",".5",".6",".7",".8",".9", }
             },
             {
-                align = "left",
+                align = "center",
                 labelPadding = 10,
-                width = H*0.075,
+                width = W*0.24,
                 startIndex = 1,
                 labels = { "kg" }
             }
@@ -668,7 +709,27 @@ createPickerWheel = function ( btnId )
         x = X ,
         y = Y*0.8,
         fontSize = H*0.024,
-        columns = columnData
+        columns = columnData , 
+        style = "resizable", 
+        width = W*0.72 , 
+
+        sheet = T.pickerWheelSheet,
+        topLeftFrame = 1,
+        topMiddleFrame = 2,
+        topRightFrame = 3,
+        middleLeftFrame = 4,
+        middleRightFrame = 5,
+        bottomLeftFrame = 6,
+        bottomMiddleFrame = 7,
+        bottomRightFrame = 8,
+        topFadeFrame = 9,
+        bottomFadeFrame = 10,
+        middleSpanTopFrame = 11,
+        middleSpanBottomFrame = 12,
+        separatorFrame = 13,
+        middleSpanOffset = 4,
+        borderPadding = 8
+
     })  
          
     sceneGroup:insert(pickerWheel)
@@ -710,6 +771,9 @@ createPickerWheelBtn = function ( id )
             chkPickerWheelBtn:removeSelf( )
             readDb()
             mask:removeSelf( )
+            Runtime:removeEventListener( "key", onKeyEvent )
+            Runtime:addEventListener( "key", onKeyEvent2 )
+
         end
     end
 
@@ -740,6 +804,11 @@ createPickerWheelBtn = function ( id )
   
     topGroup:insert(clearPickerWheelBtn)
     topGroup:insert(chkPickerWheelBtn)
+
+    
+    Runtime:removeEventListener( "key", onKeyEvent2 )
+    Runtime:addEventListener( "key", onKeyEvent )
+    
 end
 
 maskListener = function ( e )
@@ -1207,8 +1276,8 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        
-        -- composer.recycleOnSceneChange = true
+        Runtime:removeEventListener( "key", onKeyEvent2 )
+        composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
  

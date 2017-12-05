@@ -13,21 +13,25 @@ function M.backBtn( sceneGroup , prevScene )
     end
 
     local backBtn = widget.newButton({
-        -- label = "<",
+        label = "",
         onEvent = backBtnListener,
         left = W*0.032 ,
-        top = H*0.05, 
-        -- shape = "rect",
-        width = W*0.032,
-        height = H*0.036,
-        -- fontSize = H*0.05 ,
+        top = H*0.035, 
+        shape = "rect",
+        width = W*0.1,
+        height = H*0.06,
+        fontSize = H*0.05 ,
         -- font = bold ,
-        -- fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
+        fillColor = { default={254/255,118/255,118/255,0.1}, over={1,0.1,0.7,0} },
         -- labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
         -- } )
-        defaultFile = "images/nav_back@3x.png" , 
+        -- defaultFile = "images/nav_back@3x.png" , 
         -- overFile = "" , 
         })
+
+    local backBtnImg = display.newImageRect( sceneGroup, "images/nav_back@3x.png", W*0.032, H*0.036 )
+    backBtnImg.x , backBtnImg.y = W*0.032 , H*0.05 
+    backBtnImg.anchorX , backBtnImg.anchorY = 0 , 0
 
     sceneGroup:insert( backBtn)
 end
@@ -165,6 +169,36 @@ function M.note(  )
 
     days = (tonumber(e-s)/24/60/60+1) 
 end
+
+local pickerOptions = {
+    frames =
+    {
+        { x=28, y=28, width=40, height=40 },
+        { x=68, y=28, width=240, height=40 },
+        { x=308, y=28, width=40, height=40 },
+        { x=28, y=68, width=40, height=240 },
+        { x=308, y=68, width=40, height=240 },
+        { x=28, y=308, width=40, height=40 },
+        { x=68, y=308, width=240, height=40 },
+        { x=308, y=308, width=40, height=40 },
+        { x=68, y=68, width=64, height=80 },
+        { x=68, y=228, width=64, height=80 },
+        { x=580, y=28, width=64, height=40 },
+        { x=580, y=148, width=64, height=40 },
+        { x=580, y=228, width=24, height=68 }
+    },
+    sheetContentWidth = 662,  --606
+    sheetContentHeight = 376,  --320
+}
+
+-- display.newRoundedRect( [parent,], x, y, width, height, cornerRadius )
+M.pickerWheelSheet = graphics.newImageSheet( "images/picker.png", pickerOptions )
+
+M.options = {
+    --  -- isModal = true,
+    -- effect = "fade",
+    -- time = 400,
+}
 
 return M
 

@@ -56,6 +56,7 @@ local blackTitle
 local pinkArrow
 local pinkArrow2 
 local helpBtnEvent 
+local onKeyEvent
 -- local sGroup = display.newGroup( )
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -68,12 +69,12 @@ init = function ( _parent )
     createCircle(X*1.47,Y*0.315)
     createCircle(X*1.675,Y*0.633)
     createCircle(X*1.671,Y*0.9625)
-    createCircle(X*1.675,Y*1.128)
+    createCircle(X*1.675,Y*1.129)
 
-    createSwitch(W*0.08,X*1.77,Y*0.315,"ON","OFF","psdPropect" ,gr1 , W*0.23 )
-    createSwitch(W*0.08,X*1.7,Y*0.633,"ON","OFF","notification" , gr2 , W*0.23)
-    createSwitch(W*0.1,X*1.69,Y*0.9625,"想懷孕","想避孕","plan" , gr3 , W*0.262)
-    createSwitch(W*0.08,X*1.7,Y*1.126,"女生","男生","sex" , gr4 , W*0.23)
+    createSwitch(W*0.08,X*1.77,Y*0.316,"ON","OFF","psdPropect" ,gr1 , W*0.23 )
+    createSwitch(W*0.08,X*1.7,Y*0.634,"ON","OFF","notification" , gr2 , W*0.23)
+    createSwitch(W*0.1,X*1.69,Y*0.963,"想懷孕","想避孕","plan" , gr3 , W*0.262)
+    createSwitch(W*0.08,X*1.7,Y*1.128,"女生","男生","sex" , gr4 , W*0.23)
 
     maskBg = display.newImageRect( _parent, "images/radio_mask_2@3x.png", W, H )
     maskBg.x , maskBg.y = X , Y*1
@@ -199,6 +200,36 @@ init = function ( _parent )
    pinkArrow2 = display.newImageRect( sceneGroup, "images/cell_arrow_pink@3x.png", W*0.0266, H*0.024 )
    pinkArrow2.x , pinkArrow2.y = W*0.893 , H*0.781
     
+
+   timer.performWithDelay( 1, function (  )
+       Runtime:addEventListener( "key", onKeyEvent )
+   end )
+end
+
+onKeyEvent = function( event )
+
+    -- Print which key was pressed down/up
+    local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
+    print( message )
+ 
+    -- If the "back" key was pressed on Android, prevent it from backing out of the app
+    if (event.phase == "down" and event.keyName == "back") then
+        --Here the key was pressed      
+        downPress = true
+        return true
+    else 
+        if ( event.keyName == "back" and event.phase == "up" and downPress ) then
+            if ( system.getInfo("platform") == "android" ) then
+                composer.showOverlay( "daily_calendar" )
+                Runtime:removeEventListener( "key", onKeyEvent )
+                return true
+            end
+        end
+    end
+ 
+    -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+    -- This lets the operating system execute its default handling of the key
+    return true
 end
 
 helpBtnEvent = function ( e )
@@ -221,7 +252,7 @@ createSwitch = function ( sPadding , sX , sY ,t1 , t2 , id , gr , sWidth )
     -- rbg = display.newRect( X, Y, W, H )
     -- rbg:setFillColor( 1,0,0 )
 
-    local left = display.newImageRect( gr, "images/radio_on@3x.png",  sWidth, H*0.04797 )
+    local left = display.newImageRect( gr, "images/radio_on@3x.png",  sWidth, H*0.049 )
     left.x , left.y = sX - sPadding , sY
 
     local leftTextShadow = display.newText( gr, t1, left.x-sPadding/3+1 , left.y +1 , bold ,H*0.024 )
@@ -229,7 +260,7 @@ createSwitch = function ( sPadding , sX , sY ,t1 , t2 , id , gr , sWidth )
     local leftText = display.newText( gr, t1, left.x-sPadding/3, left.y, bold ,H*0.024 )
     
 
-    local right = display.newImageRect( gr,"images/radio_off@3x.png",  sWidth, H*0.04797 )
+    local right = display.newImageRect( gr,"images/radio_off@3x.png",  sWidth, H*0.049 )
     right.x , right.y = sX + sPadding , sY
 
     local rightTextShadow = display.newText( gr, t2, right.x+sPadding/3+1 , right.y+1 , bold ,H*0.024 )
@@ -546,7 +577,7 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        
+        Runtime:removeEventListener( "key", onKeyEvent )
         composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen

@@ -31,6 +31,30 @@ local writeDb
 local checkDb
 local ttt 
 
+-- local options = {
+--     frames =
+--     {
+--         { x=28, y=28, width=40, height=40 },
+--         { x=68, y=28, width=240, height=40 },
+--         { x=308, y=28, width=40, height=40 },
+--         { x=28, y=68, width=40, height=240 },
+--         { x=308, y=68, width=40, height=240 },
+--         { x=28, y=308, width=40, height=40 },
+--         { x=68, y=308, width=240, height=40 },
+--         { x=308, y=308, width=40, height=40 },
+--         { x=68, y=68, width=64, height=80 },
+--         { x=68, y=228, width=64, height=80 },
+--         { x=580, y=28, width=64, height=40 },
+--         { x=580, y=148, width=64, height=40 },
+--         { x=580, y=228, width=24, height=68 }
+--     },
+--     sheetContentWidth = 662,  --606
+--     sheetContentHeight = 376,  --320
+-- }
+
+-- -- display.newRoundedRect( [parent,], x, y, width, height, cornerRadius )
+-- pickerWheelSheet = graphics.newImageSheet( "images/picker.png", options )
+
 main = function (  )
 
 
@@ -53,6 +77,26 @@ main = function (  )
 
     composer.gotoScene( "initSetting" )
 
+    local function onKeyEvent( event )
+ 
+        -- Print which key was pressed down/up
+        local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
+        print( message )
+     
+        -- If the "back" key was pressed on Android, prevent it from backing out of the app
+        if ( event.keyName == "back" ) then
+            if ( system.getInfo("platform") == "android" ) then
+                return true
+            end
+        end
+     
+        -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+        -- This lets the operating system execute its default handling of the key
+        return true
+    end
+
+
+    Runtime:addEventListener( "key", onKeyEvent )
 
 end
 

@@ -20,6 +20,8 @@ local dbDate = composer.getVariable( "dbDate" )
 local noteContent = ""
 local backBtn
 local bg_green 
+local onKeyEvent 
+local backBtnImg
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -33,18 +35,26 @@ init = function ( _parent )
     T.title("紀錄" , sceneGroup)
      
     backBtn = widget.newButton({
-        label = "<",
+        label = "",
         onEvent = listener,
-        left = X*0.02 ,
-        top = Y*0.07, 
+        left = W*0.032 ,
+        top = H*0.035, 
         shape = "rect",
         width = W*0.1,
-        height = H*0.07,
+        height = H*0.06,
         fontSize = H*0.05 ,
-        font = bold ,
-        fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
-        labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
-        } )
+        -- font = bold ,
+        fillColor = { default={254/255,118/255,118/255,0.1}, over={1,0.1,0.7,0} },
+        -- labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
+        -- } )
+        -- defaultFile = "images/nav_back@3x.png" , 
+        -- overFile = "" , 
+        })
+
+    backBtnImg = display.newImageRect( sceneGroup, "images/nav_back@3x.png", W*0.032, H*0.036 )
+    backBtnImg.x , backBtnImg.y = W*0.032 , H*0.05 
+    backBtnImg.anchorX , backBtnImg.anchorY = 0 , 0
+
 
     sceneGroup:insert( backBtn)
 
@@ -59,6 +69,35 @@ init = function ( _parent )
     for row in database:nrows([[SELECT * FROM Diary WHERE Date = ']]..dbDate..[[']]) do
         msgBox.text = row.Notes
     end
+
+    Runtime:addEventListener( "key", onKeyEvent )
+end
+
+onKeyEvent = function( event )
+
+    -- Print which key was pressed down/up
+    local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
+    print( message )
+ 
+    -- If the "back" key was pressed on Android, prevent it from backing out of the app
+    if (event.phase == "down" and event.keyName == "back") then
+        --Here the key was pressed      
+        downPress = true
+        return true
+    else 
+        if ( event.keyName == "back" and event.phase == "up" and downPress ) then
+            if ( system.getInfo("platform") == "android" ) then
+                native.setKeyboardFocus( nil )
+                composer.showOverlay( "edit" )
+                Runtime:removeEventListener( "key", onKeyEvent )
+                return true
+            end
+        end
+    end
+ 
+    -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+    -- This lets the operating system execute its default handling of the key
+    return true
 end
 
 listener = function ( e )
@@ -79,6 +118,7 @@ textListener = function( event )
         if backBtn then
             backBtn:removeSelf( )
             backBtn = nil 
+            backBtnImg.alpha = 0
         end
 
         if not saveBtn then
@@ -114,20 +154,25 @@ saveBtnEvent = function ( e )
         native.setKeyboardFocus( nil )
         
         backBtn = widget.newButton({
-            label = "<",
+             label = "",
             onEvent = listener,
-            left = X*0.02 ,
-            top = Y*0.07, 
+            left = W*0.032 ,
+            top = H*0.035, 
             shape = "rect",
             width = W*0.1,
-            height = H*0.07,
+            height = H*0.06,
             fontSize = H*0.05 ,
-            font = bold ,
-            fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
-            labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
+            -- font = bold ,
+            fillColor = { default={254/255,118/255,118/255,0.1}, over={1,0.1,0.7,0} },
+            -- labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
+            -- } )
+            -- defaultFile = "images/nav_back@3x.png" , 
+            -- overFile = "" , 
         } )
 
         sceneGroup:insert( backBtn)
+
+        backBtnImg.alpha = 1
     end
 end
 
@@ -165,7 +210,7 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        
+        Runtime:removeEventListener( "key", onKeyEvent )
         composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen

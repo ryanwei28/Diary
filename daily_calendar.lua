@@ -599,7 +599,7 @@ setBtn = function (  )
     setBtnEvent = function ( e )
         if ( "ended" == e.phase ) then
             if e.target.id == "disclaimer" then 
-                composer.showOverlay( "disclaimer" )
+                composer.showOverlay( "disclaimer" ,T.options )
             elseif e.target.id == "statistics" then 
                 composer.showOverlay( "statistics" )
             elseif e.target.id == "setup" then 

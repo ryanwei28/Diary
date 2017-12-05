@@ -95,7 +95,7 @@ end
 
 createSwitch = function (  )
 
-    local left = display.newImageRect(  sGroup , "images/radio_on@3x.png",  W*0.23, H*0.04797 )
+    local left = display.newImageRect(  sGroup , "images/radio_on@3x.png",  W*0.23, H*0.049 )
     left.x , left.y = X*1.27 , Y*0.953
 
     local leftTextShadow = display.newText( sGroup, "女生", left.x - W*0.028 , left.y + W*0.002, bold , H*0.025 )
@@ -103,7 +103,7 @@ createSwitch = function (  )
     local leftText = display.newText( sGroup, "女生", left.x - W*0.03, left.y, bold , H*0.025 )
 
 
-    local right = display.newImageRect( sGroup, "images/radio_off@3x.png",  W*0.23, H*0.04797 )
+    local right = display.newImageRect( sGroup, "images/radio_off@3x.png",  W*0.23, H*0.049 )
     right.x , right.y = W*0.77 , Y*0.953
 
     local rightTextShadow = display.newText( sGroup, "男生", right.x + W*0.032 , right.y + W*0.002, bold , H*0.025 )

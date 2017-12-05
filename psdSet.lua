@@ -25,6 +25,7 @@ local updateNum = 0
 local setPsdNum = 0
 local psdChk 
 local backBtn
+local onKeyEvent
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -38,21 +39,26 @@ init = function ( _parent )
     title = display.newText( _parent , "密碼設定" , X, Y*0.14, bold , H*0.032 )
 
     backBtn = widget.newButton({
-        -- label = "<",
+        label = "",
         onEvent = listener,
-         left = W*0.032 ,
-        top = H*0.05, 
-        -- shape = "rect",
-        width = W*0.032,
-        height = H*0.036,
-        -- fontSize = H*0.05 ,
+        left = W*0.032 ,
+        top = H*0.035, 
+        shape = "rect",
+        width = W*0.1,
+        height = H*0.06,
+        fontSize = H*0.05 ,
         -- font = bold ,
-        -- fillColor = { default={1,0,0,0}, over={1,0.1,0.7,0} },
+        fillColor = { default={254/255,118/255,118/255,0.1}, over={1,0.1,0.7,0} },
         -- labelColor = { default={ 1, 1, 1 }, over={ 0.7, 0.7, 0.7 } }
         -- } )
-        defaultFile = "images/nav_back@3x.png" , 
+        -- defaultFile = "images/nav_back@3x.png" , 
         -- overFile = "" , 
         })
+
+    local backBtnImg = display.newImageRect( sceneGroup, "images/nav_back@3x.png", W*0.032, H*0.036 )
+    backBtnImg.x , backBtnImg.y = W*0.032 , H*0.05 
+    backBtnImg.anchorX , backBtnImg.anchorY = 0 , 0
+
 
     sceneGroup:insert( backBtn)
     -- back = display.newCircle( _parent, X*0.2, Y*0.2, H*0.045 )
@@ -75,7 +81,37 @@ init = function ( _parent )
     else
         readDb()
     end
+
+    Runtime:addEventListener( "key" , onKeyEvent)
 end
+
+onKeyEvent = function( event )
+
+    -- Print which key was pressed down/up
+    local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
+    print( message )
+ 
+    -- If the "back" key was pressed on Android, prevent it from backing out of the app
+    if (event.phase == "down" and event.keyName == "back") then
+        --Here the key was pressed      
+        downPress = true
+        return true
+    else 
+        if ( event.keyName == "back" and event.phase == "up" and downPress ) then
+            if ( system.getInfo("platform") == "android" ) then
+                native.setKeyboardFocus( nil )
+                composer.showOverlay( "setup" )
+                Runtime:removeEventListener( "key", onKeyEvent )
+                return true
+            end
+        end
+    end
+ 
+    -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+    -- This lets the operating system execute its default handling of the key
+    return true
+end
+
 
 listener = function ( e )
     if e.phase == "ended" then
@@ -267,7 +303,7 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        
+        Runtime:removeEventListener( "key", onKeyEvent )
         composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
