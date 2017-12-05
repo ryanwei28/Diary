@@ -163,11 +163,34 @@ function M.statisticCount ()
     sDate = sY.."/"..string.format("%02d",sM).."/"..string.format("%02d",sD)
 end
 
-function M.note(  )
+function M.caculateDays( eDay , sDay )
     local e = os.date(os.time{year=string.sub(eDay , 1 , 4) ,month=string.sub(eDay , 6 , 7),day=string.sub(eDay , 9 , 10)})
     local s = os.date(os.time{year=string.sub(sDay , 1 , 4) ,month=string.sub(sDay , 6 , 7),day=string.sub(sDay , 9 , 10)})
 
-    days = (tonumber(e-s)/24/60/60+1) 
+    local days = (tonumber(e-s)/24/60/60) 
+
+    return days 
+end
+
+function M.addDays( sDay , days )
+    -- local e = os.date(os.time{year=string.sub(eDay , 1 , 4) ,month=string.sub(eDay , 6 , 7),day=string.sub(eDay , 9 , 10)})
+    local s = os.date(os.time{year=string.sub(sDay , 1 , 4) ,month=string.sub(sDay , 6 , 7),day=string.sub(sDay , 9 , 10)})
+    -- local days = (tonumber(e-s)/24/60/60) 
+    local e = days*24*60*60 + s 
+    local eDay = os.date("%Y", e).."/"..os.date("%m", e).."/"..os.date("%d", e)
+
+    return eDay
+end
+
+
+function M.minusDays( eDay , days )
+    local e = os.date(os.time{year=string.sub(eDay , 1 , 4) ,month=string.sub(eDay , 6 , 7),day=string.sub(eDay , 9 , 10)})
+    -- local s = os.date(os.time{year=string.sub(sDay , 1 , 4) ,month=string.sub(sDay , 6 , 7),day=string.sub(sDay , 9 , 10)})
+    -- local days = (tonumber(e-s)/24/60/60) 
+    local s = e - days*24*60*60  
+    local sDay = os.date("%Y", s).."/"..os.date("%m", s).."/"..os.date("%d", s)
+
+    return sDay
 end
 
 local pickerOptions = {

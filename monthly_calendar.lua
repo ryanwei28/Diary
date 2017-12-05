@@ -56,6 +56,10 @@ local judge1stWeek
 local firstW
 local mCalendarTable = {}
 local periodTable = {}
+local periodTable1 = {}
+local periodTable2 = {}
+local periodTable3 = {}
+local periodTable4 = {}
 local creatMonthlyCalendar 
 local mGroup
 local wd
@@ -76,6 +80,10 @@ local bg2
 local removeListener 
 local removeSw = true
 local redRect 
+local readOvulation 
+local predictDay 
+local avgDays
+local continuance
 -- local bg 
 -- local titleBg
 composer.setVariable( "prevScene", "monthly_calendar" )
@@ -156,6 +164,9 @@ init = function ( _parent )
     setBtn()
     -- readDb()
     fourSqrare()
+
+
+    readOvulation()
 end
 
 
@@ -537,6 +548,7 @@ fourSqrare = function (  )
 
         sText2Year.text = os.date("%Y",e)
         sText2.text = os.date("%m",e).."/"..os.date("%d",e)
+        -- predictDay = os.date("%Y",e).."/"..os.date("%m",e).."/"..os.date("%d",e)
 
          for row in database:nrows([[SELECT * FROM Statistics ;]]) do
             if row.Padding ~= "" then
@@ -559,6 +571,7 @@ fourSqrare = function (  )
         end
 
         sText4.text = string.format("%d" , duringDays/duringNum )
+        -- avgDays = tonumber( string.format("%d" , duringDays/duringNum ) )
     end
 end
 
@@ -641,6 +654,25 @@ readDb = function (  )
     -- end
 end
 
+readOvulation = function ( Tday )
+    -- print(dbDate.."::::")
+    -- print(T.caculateDays ( dbDate , "2017/11/05") )
+    -- print(T.addDays(dbDate , 5 ) )
+    -- print ( T.minusDays (dbDate , 6))
+
+    local preMonth = T.minusDays( string.sub( dbDate,1,8).."01" , 30 )
+    local nextMonth = T.addDays( string.sub( dbDate,1,8).."28" , 30 )
+
+    print( preMonth )
+    print( nextMonth )
+
+     for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay > ']]..preMonth..[[' AND StartDay < ']]..nextMonth..[[' ORDER BY StartDay ASC ]]) do
+        -- sss = T.caculateDays( Tday , row.StartDay )
+    end
+
+    -- print( Tday.."??????" )
+end
+
 creatMonthlyCalendar = function (  )
     local mBg = display.newRect( backGroup, X, Y, W, H*0.45 ) 
     mGroup = display.newGroup( )
@@ -660,12 +692,21 @@ creatMonthlyCalendar = function (  )
 
     -- local cW = 
     -- local cH = 
-    -- for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay >= ']]..s1..[[' AND StartDay < ']]..e1..[[' ;]]) do
-    --     -- print(row.StartDay.."***")
-    --     dNum = dNum + 1
-    --     dTable[dNum] = row.StartDay
-    -- end 
+    for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay >= ']]..s1..[[' AND StartDay < ']]..e1..[[' ;]]) do
+        -- print(row.StartDay.."***")
+        dNum = dNum + 1
+        dTable[dNum] = row.StartDay
+    end 
     
+    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+        if row.SetSwitch == 1 then 
+            avgDays = row.regularCycle
+        elseif row.SetSwitch == 2 then 
+            avgDays = row.Cycle
+        end 
+    end 
+
+    -- print( avgDays.."++++++++++++" )
 
     for i = 1 , 5 do 
         for j = 1 , 7 do 
@@ -681,29 +722,94 @@ creatMonthlyCalendar = function (  )
                 lineV.strokeWidth = H*0.008
 
                 if (firstW + j -1 ) <= 6 then
+                    periodTable[i*7+j-7] = display.newText( mGroup,"", -X*0.25 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, native.systemFontBold , H*0.032 )
+                    periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)
+                    periodTable1[i*7+j-7] = display.newRect( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, W*0.145, H*0.027 )
+                    periodTable1[i*7+j-7]:setFillColor( 255/255,195/255,0 )
+                    periodTable1[i*7+j-7].alpha = 0
+
+                    periodTable2[i*7+j-7] = display.newRect( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, W*0.145, H*0.027 )
+                    periodTable2[i*7+j-7]:setFillColor( 255/255,0/255,0 )
+                    periodTable2[i*7+j-7].alpha = 0
+
+                    periodTable3[i*7+j-7] = display.newRect( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, W*0.145, H*0.027 )
+                    periodTable3[i*7+j-7]:setFillColor( 255/255,195/255,147/255 )
+                    periodTable3[i*7+j-7].alpha = 0
+
+                    periodTable4[i*7+j-7] = display.newCircle( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, H*0.01 )
+                    periodTable4[i*7+j-7]:setFillColor( 255/255,20/255,20/255 )
+                    periodTable4[i*7+j-7].alpha = 0
+
                     mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , -X*0.25 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, font , H*0.028 )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
                     mCalendarTable[i*7+j-7]:setFillColor( 0 )
                     mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
-                    periodTable[i*7+j-7] = display.newText( mGroup,"", X*0.1 + (firstW + j  ) * H*0.062, H*0.25+ i * H*0.075, native.systemFontBold , H*0.032 )
-                    periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)
 
-                    for l = 1 , #dTable do 
-                        local e = os.date(os.time{year=string.sub(mCalendarTable[i*7+j-7].id , 1 , 4) ,month=string.sub(mCalendarTable[i*7+j-7].id , 6 , 7),day=string.sub(mCalendarTable[i*7+j-7].id , 9 , 10)})
-                        local s = os.date(os.time{year=string.sub(dTable[l] , 1 , 4) ,month=string.sub(dTable[l] , 6 , 7),day=string.sub(dTable[l] , 9 , 10)})
 
-                        local days = (tonumber(e-s)/24/60/60) 
-                        print(mCalendarTable[i*7+j-7].id..":"..days.."天")
+                    for l = 1 , #dTable +1  do 
+                        -- local e = os.date(os.time{year=string.sub(mCalendarTable[i*7+j-7].id , 1 , 4) ,month=string.sub(mCalendarTable[i*7+j-7].id , 6 , 7),day=string.sub(mCalendarTable[i*7+j-7].id , 9 , 10)})
+                        -- local s = os.date(os.time{year=string.sub(dTable[l] , 1 , 4) ,month=string.sub(dTable[l] , 6 , 7),day=string.sub(dTable[l] , 9 , 10)})
+
+                        -- local days = (tonumber(e-s)/24/60/60) 
+                        -- print(mCalendarTable[i*7+j-7].id..":"..days.."天")
                         -- print(days)
                         -- print(0 == nil)
-                        if days >= 0 and days <= 5 then 
-                            periodTable[i*7+j-7].text = "經"
-                        elseif days == 14 then 
-                            periodTable[i*7+j-7].text = "卵"
-                        elseif days < 14 and days > 9  or days >14 and days <19 then 
-                            periodTable[i*7+j-7].text = "危險"
+                        -- print( mCalendarTable[i*7+j-7].id..":::::::::::id" )
+                        -- readOvulation(mCalendarTable[i*7+j-7].id)
+                        for row in database:nrows([[SELECT * FROM Statistics ORDER BY StartDay ASC ]]) do
+                            predictDay = T.addDays(row.StartDay , avgDays)
                         end
+
+                        if predictDay then
+                            local preMonth = T.minusDays( string.sub( dbDate,1,8).."01" , 30 )
+                            local nextMonth = T.addDays( string.sub( dbDate,1,8).."28" , 30 )
+
+                            print( preMonth )
+                            print( nextMonth )
+
+                            for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay > ']]..preMonth..[[' AND StartDay < ']]..nextMonth..[[' ORDER BY StartDay ASC ]]) do
+                                mCalendarTable[i*7+j-7].distance = T.caculateDays( mCalendarTable[i*7+j-7].id , row.StartDay )
+                                
+                                continuance = tonumber(row.Continuance) - 1
+                                local dt = mCalendarTable[i*7+j-7].distance
+
+                                if dt then
+                                    if dt >= 0 and dt <= continuance then 
+                                        periodTable2[i*7+j-7].alpha = 1
+                                    
+                                    elseif dt <= -10 and dt >= -19 then 
+                                        periodTable1[i*7+j-7].alpha = 1
+                                    end
+
+                                    if dt == -14 then 
+                                        periodTable4[i*7+j-7].alpha = 1
+                                    end
+                                end 
+
+                            end
+
+                            
+                            -- print( predictDay.."-----------+++++++++++" )
+                            mCalendarTable[i*7+j-7].distance = T.caculateDays( mCalendarTable[i*7+j-7].id , predictDay )
+                            local dt2 = mCalendarTable[i*7+j-7].distance
+                            -- -- end 
+
+                            if continuance then 
+                                if dt2 then
+                                    if dt2 >= 0 and dt2 <= continuance then 
+                                        periodTable3[i*7+j-7].alpha = 1
+                                   
+                                    elseif dt2 <= -10 and dt2 >= -19 then 
+                                        periodTable1[i*7+j-7].alpha = 1
+                                    end
+
+                                    if dt2 == -14 then 
+                                        periodTable4[i*7+j-7].alpha = 1
+                                    end
+                                end 
+                            end 
+                        end 
                     end 
 
                     if mCalendarTable[i*7+j-7].id == todayNum then
@@ -746,31 +852,102 @@ creatMonthlyCalendar = function (  )
                     -- print(mCalendarTable[i*7+j-7].id..":<6")
                 end
 
-                if (firstW + j -1 ) > 6 then                       
+                if (firstW + j -1 ) > 6 then     
+                    periodTable[i*7+j-7] = display.newText( mGroup, "" , -X*2.33 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, native.systemFontBold , H*0.032 )
+                    periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)    
+                    periodTable1[i*7+j-7] = display.newRect( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, W*0.145, H*0.027 )
+                    periodTable1[i*7+j-7]:setFillColor( 255/255,195/255,0 )
+                    periodTable1[i*7+j-7].alpha = 0
+
+                    periodTable2[i*7+j-7] = display.newRect( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, W*0.145, H*0.027 )
+                    periodTable2[i*7+j-7]:setFillColor( 255/255,0/255,0 )
+                    periodTable2[i*7+j-7].alpha = 0
+
+                    periodTable3[i*7+j-7] = display.newRect( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, W*0.145, H*0.027 )
+                    periodTable3[i*7+j-7]:setFillColor( 255/255,195/255,147/255 )
+                    periodTable3[i*7+j-7].alpha = 0
+
+                    periodTable4[i*7+j-7] = display.newCircle ( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, H*0.01 )
+                    periodTable4[i*7+j-7]:setFillColor( 255/255,20/255,20/255 )
+                    periodTable4[i*7+j-7].alpha = 0
+
                     mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , -X*2.33 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, font , H*0.028 )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d", mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
                     mCalendarTable[i*7+j-7]:setFillColor( 0 )
                     mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
                     
-                    periodTable[i*7+j-7] = display.newText( mGroup, "" , X*0.1 + -X*1.53 + (firstW + j  ) * H*0.062, H*0.25+ (i + 1) * H*0.075, native.systemFontBold , H*0.032 )
-                    periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)
+                   
 
-                     for l = 1 , #dTable do 
-                        local e = os.date(os.time{year=string.sub(mCalendarTable[i*7+j-7].id , 1 , 4) ,month=string.sub(mCalendarTable[i*7+j-7].id , 6 , 7),day=string.sub(mCalendarTable[i*7+j-7].id , 9 , 10)})
-                        local s = os.date(os.time{year=string.sub(dTable[l] , 1 , 4) ,month=string.sub(dTable[l] , 6 , 7),day=string.sub(dTable[l] , 9 , 10)})
+                    for l = 1 , #dTable + 1 do 
+                        -- local e = os.date(os.time{year=string.sub(mCalendarTable[i*7+j-7].id , 1 , 4) ,month=string.sub(mCalendarTable[i*7+j-7].id , 6 , 7),day=string.sub(mCalendarTable[i*7+j-7].id , 9 , 10)})
+                        -- local s = os.date(os.time{year=string.sub(dTable[l] , 1 , 4) ,month=string.sub(dTable[l] , 6 , 7),day=string.sub(dTable[l] , 9 , 10)})
 
-                        local days = (tonumber(e-s)/24/60/60) 
-                        print(mCalendarTable[i*7+j-7].id..":"..days.."天")
+                        -- local days = (tonumber(e-s)/24/60/60) 
+                        -- print(mCalendarTable[i*7+j-7].id..":"..days.."天")
                         -- print(days)
                         -- print(0 == nil)
-                        if days >= 0 and days <= 5 then 
-                            periodTable[i*7+j-7].text = "經"
-                        elseif days == 14 then 
-                            periodTable[i*7+j-7].text = "卵"
-                        elseif days < 14 and days > 9  or days >14 and days <19 then 
-                            periodTable[i*7+j-7].text = "危險"
+                        -- if days >= 0 and days <= 5 then 
+                        --     periodTable[i*7+j-7].text = "經"
+                        -- elseif days == 14 then 
+                        --     periodTable[i*7+j-7].text = "卵"
+                        -- elseif days < 14 and days > 9  or days >14 and days <19 then 
+                        --     periodTable[i*7+j-7].text = "危險"
+                        -- end
+                         for row in database:nrows([[SELECT * FROM Statistics ORDER BY StartDay ASC ]]) do
+                            predictDay = T.addDays(row.StartDay , avgDays)
                         end
+
+                        if predictDay then 
+
+                            local preMonth = T.minusDays( string.sub( dbDate,1,8).."01" , 30 )
+                            local nextMonth = T.addDays( string.sub( dbDate,1,8).."28" , 30 )
+
+                            print( preMonth )
+                            print( nextMonth )
+
+                            for row in database:nrows([[SELECT * FROM Statistics WHERE StartDay > ']]..preMonth..[[' AND StartDay < ']]..nextMonth..[[' ORDER BY StartDay ASC ]]) do
+                                mCalendarTable[i*7+j-7].distance = T.caculateDays( mCalendarTable[i*7+j-7].id , row.StartDay )
+                                
+                                continuance = tonumber(row.Continuance) - 1
+                                local dt = mCalendarTable[i*7+j-7].distance
+
+                                if dt then
+                                    if dt >= 0 and dt <= continuance then 
+                                        periodTable2[i*7+j-7].alpha = 1
+                                   
+                                    elseif dt <= -10 and dt >= -19 then 
+                                        periodTable1[i*7+j-7].alpha = 1
+                                    end
+
+                                    if dt == -14 then 
+                                        periodTable4[i*7+j-7].alpha = 1
+                                    end
+                                end 
+
+                            end
+
+                           
+                            -- print( predictDay.."-----------+++++++++++" )
+                            mCalendarTable[i*7+j-7].distance = T.caculateDays( mCalendarTable[i*7+j-7].id , predictDay )
+                            local dt2 = mCalendarTable[i*7+j-7].distance
+                            -- -- end 
+
+                            if dt2 then
+                                if continuance then 
+                                    if dt2 >= 0 and dt2 <= continuance then 
+                                        periodTable3[i*7+j-7].alpha = 1
+                                    
+                                    elseif dt2 <= -10 and dt2 >= -19 then 
+                                        periodTable1[i*7+j-7].alpha = 1
+                                    end
+
+                                    if dt2 == -14 then 
+                                        periodTable4[i*7+j-7].alpha = 1
+                                    end 
+                                end 
+                            end 
+                        end 
                     end 
 
                     if mCalendarTable[i*7+j-7].id == todayNum then
@@ -838,6 +1015,8 @@ creatMonthlyCalendar = function (  )
     -- redRect:setFillColor(1,0,0,0) 
     -- redRect.strokeWidth = H*0.009
     -- redRect:setStrokeColor( 1,0,0 )
+
+    readOvulation()
 end
 
 removeListener = function (  )
