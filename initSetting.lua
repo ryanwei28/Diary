@@ -42,6 +42,15 @@ local sw = 1
 local circle 
 local readDb
 local blackTitle
+local pkwBg 
+local pkwTitle
+local yearlabels = {}
+local cycleDays = {}
+local y = tonumber(string.sub( os.date( "%Y" ) , 1 , 4 ))
+local m = string.format("%02d" , tonumber(os.date( "%m" )))
+local d = string.format("%02d" ,tonumber(os.date( "%d" )))
+local today = y.."/"..m.."/"..d
+
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -156,27 +165,39 @@ end
 createPickerWheel = function ( btnId )
     local columnData 
 
+    for i = 1 , 100 do
+        yearlabels[i] = 2010+i .."年"
+    end
+
+    for i = 1 , 46 do 
+        cycleDays[i] = 14+i .."天"
+    end
+
     if btnId == "btn1" then 
          columnData =
         {
-            {
-                align = "center",
-                width = W*0.3,
-                startIndex = 2,
-                labelPadding = 1,
-                labels = { "2015年", "2016年", "2017年","2018年" }
+            {   
+                
+
+                align = "left",
+                width = W*0.24,
+                startIndex = 7,
+                labelPadding = W*0.03333,
+                labels = yearlabels , 
+                -- labels = { "2015年", "2016年", "2017年","2018年" }
+                
             },
             {
-                align = "center",
-                width = W*0.2,
-                labelPadding = 10,
+                align = "left",
+                width = W*0.16,
+                -- labelPadding = W*0.01333,
                 startIndex = 1,
                 labels = { "1月", "2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月", }
             },
             {
-                align = "center",
-                width = W*0.2,
-                labelPadding = 10,
+                align = "left",
+                width = W*0.16,
+                -- labelPadding = W*0.01333,
                 startIndex = 1,
                 labels = { "1日", "2日","3日","4日","5日","6日","7日","8日","9日","10日","11日","12日","13日","14日","15日","16日","17日","18日","19日","20日","21日","22日","23日","24日","25日","26日","27日","28日","29日","30日","31日", }
             },
@@ -186,10 +207,11 @@ createPickerWheel = function ( btnId )
         {
             {
                 align = "center",
-                width = W*0.3,
-                startIndex = 1,
+                width = W*0.56,
+                startIndex = 14,
                 labelPadding = 10,
-                labels = { "15天", "16天","17天","18天","19天","20天","21天","22天","23天","24天","25天","26天","27天","28天", }
+                labels = cycleDays,
+                -- { "15天", "16天","17天","18天","19天","20天","21天","22天","23天","24天","25天","26天","27天","28天", }
             },
            
         }
@@ -198,8 +220,8 @@ createPickerWheel = function ( btnId )
         {
             {
                 align = "center",
-                width = W*0.2,
-                startIndex = 1,
+                width = W*0.55,
+                startIndex = 4,
                 labelPadding = 10,
                 labels = { "2天","3天","4天","5天","6天","7天","8天","9天","10天" }
             },
@@ -211,12 +233,30 @@ createPickerWheel = function ( btnId )
     pickerWheel = widget.newPickerWheel(
     {
         x = X ,
-        y = Y*0.8,
-        style = "resizable",
-        width = W*0.3,
-        rowHeight = H*0.05,
-        fontSize = H*0.035,
-        columns = columnData
+        y = H*0.46,
+        fontSize = H*0.026,
+        font = bold , 
+        rowHeight = H*0.043,
+        columns = columnData , 
+        style = "resizable", 
+        width = W*0.55 , 
+
+         sheet = T.pickerWheelSheet,
+        topLeftFrame = 1,
+        topMiddleFrame = 2,
+        topRightFrame = 3,
+        middleLeftFrame = 4,
+        middleRightFrame = 5,
+        bottomLeftFrame = 6,
+        bottomMiddleFrame = 7,
+        bottomRightFrame = 8,
+        topFadeFrame = 9,
+        bottomFadeFrame = 10,
+        middleSpanTopFrame = 11,
+        middleSpanBottomFrame = 12,
+        separatorFrame = 13,
+        middleSpanOffset = 4,
+        borderPadding = 8
     })  
          
     sceneGroup:insert(pickerWheel)
@@ -224,6 +264,19 @@ createPickerWheel = function ( btnId )
 end
 
 createPickerWheelBtn = function ( id )
+    pkwBg = display.newImageRect( topGroup, "images/modal@3x.png", W*0.7, H*0.39 )
+    pkwBg.x , pkwBg.y = X , H*0.4647
+
+    pkwTitle = display.newText( topGroup, "", X, Y*0.595 , bold , H*0.03 )
+
+    if id == "btn1" then 
+        pkwTitle.text = "上次月經開始日期"
+    elseif id == "btn2" then 
+        pkwTitle.text = "月經週期"
+    elseif id == "btn3" then 
+        pkwTitle.text = "經期長度"
+    end 
+
     pickerWheelButtonEvent = function ( e )
         if ( "ended" == e.phase ) then
             if e.target.id == "clearPickerWheelBtn" then 
@@ -241,8 +294,29 @@ createPickerWheelBtn = function ( id )
                     local v1 = string.sub(  values[1].value, 1 , -4 )
                     local v2 = string.sub(  values[2].value, 1 , -4 )
                     local v3 = string.sub(  values[3].value, 1 , -4 )
-                    setValue1 = v1.."/"..string.format("%02d" , v2).."/"..string.format("%02d" , v3)
-                    btn1:setLabel( values[1].value..values[2].value..values[3].value )
+
+                    local vYear = string.sub(values[1].value , 1 , 4 )
+                    local vMonth =  string.format("%02d", tonumber(string.sub(values[2].value , 1 , -4)) )
+                    local vDay =  string.format("%02d", tonumber(string.sub(values[3].value , 1 , -4)) )
+                    local chooseday = vYear.."/"..vMonth.."/"..vDay
+                    local leap = math.fmod( vYear , 4)
+    
+                    if leap == 0 then 
+                        daysTable[2] = 29
+                        print( "leap" )
+                    elseif leap ~= 0 then 
+                        daysTable[2] = 28
+                        print( "no leap" )
+                    end
+
+                    if chooseday > today then
+                        T.alert("future")
+                    elseif tonumber(vDay) > daysTable[tonumber(v2)] then
+                        T.alert("noDay")
+                    else
+                        setValue1 = v1.."/"..string.format("%02d" , v2).."/"..string.format("%02d" , v3)
+                        btn1:setLabel( vYear.."-"..vMonth.."-"..vDay )
+                    end
                 elseif id == "btn2" then
                     setValue2 = string.sub( values[1].value, 1 , -4 )
                     btn2:setLabel( values[1].value )
@@ -256,32 +330,42 @@ createPickerWheelBtn = function ( id )
             pickerWheel:removeSelf( )
             clearPickerWheelBtn:removeSelf( )
             chkPickerWheelBtn:removeSelf( )
+            pkwBg:removeSelf()
+            pkwTitle:removeSelf()
             -- readDb()
             mask:removeSelf( )
         end
     end
 
     clearPickerWheelBtn = widget.newButton({ 
-        x = X*0.8,
-        y = Y*1.2,
+        x = X*0.76,
+        y = Y*1.24,
         id = "clearPickerWheelBtn",
         label = "取消",
+        font = bold , 
         fontSize = H*0.03 ,
-        shape = "circle",
-        radius = H*0.03 ,
-        fillColor = { default={0.12,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.213 ,
+        height = H*0.054,
+        shape = "roundedRect",
+        cornerRadius  = H*0.009,
+        fillColor = { default={254/255,118/255,118/255,1}, over={90/255,48/255,62/255,1} },
+        labelColor = {default = {1,1,1} , over = {1,1,1} } ,
         onEvent = pickerWheelButtonEvent 
     })
 
     chkPickerWheelBtn = widget.newButton({ 
-        x = X*1.2,
-        y = Y*1.2,
+        x = X*1.24,
+        y = Y*1.24,
         id = "chkPickerWheelBtn",
         label = "確定",
+        font = bold , 
         fontSize = H*0.03 ,
-        shape = "circle",
-        radius = H*0.03 ,
-        fillColor = { default={0.12,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = W*0.213 ,
+        height = H*0.054,
+        shape = "roundedRect",
+        cornerRadius  = H*0.009,
+        fillColor = { default={254/255,118/255,118/255,1}, over={90/255,48/255,62/255,1} },
+        labelColor = {default = {1,1,1} , over = {1,1,1} } ,
         onEvent = pickerWheelButtonEvent 
     })
 
@@ -302,9 +386,9 @@ maskListener = function ( e )
 end
 
 createMask = function (  )
-    mask = display.newRect( maskGroup, X, Y*0.9, W, H )
-    mask:setFillColor( 0.9 )
-    mask.alpha = 0.2
+    mask = display.newRect( maskGroup, X, Y*0.9, W, H*1.1 )
+    mask:setFillColor( 0 )
+    mask.alpha = 0.5
     mask:addEventListener( "touch", maskListener )
 end
 
@@ -318,7 +402,8 @@ addBtn = function (  )
         height = H*0.048,
         -- cornerRadius = H*0.015,
         label = "",
-        fontSize = H*0.03 ,
+        fontSize = H*0.027 ,
+        font = bold , 
         labelColor =  { default={226/255,68/255,61/255}, over={226/255,68/255,61/255}, } ,   
         -- strokeWidth = 1 ,
         -- strokeColor = { default={ 0.5, 0.5, 0.5 }, over={ 0.5, 0.5, 0.5 }, } , 
@@ -338,7 +423,8 @@ addBtn = function (  )
         defaultFile = "images/input@3x.png",
         -- cornerRadius = H*0.015,
         label = "",
-        fontSize = H*0.03 ,
+        fontSize = H*0.027 ,
+        font = bold , 
         labelColor =  { default={226/255,68/255,61/255}, over={226/255,68/255,61/255}, } ,   
         -- fillColor = { default={0.95,0.95,0.99,0.99}, over={0.2,0.78,0.75,0.4} },
         onEvent = btnEvent 
@@ -354,7 +440,8 @@ addBtn = function (  )
         -- cornerRadius = H*0.015,
         defaultFile = "images/input@3x.png",
         label = "",
-        fontSize = H*0.03 ,
+        fontSize = H*0.027 ,
+        font = bold , 
         labelColor =  { default={226/255,68/255,61/255}, over={226/255,68/255,61/255}, } ,   
         -- fillColor = { default={0.95,0.95,0.99,0.99}, over={0.2,0.78,0.75,0.4} },
         onEvent = btnEvent 
@@ -372,7 +459,7 @@ addBtn = function (  )
         font = bold ,
         fontSize = H*0.028 ,
         labelColor = {default = {1,1,1,1}} ,
-        fillColor = { default={254/255,118/254,118/254,1}, over={0.2,0.78,0.75,0.4} },
+        fillColor = { default={254/255,118/254,118/254,1}, over={0.7,0.7,0.7,0.9} },
         onEvent = btnEvent 
         } )
 

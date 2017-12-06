@@ -67,32 +67,36 @@ init = function ( _parent )
     _parent:insert(textField)
 
     local cancelBtn = widget.newButton({ 
-        x = X*0.7 ,
+        x = X*0.76 ,
         y = Y*0.8,
         id = "cancelBtn",
         label = "取消",
-        fontSize = H*0.028 ,
+        font = bold , 
+        fontSize = H*0.03 ,
+        width = W*0.213 ,
+        height = H*0.054,
         shape = "roundedRect",
-        width = W*0.2,
-        height = H*0.08,
-        cornerRadius = H*0.015,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        cornerRadius  = H*0.009,
+        fillColor = { default={254/255,118/255,118/255,1}, over={90/255,48/255,62/255,1} },
+        labelColor = {default = {1,1,1} , over = {1,1,1} } ,
         onEvent = setBtnEvent 
     }) 
 
     _parent:insert(cancelBtn)
 
     local confirmBtn = widget.newButton({ 
-        x = X*1.3 ,
+        x = X*1.24 ,
         y = Y*0.8,
         id = "confirmBtn",
         label = "確定",
-        fontSize = H*0.028 ,
+        font = bold , 
+        fontSize = H*0.03 ,
+        width = W*0.213 ,
+        height = H*0.054,
         shape = "roundedRect",
-        width = W*0.2,
-        height = H*0.08,
-        cornerRadius = H*0.015,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        cornerRadius  = H*0.009,
+        fillColor = { default={254/255,118/255,118/255,1}, over={90/255,48/255,62/255,1} },
+        labelColor = {default = {1,1,1} , over = {1,1,1} } ,
         onEvent = setBtnEvent 
     })
      _parent:insert(confirmBtn)

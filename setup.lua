@@ -57,6 +57,16 @@ local pinkArrow
 local pinkArrow2 
 local helpBtnEvent 
 local onKeyEvent
+local maskGroup = display.newGroup()
+local topGroup = display.newGroup()
+local pkwBg
+local pkwTitle
+local talltextListener 
+local tallsetBtnEvent 
+local fieldBg 
+local setGroup
+local cmText 
+local pinkkBg
 -- local sGroup = display.newGroup( )
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -230,6 +240,24 @@ onKeyEvent = function( event )
     -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
     -- This lets the operating system execute its default handling of the key
     return true
+end
+
+
+maskListener = function ( e )
+    if e.phase == "began" then
+        display.getCurrentStage():setFocus( e.target )
+    elseif e.phase == "ended" then
+        display.getCurrentStage():setFocus(nil)
+    end
+
+    return true
+end
+
+createMask = function (  )
+    mask = display.newRect( maskGroup, X, Y*0.9, W, H )
+    mask:setFillColor( 0 )
+    mask.alpha = 0.5
+    mask:addEventListener( "touch", maskListener )
 end
 
 helpBtnEvent = function ( e )
@@ -420,11 +448,106 @@ setBtnEvent = function ( e )
         if e.target.id == "predictSetBtn" then 
             composer.showOverlay( "predictSet" )
         elseif e.target.id == "tallSetBtn" then 
-            composer.showOverlay( "tallSet" )
+            createMask()
+            
+
+            tallSet()
+            -- composer.showOverlay( "tallSet" )
         end
     end
 end
 
+tallSet = function (  )
+    setGroup = display.newGroup( ) 
+    topGroup:insert(setGroup)
+    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1]]) do
+        tt = row.Height
+    end
+
+    pkwBg = display.newImageRect( setGroup, "images/modal@3x.png", W*0.7, H*0.24 )
+    pkwBg.x , pkwBg.y = X , H*0.353
+
+    pinkkBg = display.newRect( setGroup, X, Y*0.53 , W*0.7, H*0.03 )
+    pinkkBg:setFillColor( 254/255,118/255,118/255 )
+
+    pkwTitle = display.newText( setGroup, "身高設定", X, Y*0.515 , bold , H*0.0254 )
+    -- pkwTitle:setFillColor( 0 )
+
+    cmText = display.newText( setGroup, "單位:公分", X, H*0.372 , bold, H*0.0194 )
+    cmText:setFillColor( 0.67 )
+
+    fieldBg = display.newImageRect( setGroup, "images/input@3x.png", W*0.32 , H*0.048 )
+    fieldBg.x , fieldBg.y = X , H*0.33
+
+    textField = native.newTextField( X, H*0.33, W*0.3, H*0.05 )
+    textField.placeholder = tt
+    textField.inputType = "number"
+    textField:addEventListener( "userInput", talltextListener )
+    textField:setTextColor(226/255,68/255,61/255)
+    setGroup:insert(textField)
+
+
+    local cancelBtn = widget.newButton({ 
+        x = X*0.76 ,
+        y = H*0.431,
+        id = "cancelBtn",
+        label = "取消",
+        font = bold , 
+        fontSize = H*0.03 ,
+        width = W*0.213 ,
+        height = H*0.054,
+        shape = "roundedRect",
+        cornerRadius  = H*0.009,
+        fillColor = { default={254/255,118/255,118/255,1}, over={90/255,48/255,62/255,1} },
+        labelColor = {default = {1,1,1} , over = {1,1,1} } ,
+        onEvent = tallsetBtnEvent 
+    }) 
+
+    setGroup:insert(cancelBtn)
+
+    local confirmBtn = widget.newButton({ 
+        x = X*1.24 ,
+        y = H*0.431 ,
+        id = "confirmBtn",
+        label = "確定",
+        font = bold , 
+        fontSize = H*0.03 ,
+        width = W*0.213 ,
+        height = H*0.054,
+        shape = "roundedRect",
+        cornerRadius  = H*0.009,
+        fillColor = { default={254/255,118/255,118/255,1}, over={90/255,48/255,62/255,1} },
+        labelColor = {default = {1,1,1} , over = {1,1,1} } ,
+        onEvent = tallsetBtnEvent 
+    })
+     setGroup:insert(confirmBtn)
+
+end
+
+tallsetBtnEvent = function ( e )
+    if e.phase == "ended" then 
+        if e.target.id == "cancelBtn" then
+            native.setKeyboardFocus( nil )
+            setGroup:removeSelf( )
+            mask:removeSelf( )
+        elseif e.target.id == "confirmBtn" then
+            native.setKeyboardFocus( nil )
+            database:exec([[UPDATE Setting SET Height =']]..tallText..[[' WHERE id =1;]])
+            setGroup:removeSelf( )
+            mask:removeSelf( )
+        end
+    end
+end
+
+talltextListener = function( event )
+    if ( event.phase == "began" ) then
+     
+    elseif ( event.phase == "ended" or event.phase == "submitted" ) then
+        native.setKeyboardFocus( nil )
+    elseif ( event.phase == "editing" ) then
+        tallText = event.text 
+    end     
+end
 
 checkSwitchBtn = function (  )
     checkBoxBtnEvent = function ( e )
@@ -552,6 +675,8 @@ function scene:create( event )
     sceneGroup:insert( midGroup )
     sceneGroup:insert( cGroup )
     init(midGroup)
+    sceneGroup:insert( maskGroup )
+    sceneGroup:insert( topGroup )
 end
  
 -- show()

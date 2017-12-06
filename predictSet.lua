@@ -110,8 +110,8 @@ init = function ( _parent )
     { 
         { 
             align = "center",
-            width =  W*0.3,
-            labelPadding = 20,
+            width =  W*0.25,
+            labelPadding = 0,
             startIndex = indexCycle-14 ,
             labels = { "15天", "16天", "17天", "18天" , "19天", "20天", "21天", "22天", "23天", "24天","25天","26天","27天","28天","29天","30天","31天","32天","33天","34天","35天","36天","37天","38天","39天","40天","41天","42天","43天","44天","45天","46天","47天","48天","49天","50天","51天","52天","53天","54天","55天","56天","57天","58天","59天","60天", }
         },
@@ -120,13 +120,13 @@ init = function ( _parent )
     -- Create the widget
     pickerWheel = widget.newPickerWheel(
     {
-        x = X*1.6 ,
+        x = X*1.55 ,
         y = H*0.266 ,
         columns = columnData,
         style = "resizable",
-        width = W*0.28,
-        rowHeight = H*0.04875,
-        fontSize = H*0.042,
+        width = W*0.25,
+        rowHeight = H*0.043,
+        fontSize = H*0.03,
         font = bold , 
         onValueSelected = onValueSelected,
 
@@ -158,7 +158,7 @@ init = function ( _parent )
     { 
         { 
             align = "center",
-            width =  W*0.3,
+            width =  W*0.25,
             labelPadding = 20,
             startIndex = indexDuring-1 ,
             labels = { "2天", "3天", "4天", "5天" , "6天", "7天", "8天", "9天", "10天", }
@@ -168,13 +168,14 @@ init = function ( _parent )
     -- Create the widget
     pickerWheel2 = widget.newPickerWheel(
     {
-        x = X*1.6 ,
+        x = X*1.55 ,
         y = H*0.665 ,
         columns = columnData2,
         style = "resizable",
-        width = W*0.28,
-        rowHeight = H*0.04875,
-        fontSize = H*0.042,
+        width = W*0.25,
+        -- height = H*0.1 ,
+        rowHeight = H*0.043,
+        fontSize = H*0.03,
         font = bold , 
         onValueSelected = onValueSelected2,
 

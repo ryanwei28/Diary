@@ -50,7 +50,7 @@ local paddingDays = 0
 local paddingNum = 0
 local line 
 local noticeText 
-local noticeT = "注意：「平均週期」與「平均天數」為前12月之週期平均值，如不足個月，以實際紀錄之月份數來計算平均天數。"
+local noticeT = "注意：「平均週期」與「平均天數」為前12月之週期平均值，如不足12個月，以實際紀錄之月份數來計算平均天數。"
 local product 
 local onKeyEvent 
 -- -----------------------------------------------------------------------------------

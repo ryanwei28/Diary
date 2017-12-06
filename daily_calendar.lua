@@ -822,6 +822,63 @@ readDb = function (  )
     elseif statusNum ~= ""  then
         statusText.text = "今天是月經期"
     end
+
+    for row in database:nrows([[SELECT * FROM Statistics WHERE Startday >= ']]..dbDate..[[' ORDER BY Startday DESC ;]]) do
+        recentStartDay = row.StartDay
+    end
+
+    -- print(recentStartDay)
+
+    if recentStartDay then 
+        local ddd = T.caculateDays( recentStartDay , dbDate)
+        -- print(ddd.."::::")
+        if ddd > 9 and ddd <= 19 then
+            statusText.text = "今天是危險期"
+        end 
+
+        if ddd == 14 then 
+            statusText.text = "今天是排卵日"
+        end
+
+        recentStartDay = nil
+    else
+        for row in database:nrows([[SELECT * FROM Statistics ORDER BY Startday ASC ;]]) do
+            recentStartDay2 = row.StartDay
+            print(111111111111)
+        end
+
+        if recentStartDay2 then
+            for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+                if row.SetSwitch == 1 then 
+                    avgDays2 = row.regularCycle
+                elseif row.SetSwitch == 2 then 
+                    avgDays2 = row.Cycle
+                end 
+            end 
+
+            local predictDay = T.addDays(recentStartDay2 , avgDays2)
+            local ddd = T.caculateDays( predictDay , dbDate)
+            print(ddd.."::::")
+            if ddd > 9 and ddd <= 19 then
+                statusText.text = "今天是預測危險期"
+            end 
+
+            if ddd == 14 then 
+                statusText.text = "今天是預測排卵日"
+            end
+
+            for row in database:nrows([[SELECT * FROM Setting ;]]) do
+                if ddd <= 0 and ddd > -row.During +1 then 
+                    statusText.text = "今天是預測經期"
+                end
+            end 
+
+            recentStartDay2 = nil
+        end 
+
+
+    end 
+
 end
 
 statisticalDays = function (  )

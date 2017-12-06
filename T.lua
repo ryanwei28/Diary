@@ -74,6 +74,8 @@ function M.alert( alertType )
         local alert = native.showAlert( "","如經期非於本日結束，請直接於結束當天標記", { "OK" }, onCompleteee )
     elseif alertType == "next" then
         local alert = native.showAlert( "","請輸入完整三筆資料", { "OK" }, onCompleteee )
+    elseif alertType == "noDay" then
+        local alert = native.showAlert( "","無此日期", { "OK" }, onCompleteee )    
     end
 end
 
@@ -206,8 +208,8 @@ local pickerOptions = {
         { x=308, y=308, width=40, height=40 },
         { x=68, y=68, width=64, height=80 },
         { x=68, y=228, width=64, height=80 },
-        { x=580, y=28, width=64, height=40 },
-        { x=580, y=148, width=64, height=40 },
+        { x=570, y=28, width=64, height=18 },
+        { x=570, y=168, width=64, height=19 },
         { x=580, y=228, width=24, height=68 }
     },
     sheetContentWidth = 662,  --606
@@ -215,7 +217,7 @@ local pickerOptions = {
 }
 
 -- display.newRoundedRect( [parent,], x, y, width, height, cornerRadius )
-M.pickerWheelSheet = graphics.newImageSheet( "images/picker.png", pickerOptions )
+M.pickerWheelSheet = graphics.newImageSheet( "images/picker@3x.png", pickerOptions )
 
 M.options = {
     --  -- isModal = true,

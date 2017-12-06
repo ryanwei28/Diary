@@ -116,6 +116,8 @@ local addImages
 local bird 
 local onKeyEvent
 local onKeyEvent2
+local pkwBg
+local pkwTitle
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -487,6 +489,7 @@ end
  
 
 createBtn = function (  )
+
     createBtnEvent = function ( e )
         local today = tonumber(os.date( "%Y" ))..string.format("%02d", tonumber(os.date( "%m" )))..string.format("%02d", tonumber(os.date( "%d" ))) 
         local choseDay = string.sub( dbDate, 1 ,4 )..string.sub( dbDate, 6 ,7 )..string.sub( dbDate, 9 ,10 )
@@ -644,10 +647,10 @@ createPickerWheel = function ( btnId )
          columnData =
         {
             {
-                align = "center",
-                width = W*0.72,
+                align = "left",
+                width = W*0.55,
                 startIndex = 2,
-                labelPadding = 1,
+                labelPadding = W*0.0533,
                 labels = { "有避孕", "沒避孕", "不知道是否有避孕", }
             },
         }
@@ -655,23 +658,23 @@ createPickerWheel = function ( btnId )
         columnData =
         {
             {
-                align = "center",
-                width = W*0.24,
-                startIndex = 2,
-                labelPadding = 10,
+                align = "left",
+                width = W*0.25,
+                startIndex = 3,
+                labelPadding = W*0.0533,
                 labels = { "35", "36", "37", "38" }
             },
             {
-                align = "center",
-                width = W*0.24,
-                labelPadding = 10,
-                startIndex = 1,
-                labels = { ".00", ".01", ".02",".03",".04",".05",".06", }
+                align = "left",
+                width = W*0.15,
+                labelPadding = W*0.01333,
+                startIndex = 6,
+                labels = { ".00", ".01", ".02",".03",".04",".05",".06",".07",".08",".09",".10",".11",".12",".13",".14",".15",".16",".17",".18",".19",".20",".21",".22",".23",".24",".25",".26",".27",".28",".29",".30",".31",".32",".33",".34",".35",".36",".37",".38",".39",".40",".41",".42",".43",".44",".45",".46",".47",".48",".49",".50",".51",".52",".53",".54",".55",".56",".57",".58",".59",".60",".61",".62",".63",".64",".65",".66",".67",".68",".69",".70",".71",".72",".73",".74",".75",".76",".77", ".78",".79",".80",".81",".82",".83",".84",".85",".86",".87",".88",".89",".90",".91",".92",".93",".94",".95",".96",".97",".98",".99",}
             },
             {
-                align = "center",
-                labelPadding = 10,
-                width = W*0.24,
+                align = "left",
+                labelPadding = W*0.01333,
+                width = W*0.15,
                 startIndex = 1,
                 labels = { "°C" }
             }
@@ -680,23 +683,23 @@ createPickerWheel = function ( btnId )
         columnData =
         {
             {
-                align = "center",
-                width = W*0.24,
-                startIndex = 2,
-                labelPadding = 10,
+                align = "left",
+                width = W*0.25,
+                startIndex = 11,
+                labelPadding = W*0.05333,
                 labels = { "35", "36", "37", "38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99",}
             },
             {
-                align = "center",
-                width = W*0.24,
-                labelPadding = 10,
-                startIndex = 1,
+                align = "left",
+                width = W*0.15,
+                labelPadding = W*0.01333,
+                startIndex = 6,
                 labels = { ".0", ".1", ".2",".3",".4",".5",".6",".7",".8",".9", }
             },
             {
-                align = "center",
-                labelPadding = 10,
-                width = W*0.24,
+                align = "left",
+                labelPadding = W*0.01333,
+                width = W*0.15,
                 startIndex = 1,
                 labels = { "kg" }
             }
@@ -707,11 +710,13 @@ createPickerWheel = function ( btnId )
     pickerWheel = widget.newPickerWheel(
     {
         x = X ,
-        y = Y*0.8,
-        fontSize = H*0.024,
+        y = H*0.46,
+        fontSize = H*0.03,
+        font = bold , 
+        rowHeight = H*0.043,
         columns = columnData , 
         style = "resizable", 
-        width = W*0.72 , 
+        width = W*0.55 , 
 
         sheet = T.pickerWheelSheet,
         topLeftFrame = 1,
@@ -737,6 +742,19 @@ createPickerWheel = function ( btnId )
 end
 
 createPickerWheelBtn = function ( id )
+    pkwBg = display.newImageRect( topGroup, "images/modal@3x.png", W*0.7, H*0.39 )
+    pkwBg.x , pkwBg.y = X , H*0.4647
+
+    pkwTitle = display.newText( topGroup, "", X, Y*0.595 , bold , H*0.03 )
+
+    if id == "close" then 
+        pkwTitle.text = "親密行為"
+    elseif id == "temperature" then 
+        pkwTitle.text = "基礎體溫"
+    elseif id == "weight" then 
+        pkwTitle.text = "體重"
+    end 
+
     pickerWheelButtonEvent = function ( e )
         if ( "ended" == e.phase ) then
             if e.target.id == "clearPickerWheelBtn" then 
@@ -769,6 +787,8 @@ createPickerWheelBtn = function ( id )
             pickerWheel:removeSelf( )
             clearPickerWheelBtn:removeSelf( )
             chkPickerWheelBtn:removeSelf( )
+            pkwBg:removeSelf( )
+            pkwTitle:removeSelf( )
             readDb()
             mask:removeSelf( )
             Runtime:removeEventListener( "key", onKeyEvent )
@@ -778,26 +798,34 @@ createPickerWheelBtn = function ( id )
     end
 
     clearPickerWheelBtn = widget.newButton({ 
-        x = X*0.8,
-        y = Y*1.2,
+        x = X*0.76,
+        y = Y*1.24,
         id = "clearPickerWheelBtn",
         label = "清除",
-        fontSize = H*0.038 ,
-        shape = "circle",
-        radius = H*0.025 ,
-        fillColor = { default={0.12,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        font = bold , 
+        fontSize = H*0.03 ,
+        width = W*0.213 ,
+        height = H*0.054,
+        shape = "roundedRect",
+        cornerRadius  = H*0.009,
+        fillColor = { default={254/255,118/255,118/255,1}, over={90/255,48/255,62/255,1} },
+        labelColor = {default = {1,1,1} , over = {1,1,1} } ,
         onEvent = pickerWheelButtonEvent 
     })
 
     chkPickerWheelBtn = widget.newButton({ 
-        x = X*1.2,
-        y = Y*1.2,
+        x = X*1.24,
+        y = Y*1.24,
         id = "chkPickerWheelBtn",
         label = "儲存",
-        fontSize = H*0.038 ,
-        shape = "circle",
-        radius = H*0.025 ,
-        fillColor = { default={0.12,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+         font = bold , 
+        fontSize = H*0.03 ,
+        width = W*0.213 ,
+        height = H*0.054,
+        shape = "roundedRect",
+        cornerRadius  = H*0.009,
+        fillColor = { default={254/255,118/255,118/255,1}, over={90/255,48/255,62/255,1} },
+        labelColor = {default = {1,1,1} , over = {1,1,1} } ,
         onEvent = pickerWheelButtonEvent 
     })
 
@@ -823,8 +851,8 @@ end
 
 createMask = function (  )
     mask = display.newRect( maskGroup, X, Y*0.9, W, H )
-    mask:setFillColor( 0.9 )
-    mask.alpha = 0.2
+    mask:setFillColor( 0 )
+    mask.alpha = 0.5
     mask:addEventListener( "touch", maskListener )
 end
 
@@ -871,6 +899,61 @@ readDb = function (  )
             statusText.text = "今天是安全期"
         end
     end
+
+
+    for row in database:nrows([[SELECT * FROM Statistics WHERE Startday >= ']]..dbDate..[[' ORDER BY Startday DESC ;]]) do
+        recentStartDay = row.StartDay
+    end
+
+    -- print(recentStartDay)
+
+    if recentStartDay then 
+        local ddd = T.caculateDays( recentStartDay , dbDate)
+        -- print(ddd.."::::")
+        if ddd > 9 and ddd <= 19 then
+            statusText.text = "今天是危險期"
+        end 
+
+        if ddd == 14 then 
+            statusText.text = "今天是排卵日"
+        end
+
+        recentStartDay = nil
+    else
+        for row in database:nrows([[SELECT * FROM Statistics ORDER BY Startday ASC ;]]) do
+            recentStartDay2 = row.StartDay
+            print(111111111111)
+        end
+
+        if recentStartDay2 then
+            for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+                if row.SetSwitch == 1 then 
+                    avgDays2 = row.regularCycle
+                elseif row.SetSwitch == 2 then 
+                    avgDays2 = row.Cycle
+                end 
+            end 
+
+            local predictDay = T.addDays(recentStartDay2 , avgDays2)
+            local ddd = T.caculateDays( predictDay , dbDate)
+            print(ddd.."::::")
+            if ddd > 9 and ddd <= 19 then
+                statusText.text = "今天是預測危險期"
+            end 
+
+            if ddd == 14 then 
+                statusText.text = "今天是預測排卵日"
+            end
+
+            for row in database:nrows([[SELECT * FROM Setting ;]]) do
+                if ddd <= 0 and ddd > -row.During +1 then 
+                    statusText.text = "今天是預測經期"
+                end
+            end 
+
+            recentStartDay2 = nil
+        end 
+    end 
 end
 
 judgeReadDb = function ( judgeType )

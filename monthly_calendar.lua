@@ -84,6 +84,9 @@ local readOvulation
 local predictDay 
 local avgDays
 local continuance
+local topBg
+local bottomBg
+local legend 
 -- local bg 
 -- local titleBg
 composer.setVariable( "prevScene", "monthly_calendar" )
@@ -97,13 +100,21 @@ init = function ( _parent )
     -- bg = display.newRect( _parent, X, Y*1.07, W, H )
     -- bg:setFillColor( 127/255, 215/255, 210/255 )
     -- bg.x , bg.y = X , Y*1.07
-    bg1 = display.newImageRect( _parent, "images/b.png", W, H*0.2 )
-    bg1.x , bg1.y = X , Y*0.35
+    bg1 = display.newRect( _parent, X , Y*0.27 , W, H*0.15 )
+    bg1:setFillColor(145/255,215/255,215/255)
+    -- bg1.x , bg1.y = X , Y*0.35
 
-    bg2 = display.newImageRect( _parent, "images/b.png", W, H*0.2 )
-    bg2.x , bg2.y = X , Y*1.65
+    bg2 = display.newRect( _parent, X , Y*1.487 , W, H*0.15 )
+    bg2:setFillColor(145/255,215/255,215/255)
 
+    topBg = display.newImageRect( sceneGroup, "images/bg_white_top@3x.png" , W , H*0.0135 )
+    topBg.x , topBg.y = X , H*0.2031
 
+    bottomBg = display.newImageRect( sceneGroup, "images/bg_white_bottom@3x.png" , W , H*0.0135 )
+    bottomBg.x , bottomBg.y = X , H*0.675
+
+    legend = display.newImageRect( sceneGroup, "images/legend@3x.png", W*0.781, H*0.021)
+    legend.x , legend.y = X , Y*1.415
     -- titleBg = display.newImageRect( _parent, "images/bg_top@3x.png", W, H*0.07 )
     -- titleBg.x , titleBg.y ,titleBg.anchorY= X, Y*0.07 , 0
     -- title = display.newText( _parent, "月曆", X, Y*0.14, bold , H*0.032 )
@@ -115,9 +126,9 @@ init = function ( _parent )
 
     judgeWeek()
     judge1stWeek()
-    dateText1 = display.newText( _parent, c..y.." 年 "..m.." 月" , X , Y*0.3 , bold ,  H*0.04 )
+    dateText1 = display.newText( _parent, c..y.." 年 "..m.." 月" , X , Y*0.28 , bold ,  H*0.029 )
     dateText1:setFillColor( 226/255,68/255,61/255 )
-    wd = display.newText( _parent, "SUN     MON     TUE     WED     THU     FRI     SAT", X, Y*0.5 , bold , H*0.022 )
+    wd = display.newText( _parent, "SUN           MON           TUE           WED           THU           FRI           SAT", X, H*0.183 , bold , H*0.015 )
     -- dateText2 = display.newText( _parent, c..y.."  "..week , X, Y*0.4, font , 30 )
     if m == 1 then 
         m = 13
@@ -134,26 +145,32 @@ init = function ( _parent )
 
 
     leftBtn = widget.newButton({ 
-        x = X*0.4,
-        y = Y*0.3,
+        x = X*0.5,
+        y = Y*0.275,
         id = "leftBtn",
-        label = "<",
-        fontSize = H*0.028 ,
-        shape = "circle",
-        radius = H*0.028 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        -- label = "<",
+        -- fontSize = H*0.028 ,
+        -- shape = "circle",
+        -- radius = H*0.028 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = H*0.033 , 
+        height = H*0.033 , 
+        defaultFile = "images/btn_prev_r_press@3x.png" , 
         onEvent = handleButtonEvent 
     })
 
     rightBtn = widget.newButton({ 
-        x = X*1.6,
-        y = Y*0.3,
+        x = X*1.5,
+        y = Y*0.275,
         id = "rightBtn",
-        label = ">",
-        fontSize = H*0.028 ,
-        shape = "circle",
-        radius = H*0.028 ,
-        fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        -- label = ">",
+        -- fontSize = H*0.028 ,
+        -- shape = "circle",
+        -- radius = H*0.028 ,
+        -- fillColor = { default={0.92,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        width = H*0.033 , 
+        height = H*0.033 , 
+        defaultFile = "images/btn_next_r_press@3x.png" , 
         onEvent = handleButtonEvent 
     })
 
@@ -674,9 +691,16 @@ readOvulation = function ( Tday )
 end
 
 creatMonthlyCalendar = function (  )
-    local mBg = display.newRect( backGroup, X, Y, W, H*0.45 ) 
+
+    local mBg = display.newRect( backGroup, X, Y*0.87, W, H*0.466 ) 
     mGroup = display.newGroup( )
     
+    for j = 1 , 7 do 
+        local lineV = display.newLine( backGroup ,  -X*0.035+X*0.3*(j-1),  H*0.22 , -X*0.035+X*0.3*(j-1),  H*0.73 )
+        lineV:setStrokeColor( 145/255, 215/255, 215/255 )
+        lineV.strokeWidth = H*0.0045
+    end
+
     backGroup:insert(mGroup)
 
     local s1 = c..yNum.."/"..string.format("%02d",mNum) .."/".."01"
@@ -712,35 +736,51 @@ creatMonthlyCalendar = function (  )
         for j = 1 , 7 do 
             k = i*7+j-7 
             -- display.newLine( x1, y1, x2, y2 )
+            local lineH = display.newLine( mGroup , X*0, H*0.21 + i * H*0.07646, X*2,  H*0.21 + i * H*0.07646 )
+            lineH:setStrokeColor(145/255, 215/255, 215/255)
+            lineH.strokeWidth = H*0.0045
+            -- local lineV = display.newLine( backGroup ,  -X*0.035+X*0.3*(j-1),  H*0.22 , -X*0.035+X*0.3*(j-1),  H*0.73 )
+            -- lineV:setStrokeColor( 145/255, 215/255, 215/255 )
+            -- lineV.strokeWidth = H*0.0045
+
             if k <= daysTable[m] then 
 
-                local lineH = display.newLine( mGroup , X*0,  H*0.27+ i * H*0.075, X*2,  H*0.27+ i * H*0.075 )
-                lineH:setStrokeColor(127/255, 215/255, 210/255)
-                lineH.strokeWidth = H*0.008
-                local lineV = display.newLine( backGroup ,  -X*0.035+X*0.3*(j-1),  H*0.275 , -X*0.035+X*0.3*(j-1),  H*0.73 )
-                lineV:setStrokeColor( 127/255, 215/255, 210/255 )
-                lineV.strokeWidth = H*0.008
+                -- local lineH = display.newLine( mGroup , X*0, H*0.21 + i * H*0.07646, X*2,  H*0.21 + i * H*0.07646 )
+                -- lineH:setStrokeColor(145/255, 215/255, 215/255)
+                -- lineH.strokeWidth = H*0.0045
+                -- local lineV = display.newLine( backGroup ,  -X*0.035+X*0.3*(j-1),  H*0.22 , -X*0.035+X*0.3*(j-1),  H*0.73 )
+                -- lineV:setStrokeColor( 145/255, 215/255, 215/255 )
+                -- lineV.strokeWidth = H*0.0045
 
                 if (firstW + j -1 ) <= 6 then
-                    periodTable[i*7+j-7] = display.newText( mGroup,"", -X*0.25 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, native.systemFontBold , H*0.032 )
-                    periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)
-                    periodTable1[i*7+j-7] = display.newRect( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, W*0.145, H*0.027 )
-                    periodTable1[i*7+j-7]:setFillColor( 255/255,195/255,0 )
+                    -- periodTable[i*7+j-7] = display.newText( mGroup,"", -X*0.25 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, native.systemFontBold , H*0.032 )
+                    -- periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)
+
+                    periodTable1[i*7+j-7] = display.newRect( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.195+ i * H*0.075, W*0.155, H*0.0374 )
+                    periodTable1[i*7+j-7]:setFillColor( 254/255,187/255,108/255 )
                     periodTable1[i*7+j-7].alpha = 0
 
-                    periodTable2[i*7+j-7] = display.newRect( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, W*0.145, H*0.027 )
-                    periodTable2[i*7+j-7]:setFillColor( 255/255,0/255,0 )
+                    periodTable2[i*7+j-7] = display.newRect( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.195+ i * H*0.075, W*0.155, H*0.0374 )
+                    periodTable2[i*7+j-7]:setFillColor(  254/255,118/255,118/255 )
                     periodTable2[i*7+j-7].alpha = 0
 
-                    periodTable3[i*7+j-7] = display.newRect( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, W*0.145, H*0.027 )
-                    periodTable3[i*7+j-7]:setFillColor( 255/255,195/255,147/255 )
+                    -- periodTable3[i*7+j-7] = display.newRect( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.195+ i * H*0.075, W*0.145, H*0.0374 )
+                    -- periodTable3[i*7+j-7]:setFillColor( 255/255,195/255,147/255 )
+                    -- periodTable3[i*7+j-7].alpha = 0
+
+                    periodTable3[i*7+j-7] = display.newImageRect( mGroup, "images/bg_predict@3x.png", W*0.155, H*0.0374 )
+                    periodTable3[i*7+j-7].x , periodTable3[i*7+j-7].y =  -X*0.18 + (firstW + j  ) * W*0.15, H*0.195+ i * H*0.075
                     periodTable3[i*7+j-7].alpha = 0
 
-                    periodTable4[i*7+j-7] = display.newCircle( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, H*0.01 )
-                    periodTable4[i*7+j-7]:setFillColor( 255/255,20/255,20/255 )
+                    -- periodTable4[i*7+j-7] = display.newCircle( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.195+ i * H*0.075, H*0.01 )
+                    -- periodTable4[i*7+j-7]:setFillColor( 255/255,20/255,20/255 )
+                    -- periodTable4[i*7+j-7].alpha = 0
+
+                    periodTable4[i*7+j-7] = display.newImageRect( mGroup, "images/ico_ovum@3x.png", H*0.036, H*0.036 )
+                    periodTable4[i*7+j-7].x , periodTable4[i*7+j-7].y =  -X*0.13 + (firstW + j  ) * W*0.15, H*0.195+ i * H*0.075
                     periodTable4[i*7+j-7].alpha = 0
 
-                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , -X*0.25 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, font , H*0.028 )
+                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , -X*0.25 + (firstW + j  ) * W*0.15, H*0.195 + i * H*0.0765, font , H*0.0224 )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
                     mCalendarTable[i*7+j-7]:setFillColor( 0 )
@@ -823,7 +863,7 @@ creatMonthlyCalendar = function (  )
                             -- local cc = display.newText( mGroup, "❤" ,  -X*0.05 + (firstW + j  ) * W*0.13, H*0.25+ i * H*0.074, font , H*0.024 )
                             -- cc:setFillColor( 0.9 , 0.1 , 0.1 )
                             local cc = display.newImageRect( mGroup, "images/ico_lip@3x.png", W*0.05, H*0.03 )
-                            cc.x , cc.y = -X*0.265 + (firstW + j  ) * W*0.15, H*0.235 + i * H*0.074
+                            cc.x , cc.y = -X*0.265 + (firstW + j  ) * W*0.15, H*0.18 + i * H*0.074
                             -- local cc = display.newText( mGroup, "❤" ,  -X*0.05 + (firstW + j  ) * W*0.13, H*0.25+ i * H*0.074, font , H*0.024 )
                             -- cc:setFillColor( 0.9 , 0.1 , 0.1 )
                         end
@@ -833,19 +873,19 @@ creatMonthlyCalendar = function (  )
                             -- dd:setFillColor( 0.1 , 0.851 , 0.21 )
 
                             local dd = display.newImageRect( mGroup, "images/ico_temp@3x.png", W*0.05, H*0.035 )
-                            dd.x , dd.y = -X*0.19 + (firstW + j  ) * W*0.15, H*0.223 + i * H*0.074
+                            dd.x , dd.y = -X*0.19 + (firstW + j  ) * W*0.15, H*0.168 + i * H*0.074
                         end
 
                         if row.Weight ~= "" then
                             -- local ee = display.newText( mGroup, "▲" , -X*0.05 + (firstW + j  ) * W*0.14, H*0.25+ i * H*0.076, font , H*0.024 )
                             -- ee:setFillColor( 0.15 , 0.12 , 0.91 )
                             local ee = display.newImageRect( mGroup, "images/ico_weight@3x.png", W*0.05, H*0.025 )
-                            ee.x , ee.y = -X*0.265 + (firstW + j  ) * W*0.15, H*0.215 + i * H*0.074
+                            ee.x , ee.y = -X*0.265 + (firstW + j  ) * W*0.15, H*0.16 + i * H*0.074
                         end
 
                         if row.Notes ~= "" then
                             local ff = display.newImageRect( mGroup, "images/ico_note@3x.png", W*0.05, H*0.031 )
-                            ff.x , ff.y = -X*0.11 + (firstW + j  ) * W*0.15, H*0.223 + i * H*0.074
+                            ff.x , ff.y = -X*0.11 + (firstW + j  ) * W*0.15, H*0.168 + i * H*0.074
                         end
                     end
 
@@ -853,25 +893,33 @@ creatMonthlyCalendar = function (  )
                 end
 
                 if (firstW + j -1 ) > 6 then     
-                    periodTable[i*7+j-7] = display.newText( mGroup, "" , -X*2.33 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, native.systemFontBold , H*0.032 )
+                    periodTable[i*7+j-7] = display.newText( mGroup, "" , -X*2.33 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.075, native.systemFontBold , H*0.032 )
                     periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)    
-                    periodTable1[i*7+j-7] = display.newRect( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, W*0.145, H*0.027 )
-                    periodTable1[i*7+j-7]:setFillColor( 255/255,195/255,0 )
+                    periodTable1[i*7+j-7] = display.newRect( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.075, W*0.155, H*0.0374 )
+                    periodTable1[i*7+j-7]:setFillColor(  254/255,187/255,108/255 )
                     periodTable1[i*7+j-7].alpha = 0
 
-                    periodTable2[i*7+j-7] = display.newRect( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, W*0.145, H*0.027 )
-                    periodTable2[i*7+j-7]:setFillColor( 255/255,0/255,0 )
+                    periodTable2[i*7+j-7] = display.newRect( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.075, W*0.155, H*0.0374 )
+                    periodTable2[i*7+j-7]:setFillColor(  254/255,118/255,118/255 )
                     periodTable2[i*7+j-7].alpha = 0
 
-                    periodTable3[i*7+j-7] = display.newRect( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, W*0.145, H*0.027 )
-                    periodTable3[i*7+j-7]:setFillColor( 255/255,195/255,147/255 )
+                    -- periodTable3[i*7+j-7] = display.newRect( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.075, W*0.145, H*0.0374 )
+                    -- periodTable3[i*7+j-7]:setFillColor( 255/255,195/255,147/255 )
+                    -- periodTable3[i*7+j-7].alpha = 0
+
+                    periodTable3[i*7+j-7] = display.newImageRect( mGroup, "images/bg_predict@3x.png", W*0.155, H*0.0374 )
+                    periodTable3[i*7+j-7].x , periodTable3[i*7+j-7].y = -X*2.29 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.075
                     periodTable3[i*7+j-7].alpha = 0
 
-                    periodTable4[i*7+j-7] = display.newCircle ( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, H*0.01 )
-                    periodTable4[i*7+j-7]:setFillColor( 255/255,20/255,20/255 )
+                    -- periodTable4[i*7+j-7] = display.newCircle ( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.075, H*0.01 )
+                    -- periodTable4[i*7+j-7]:setFillColor( 255/255,20/255,20/255 )
+                    -- periodTable4[i*7+j-7].alpha = 0
+
+                    periodTable4[i*7+j-7] = display.newImageRect( mGroup, "images/ico_ovum@3x.png", H*0.036, H*0.036 )
+                    periodTable4[i*7+j-7].x , periodTable4[i*7+j-7].y = -X*2.22 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.075
                     periodTable4[i*7+j-7].alpha = 0
 
-                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , -X*2.33 +  (firstW + j  ) * W*0.15, H*0.25+ (i + 1) * H*0.075, font , H*0.028 )
+                    mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , -X*2.33 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.0765, font , H*0.0224 )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d", mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
                     mCalendarTable[i*7+j-7]:setFillColor( 0 )
@@ -952,7 +1000,7 @@ creatMonthlyCalendar = function (  )
 
                     if mCalendarTable[i*7+j-7].id == todayNum then
                         mCalendarTable[i*7+j-7]:setFillColor( 1,0,0 )
-                        mCalendarTable[i*7+j-7].size = H*0.03
+                        mCalendarTable[i*7+j-7].size = H*0.05
                         mCalendarTable[i*7+j-7].font = native.systemFontBold
                     end
 
@@ -978,7 +1026,7 @@ creatMonthlyCalendar = function (  )
                             -- local cc = display.newText( mGroup, "❤" ,  -X*0.05 + (firstW + j  ) * W*0.13, H*0.25+ i * H*0.074, font , H*0.024 )
                             -- cc:setFillColor( 0.9 , 0.1 , 0.1 )
                             local cc = display.newImageRect( mGroup, "images/ico_lip@3x.png", W*0.05, H*0.03 )
-                            cc.x , cc.y = -X*2.37 + (firstW + j  ) * W*0.15, H*0.235 + (i+1) * H*0.074
+                            cc.x , cc.y = -X*2.37 + (firstW + j  ) * W*0.15, H*0.18 + (i+1) * H*0.074
                             -- local cc = display.newText( mGroup, "❤" ,  -X*0.05 + (firstW + j  ) * W*0.13, H*0.25+ i * H*0.074, font , H*0.024 )
                             -- cc:setFillColor( 0.9 , 0.1 , 0.1 )
                         end
@@ -988,19 +1036,19 @@ creatMonthlyCalendar = function (  )
                             -- dd:setFillColor( 0.1 , 0.851 , 0.21 )
 
                             local dd = display.newImageRect( mGroup, "images/ico_temp@3x.png", W*0.05, H*0.035 )
-                            dd.x , dd.y = -X*2.29 + (firstW + j  ) * W*0.15, H*0.223 + (i+1) * H*0.074
+                            dd.x , dd.y = -X*2.29 + (firstW + j  ) * W*0.15, H*0.168 + (i+1) * H*0.074
                         end
 
                         if row.Weight ~= "" then
                             -- local ee = display.newText( mGroup, "▲" , -X*0.05 + (firstW + j  ) * W*0.14, H*0.25+ i * H*0.076, font , H*0.024 )
                             -- ee:setFillColor( 0.15 , 0.12 , 0.91 )
                             local ee = display.newImageRect( mGroup, "images/ico_weight@3x.png", W*0.05, H*0.025 )
-                            ee.x , ee.y = -X*2.37 + (firstW + j  ) * W*0.15, H*0.215 + (i+1) * H*0.074
+                            ee.x , ee.y = -X*2.37 + (firstW + j  ) * W*0.15, H*0.16 + (i+1) * H*0.074
                         end
 
                         if row.Notes ~= "" then
                             local ff = display.newImageRect( mGroup, "images/ico_note@3x.png", W*0.05, H*0.031 )
-                            ff.x , ff.y = -X*2.21 + (firstW + j  ) * W*0.15, H*0.223 + (i+1) * H*0.074
+                            ff.x , ff.y = -X*2.21 + (firstW + j  ) * W*0.15, H*0.168 + (i+1) * H*0.074
                         end
                     end
                      -- print(mCalendarTable[i*7+j-7].id..":>6")

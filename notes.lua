@@ -22,6 +22,11 @@ local backBtn
 local bg_green 
 local onKeyEvent 
 local backBtnImg
+local noteShadow
+local whiteBg 
+local bird 
+local product 
+local redText 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -55,14 +60,29 @@ init = function ( _parent )
     backBtnImg.x , backBtnImg.y = W*0.032 , H*0.05 
     backBtnImg.anchorX , backBtnImg.anchorY = 0 , 0
 
+    noteShadow = display.newImageRect( sceneGroup, "images/note_shadow@3x.png", W*0.866, H*0.764 )
+    noteShadow.x , noteShadow.y = X , H*0.523
+
+    whiteBg = display.newRect( sceneGroup, W*0.513, H*0.512, W*0.825, H*0.736 )
+
+    bird = display.newImageRect( sceneGroup, "images/bird_1@3x.png", W*0.096 , H*0.072 )
+    bird.x , bird.y = W*0.165  , H*0.192
+
+    product = display.newImageRect( sceneGroup, "images/product_2@3x.png", W*0.0666, H*0.123 )
+    product.x , product.y = W*0.18 , H*0.806 
+
+    redText = display.newText( sceneGroup, "統一藥品驗孕系列產品  關心您", W*0.258, H*0.834 , bold , H*0.021 )
+    redText:setFillColor( 226/255,68/255,61/255 )
+    redText.anchorX = 0
 
     sceneGroup:insert( backBtn)
 
-    msgBox = native.newTextBox( X*1, Y*1.1, W*0.9, H*0.6 )
+    msgBox = native.newTextBox( W*0.57, H*0.48, W*0.628, H*0.613 )
     msgBox.id = "msgBox"
     -- msgBox.placeholder = "輸入留言內容"
     msgBox.isEditable = true
-    msgBox.size = 50
+    msgBox.size = H*0.0254
+    msgBox.hasBackground = false
     msgBox:addEventListener( "userInput", textListener )
     _parent:insert(msgBox)
     -- addSaveBtn()
