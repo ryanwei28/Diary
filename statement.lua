@@ -45,6 +45,8 @@ local tAddress = [[105台北市松山區東興路8號7樓 ]]
 local tCompany = [[統一藥品股份有限公司]]
 local taplistener 
 local onKeyEvent
+local agreeBtn 
+local btnEvent 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -53,7 +55,7 @@ init = function ( _parent )
     -- cc = display.newText( _parent, "免責聲明", X, Y, font , 50 )
     T.bg(_parent)
     T.title("免責聲明" , sceneGroup)
-    T.backBtn(_parent , prevScene)
+    -- T.backBtn(_parent , prevScene)
 
     textLC = display.newText( _parent, tLC, X*1, Y*0.05, bold , H*0.025)
     textLC.anchorY = 0
@@ -121,7 +123,28 @@ init = function ( _parent )
     textPhone:addEventListener( "tap", taplistener )
     textAddress:addEventListener( "tap", taplistener )
 
-    Runtime:addEventListener( "key", onKeyEvent )
+    agreeBtn = widget.newButton( {
+        x = X , 
+        y = H*0.95 , 
+        width = W*0.6 ,
+        height = H*0.06 , 
+        shape = "Rect",
+        label = "同意以上條款，開始使用" , 
+        font = bold ,
+        fontSize = H*0.028 ,
+        labelColor = {default = {1,1,1,1}} ,
+        fillColor = { default={254/255,118/254,118/254,1}, over={0.7,0.7,0.7,0.9} },
+        onEvent = btnEvent 
+        } )
+
+    -- Runtime:addEventListener( "key", onKeyEvent )
+    sceneGroup:insert(agreeBtn)
+end
+
+btnEvent = function ( e )
+    if e.phase == "ended" then
+        composer.gotoScene( "mainUI" )
+    end 
 end
 
 onKeyEvent = function( event )
@@ -225,7 +248,7 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        Runtime:removeEventListener( "key", onKeyEvent )
+        -- Runtime:removeEventListener( "key", onKeyEvent )
         composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen

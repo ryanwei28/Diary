@@ -22,6 +22,7 @@ settings =
 		{
 			"android.permission.INTERNET",
 			 "android.permission.CALL_PHONE",
+			 "android.permission.RECEIVE_BOOT_COMPLETED",
 		},
 	},
 
@@ -35,6 +36,10 @@ settings =
 		{
 			UIStatusBarHidden = false,
 			UILaunchStoryboardName = "LaunchScreen",
+			NSAppTransportSecurity =
+			{
+			    NSAllowsArbitraryLoads = true,
+			},
 		},
 	},
 
@@ -43,7 +48,10 @@ settings =
 	--
 	plugins =
 	{
-
+		["plugin.notifications"] =
+		{
+			publisherId = "com.coronalabs"
+		},
 	},
 
 	--

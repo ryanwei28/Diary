@@ -38,6 +38,10 @@ local gr1 = display.newGroup( )
 local gr2 = display.newGroup( )
 local gr3 = display.newGroup( )
 local gr4 = display.newGroup( )
+local cGroup = display.newGroup( )
+local midGroup = display.newGroup( )
+local maskGroup = display.newGroup()
+local topGroup = display.newGroup()
 local left 
 local right 
 local circle
@@ -48,8 +52,7 @@ local sw2 = 1
 local sw3 = 1 
 local sw4 = 1 
 local maskBg
-local cGroup = display.newGroup( )
-local midGroup = display.newGroup( )
+
 local cNum = 0
 local cTable = {}
 local blackTitle 
@@ -57,8 +60,7 @@ local pinkArrow
 local pinkArrow2 
 local helpBtnEvent 
 local onKeyEvent
-local maskGroup = display.newGroup()
-local topGroup = display.newGroup()
+
 local pkwBg
 local pkwTitle
 local talltextListener 
@@ -67,13 +69,28 @@ local fieldBg
 local setGroup
 local cmText 
 local pinkkBg
+local notifyTimeBtn 
+local notifyTimeBtnListener 
+local notiTimeText 
+local createPickerWheel 
+local createPickerWheelBtn
+local createMask 
+local maskListener
+local mask 
+local sex --print(notificationSet.alertContent[sex][plan].pre1)
+local plan --print(notificationSet.alertContent[sex][plan].pre1)
+
 -- local sGroup = display.newGroup( )
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-    print( prevScene )
+    -- notificationSet.startNotify("2017/11/15" ,notificationSet.alertContent['Boy']["Bi"].pre1 )
+    -- notificationSet.startNotify("2017/11/18" ,notificationSet.alertContent['Girl']["Bi"].pre1 )
+    -- notificationSet.startNotify("2017/12/11" ,notificationSet.alertContent['Boy']["Huai"].dg6 )
+    -- notificationSet.startNotify("2017/12/15" ,notificationSet.alertContent['Boy']["Huai"].pre1 )
+    -- print( prevScene )
     -- title = display.newText( _parent, "設定", X, Y*0.2, font , H*0.045 )
     -- T.bg(_parent)
     createCircle(X*1.47,Y*0.315)
@@ -105,6 +122,9 @@ init = function ( _parent )
     -- psdRect = display.newRoundedRect( _parent , X, Y*0.3, W*0.9 , H*0.07 , H*0.02 )
     -- psdRect.strokeWidth = H*0.005
     -- psdRect:setStrokeColor( 254/255,118/255,118/255 )
+    notifyTimeBtn = display.newRect( _parent, X, Y*0.8 , W*0.8, H*0.08 )
+    -- notifyTimeBtn:setFillColor( 0 )
+    notifyTimeBtn:addEventListener( "touch", notifyTimeBtnListener )
 
     setText = display.newText( _parent, "個人化通知設定", X, Y*0.482, bold , H*0.027 )
     setText:setFillColor( 1 )
@@ -140,6 +160,8 @@ init = function ( _parent )
     addDashedLine(Y*0.71)
     addDashedLine(Y*0.88)
     addDashedLine(Y*1.045)
+
+   
 
     local predictSetBtn = widget.newButton({ 
         x = X*1 ,
@@ -210,10 +232,27 @@ init = function ( _parent )
    pinkArrow2 = display.newImageRect( sceneGroup, "images/cell_arrow_pink@3x.png", W*0.0266, H*0.024 )
    pinkArrow2.x , pinkArrow2.y = W*0.893 , H*0.781
     
+   pinkArrow3 = display.newImageRect( sceneGroup, "images/cell_arrow_pink@3x.png", W*0.0266, H*0.024 )
+   pinkArrow3.x , pinkArrow3.y = W*0.86 , Y*0.8
+
+   notiTimeText = display.newText( _parent, "8:35 上午", X*1.45, Y*0.8, bold , H*0.025 )
+   notiTimeText:setFillColor( 254/255,118/255,118/255 )
+
+    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+        notiTimeText.text = row.NotifyTime 
+    end
 
    timer.performWithDelay( 1, function (  )
        Runtime:addEventListener( "key", onKeyEvent )
    end )
+end
+
+notifyTimeBtnListener = function ( e )
+    if e.phase == "ended" then 
+        createPickerWheel()
+        createPickerWheelBtn()
+        createMask()
+    end
 end
 
 onKeyEvent = function( event )
@@ -242,6 +281,167 @@ onKeyEvent = function( event )
     return true
 end
 
+
+createPickerWheel = function ( btnId )
+    
+    local columnData 
+
+   
+    columnData =
+    {
+        {
+            align = "left",
+            width = W*0.25,
+            startIndex = 1,
+            labelPadding = W*0.05333,
+            labels = { "上午","下午"}
+        },
+        {
+            align = "left",
+            width = W*0.15,
+            labelPadding = W*0.01333,
+            startIndex = 6,
+            labels = { "01" ,"02" ,"03" ,"04" ,"05" ,"06" ,"07" ,"08" ,"09" ,"10" ,"11" ,"12"  }
+        },
+        {
+            align = "left",
+            labelPadding = W*0.01333,
+            width = W*0.15,
+            startIndex = 1,
+            labels = { "00" ,"05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55",  }
+        }
+    }
+
+    
+   
+    -- Create the widget
+    pickerWheel = widget.newPickerWheel(
+    {
+        x = X ,
+        y = H*0.46,
+        fontSize = H*0.03,
+        font = bold , 
+        rowHeight = H*0.043,
+        columns = columnData , 
+        style = "resizable", 
+        width = W*0.55 , 
+
+        sheet = T.pickerWheelSheet,
+        topLeftFrame = 1,
+        topMiddleFrame = 2,
+        topRightFrame = 3,
+        middleLeftFrame = 4,
+        middleRightFrame = 5,
+        bottomLeftFrame = 6,
+        bottomMiddleFrame = 7,
+        bottomRightFrame = 8,
+        topFadeFrame = 9,
+        bottomFadeFrame = 10,
+        middleSpanTopFrame = 11,
+        middleSpanBottomFrame = 12,
+        separatorFrame = 13,
+        middleSpanOffset = 4,
+        borderPadding = 8
+
+    })  
+         
+    sceneGroup:insert(pickerWheel)
+    -- print( v1, v2, v3 )
+end
+
+createPickerWheelBtn = function (  )
+    pkwBg = display.newImageRect( topGroup, "images/modal@3x.png", W*0.7, H*0.39 )
+    pkwBg.x , pkwBg.y = X , H*0.4647
+
+    pkwTitle = display.newText( topGroup, "通知時間", X, Y*0.595 , bold , H*0.03 )
+
+    pickerWheelButtonEvent = function ( e )
+        if ( "ended" == e.phase ) then
+            if e.target.id == "clearPickerWheelBtn" then 
+               
+                -- if id == "close" then
+                --     database:exec([[UPDATE Diary SET Close ="" WHERE date =']]..dbDate..[[';]])
+                -- elseif id == "temperature" then
+                --     database:exec([[UPDATE Diary SET Temperature ="" WHERE date =']]..dbDate..[[';]])
+                -- elseif id == "weight" then
+                --     database:exec([[UPDATE Diary SET Weight ="" WHERE date =']]..dbDate..[[';]])
+                -- end
+            elseif e.target.id == "chkPickerWheelBtn" then 
+                local values = pickerWheel:getValues()
+                -- if id == "close" then
+                --     local v1 = values[1].value
+                --     database:exec([[UPDATE Diary SET Close =']]..v1..[[' WHERE date =']]..dbDate..[[';]])
+                -- elseif id == "temperature" then
+                local v1 = values[1].value
+                local v2 = values[2].value
+                local v3 = values[3].value
+
+                notiTimeText.text = v2..":"..v3.." "..v1
+                database:exec([[UPDATE Setting SET NotifyTime =']]..v2..":"..v3.." "..v1..[[' WHERE id = 1 ;]])
+                -- elseif id == "weight" then
+                --     local v1 = values[1].value
+                --     local v2 = values[2].value
+                --     local v3 = values[3].value
+                --     database:exec([[UPDATE Diary SET Weight =']]..v1..v2..v3..[[' WHERE date =']]..dbDate..[[';]])
+                -- end
+                notificationSet.closeNotify()
+                notificationSet.reOpenNotify()
+            end
+
+            pickerWheel:removeSelf( )
+            clearPickerWheelBtn:removeSelf( )
+            chkPickerWheelBtn:removeSelf( )
+            pkwBg:removeSelf( )
+            pkwTitle:removeSelf( )
+            -- readDb()
+            mask:removeSelf( )
+            -- Runtime:removeEventListener( "key", onKeyEvent )
+            -- Runtime:addEventListener( "key", onKeyEvent2 )
+
+        end
+    end
+
+    clearPickerWheelBtn = widget.newButton({ 
+        x = X*0.76,
+        y = Y*1.24,
+        id = "clearPickerWheelBtn",
+        label = "取消",
+        font = bold , 
+        fontSize = H*0.03 ,
+        width = W*0.213 ,
+        height = H*0.054,
+        shape = "roundedRect",
+        cornerRadius  = H*0.009,
+        fillColor = { default={254/255,118/255,118/255,1}, over={90/255,48/255,62/255,1} },
+        labelColor = {default = {1,1,1} , over = {1,1,1} } ,
+        onEvent = pickerWheelButtonEvent 
+    })
+
+    chkPickerWheelBtn = widget.newButton({ 
+        x = X*1.24,
+        y = Y*1.24,
+        id = "chkPickerWheelBtn",
+        label = "確定",
+         font = bold , 
+        fontSize = H*0.03 ,
+        width = W*0.213 ,
+        height = H*0.054,
+        shape = "roundedRect",
+        cornerRadius  = H*0.009,
+        fillColor = { default={254/255,118/255,118/255,1}, over={90/255,48/255,62/255,1} },
+        labelColor = {default = {1,1,1} , over = {1,1,1} } ,
+        onEvent = pickerWheelButtonEvent 
+    })
+
+  
+    topGroup:insert(clearPickerWheelBtn)
+    topGroup:insert(chkPickerWheelBtn)
+
+    
+    -- Runtime:removeEventListener( "key", onKeyEvent2 )
+    -- Runtime:addEventListener( "key", onKeyEvent )
+    
+end
 
 maskListener = function ( e )
     if e.phase == "began" then
@@ -306,60 +506,98 @@ createSwitch = function ( sPadding , sX , sY ,t1 , t2 , id , gr , sWidth )
     readDb( leftW , gr)
     -- display.newLine( sX-(left.width - circle.width/2+ W*0.012), 0, sX-(left.width - circle.width/2+ W*0.012), H )
     -- display.newLine( sX, 0, sX, H )
-    gr:addEventListener( 'tap', function ( e )
-        if e.target.id == "psdPropect" then
-            if sw1 == 0 then
-                composer.setVariable( "prevScene", "setup" )
-                composer.showOverlay("psdPropect")
-                print( e.target.id..sw1 )
-            else
-                composer.setVariable( "prevScene", "setup" )
-                composer.showOverlay("psdPropect")
-                print( e.target.id..sw1 )
-            end
-        elseif e.target.id == "notification" then
-            sw2 = 1 - sw2 
-            if sw2 == 0 then
-                database:exec([[UPDATE Setting SET Notification = "OFF" WHERE id = 1 ;]])
-                print( e.target.id..sw2 )
-                transition.to( e.target , {time = 200 , x =- W*0.157} )
-                transition.to( cTable[2] , {time = 200 , x = X*1.4} )
+    gr:addEventListener( 'touch', function ( e )
+        if e.phase == "ended" then 
+            if e.target.id == "psdPropect" then
+                if sw1 == 0 then
+                    composer.setVariable( "prevScene", "setup" )
+                    composer.showOverlay("psdPropect")
+                    print( e.target.id..sw1 )
+                else
+                    composer.setVariable( "prevScene", "setup" )
+                    composer.showOverlay("psdPropect")
+                    print( e.target.id..sw1 )
+                end
+            elseif e.target.id == "notification" then
+                sw2 = 1 - sw2 
+                if sw2 == 0 then
+                    
+                    function onCompleteNoti( event )
+                        if ( event.action == "clicked" ) then
+                            local i = event.index
+                            if ( i == 1 ) then
+                                -- Do nothing; dialog will simply dismiss
+                            elseif ( i == 2 ) then
+                                database:exec([[UPDATE Setting SET Notification = "OFF" WHERE id = 1 ;]])
+                                print( e.target.id..sw2 )
+                                transition.to( e.target , {time = 200 , x =- W*0.157} )
+                                transition.to( cTable[2] , {time = 200 , x = X*1.4} )
+                                notificationSet.closeNotify()
+                            end
+                        end
+                    end
+                  
+                    local alert = native.showAlert( "","將此通知功能關閉，日後將無法在收到任何本APP「個人化通知」中自動排程的貼心提醒，已排程的提醒亦會全數刪除。\n \n是否確定關閉？", { "NO","YES" }, onCompleteNoti )
 
-            else
-                database:exec([[UPDATE Setting SET Notification = "ON" WHERE id = 1 ;]])
-                print( e.target.id..sw2 )
-                transition.to( e.target , {time = 200 , x = 0} )
-                transition.to( cTable[2] , {time = 200 , x = X*1.675} )
-            end
-        elseif e.target.id == "plan" then
-            sw3 = 1 - sw3
-            if sw3 == 0 then
-                database:exec([[UPDATE Setting SET Plan = "想避孕" WHERE id = 1 ;]])
-                print( e.target.id..sw3)
-                transition.to( e.target , {time = 200 , x = - W*0.191} )
-                transition.to( cTable[3] , {time = 200 , x = X*1.33} )
-            else
-                database:exec([[UPDATE Setting SET Plan = "想懷孕" WHERE id = 1 ;]])
-                print( e.target.id..sw3 )
-                transition.to( e.target , {time = 200 , x = 0} )
-                transition.to( cTable[3] , {time = 200 , x = X*1.671} )
-            end
-        elseif e.target.id == "sex" then
-            sw4 = 1 - sw4
-            if sw4 == 0 then
-                database:exec([[UPDATE Setting SET Sex = "男生" WHERE id = 1 ;]])
-                print( e.target.id..sw4 )
-                transition.to( e.target , {time = 200 , x = - W*0.157 } )
-                transition.to( cTable[4] , {time = 200 , x = X*1.4} )
-            else
-                database:exec([[UPDATE Setting SET Sex = "女生" WHERE id = 1 ;]])
-                print( e.target.id..sw4 )
-                transition.to( e.target , {time = 200 , x = 0} )
-                transition.to( cTable[4] , {time = 200 , x = X*1.675} )
-                
+                else
+                    database:exec([[UPDATE Setting SET Notification = "ON" WHERE id = 1 ;]])
+                    print( e.target.id..sw2 )
+                    transition.to( e.target , {time = 200 , x = 0} )
+                    transition.to( cTable[2] , {time = 200 , x = X*1.675} )
+                    notificationSet.reOpenNotify()
+                end
+            elseif e.target.id == "plan" then
+                sw3 = 1 - sw3
+                if sw3 == 0 then
+                    database:exec([[UPDATE Setting SET Plan = "想避孕" WHERE id = 1 ;]])
+                    print( e.target.id..sw3)
+                    transition.to( e.target , {time = 200 , x = - W*0.191} )
+                    transition.to( cTable[3] , {time = 200 , x = X*1.33} )
+                    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+                        if row.Notification == "ON" then
+                            notificationSet.closeNotify()
+                            notificationSet.reOpenNotify()
+                        end
+                    end
+                else
+                    database:exec([[UPDATE Setting SET Plan = "想懷孕" WHERE id = 1 ;]])
+                    print( e.target.id..sw3 )
+                    transition.to( e.target , {time = 200 , x = 0} )
+                    transition.to( cTable[3] , {time = 200 , x = X*1.671} )
+                    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+                        if row.Notification == "ON" then
+                            notificationSet.closeNotify()
+                            notificationSet.reOpenNotify()
+                        end
+                    end
+                end
+            elseif e.target.id == "sex" then
+                sw4 = 1 - sw4
+                if sw4 == 0 then
+                    database:exec([[UPDATE Setting SET Sex = "男生" WHERE id = 1 ;]])
+                    print( e.target.id..sw4 )
+                    transition.to( e.target , {time = 200 , x = - W*0.157 } )
+                    transition.to( cTable[4] , {time = 200 , x = X*1.4} )
+                    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+                        if row.Notification == "ON" then
+                            notificationSet.closeNotify()
+                            notificationSet.reOpenNotify()
+                        end
+                    end
+                else
+                    database:exec([[UPDATE Setting SET Sex = "女生" WHERE id = 1 ;]])
+                    print( e.target.id..sw4 )
+                    transition.to( e.target , {time = 200 , x = 0} )
+                    transition.to( cTable[4] , {time = 200 , x = X*1.675} )
+                    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+                        if row.Notification == "ON" then
+                            notificationSet.closeNotify()
+                            notificationSet.reOpenNotify()
+                        end
+                    end
+                end
             end
         end
-
     end )
 
     -- bg2 = display.newRect( X, Y, W, H )
@@ -430,7 +668,10 @@ readDb = function ( circleX , circleW , leftW , gr )
         --     setNum4 = 1
             cTable[4].x = X*1.4
         end
+
     end
+
+    print(notificationSet.alertContent.Girl.Bi.pre7)
 end
     
  
@@ -481,6 +722,8 @@ tallSet = function (  )
 
     textField = native.newTextField( X, H*0.33, W*0.3, H*0.05 )
     textField.placeholder = tt
+    textField.hasBackground = false
+    native.setKeyboardFocus( textField )
     textField.inputType = "number"
     textField:addEventListener( "userInput", talltextListener )
     textField:setTextColor(226/255,68/255,61/255)
@@ -531,6 +774,9 @@ tallsetBtnEvent = function ( e )
             setGroup:removeSelf( )
             mask:removeSelf( )
         elseif e.target.id == "confirmBtn" then
+            if tallText == nil then 
+                tallText = ""
+            end
             native.setKeyboardFocus( nil )
             database:exec([[UPDATE Setting SET Height =']]..tallText..[[' WHERE id =1;]])
             setGroup:removeSelf( )
@@ -658,8 +904,7 @@ checkSwitchBtn = function (  )
     sceneGroup:insert(sexSwitch)
 end
  
-      
-
+   
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -668,10 +913,12 @@ end
 -- create()
 function scene:create( event )
     sceneGroup = self.view
+    -- init(midGroup)
     sceneGroup:insert( gr1 )
     sceneGroup:insert( gr2 )
     sceneGroup:insert( gr3 )
     sceneGroup:insert( gr4 )
+    -- init(midGroup)
     sceneGroup:insert( midGroup )
     sceneGroup:insert( cGroup )
     init(midGroup)

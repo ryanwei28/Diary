@@ -17,8 +17,10 @@ X = display.contentCenterX
 Y = display.contentCenterY
 H = display.contentHeight
 W = display.contentWidth 
+notifications = require( "plugin.notifications" )
 widget = require("widget")
 T = require("T")
+notificationSet = require("notificationSet")
 composer = require ("composer")
 sqlite3 = require "sqlite3"
 path = system.pathForFile("data.db", system.DocumentsDirectory)
@@ -30,6 +32,8 @@ local main
 local writeDb
 local checkDb
 local ttt 
+local launchArgs = ...
+local opendoor
 
 -- local options = {
 --     frames =
@@ -56,8 +60,7 @@ local ttt
 -- pickerWheelSheet = graphics.newImageSheet( "images/picker.png", options )
 
 main = function (  )
-
-
+    
     local function onSystemEvent( event )
         if event.type == "applicationExit" then
             database:close()
@@ -67,15 +70,15 @@ main = function (  )
 
     database:exec([[
                     CREATE TABLE IF NOT EXISTS Diary ( id INTEGER PRIMARY KEY , Date , Start , End , Close , Temperature , Weight , Notes , StartDays ,  Period);
-                    CREATE TABLE IF NOT EXISTS Setting ( id INTEGER PRIMARY KEY , Password , Notification , NoticeTime , Plan , Sex , Cycle , regularCycle , During , Height ,Protect, SetSwitch );
+                    CREATE TABLE IF NOT EXISTS Setting ( id INTEGER PRIMARY KEY , Password , Notification , NoticeTime , Plan , Sex , Cycle , regularCycle , During , Height ,Protect, SetSwitch , NotifyTime);
                     CREATE TABLE IF NOT EXISTS Statistics ( id INTEGER PRIMARY KEY , StartDay , Continuance , Padding );
+                    CREATE TABLE IF NOT EXISTS Notifications ( id INTEGER PRIMARY KEY , NotifyDate , UTCTime , RandomId ,Type );
                      
                 ]])
 
     checkDb()
     Runtime:addEventListener("system", onSystemEvent)
 
-    composer.gotoScene( "initSetting" )
 
     local function onKeyEvent( event )
  
@@ -96,13 +99,63 @@ main = function (  )
     end
 
 
+    function notificationListener( event )
+        if event.custom == nil then
+            local json = require("json")
+            print("Notification listener unknown event: ", json.prettify(event))
+            return
+        end
+
+        print( "Notification Listener event:" )
+
+        local maxStr = 20       -- set maximum string length
+        local endStr
+
+
+        if ( event.custom ) then
+            print( event.custom.id )
+
+            -- notifications.cancelNotification( notificationIDtable[event.custom.id] )
+            -- system.cancelNotification( notificationIDtable[event.custom.id] )
+
+        end
+
+        native.setProperty( "applicationIconBadgeNumber", 0 )
+
+    end
+    
+
+    Runtime:addEventListener( "notification", notificationListener )
+
+     if launchArgs and launchArgs.notification then
+        
+        native.showAlert( "LaunchArgs Found", launchArgs.notification.alert, { "OK" } )
+        
+        -- Need to call the notification listener since it won't get called if the
+        -- the app was already closed.
+        notificationListener( launchArgs.notification )
+    end
+
     Runtime:addEventListener( "key", onKeyEvent )
+
+
+    opendoor = display.newImageRect( "images/opendoor.png", W, H ) 
+    opendoor.x , opendoor.y = X , Y 
+
+    timer.performWithDelay( 500, function (  )
+        transition.to( opendoor , {time = 100 , alpha = 0 , onComplete = function (  )
+            composer.gotoScene( "initSetting" )
+
+        end} )
+    end  )
+    
+
 
 end
 
 writeDb = function (  )
     local tablesetup =  [[
-                        INSERT INTO Setting VALUES ( NULL , "" , "" , "" , "" , "" ,"" , "" , "" , "" ,"OFF", 1);
+                        INSERT INTO Setting VALUES ( NULL , "" , "ON" , "" , "想避孕" , "男生" ,"" , "" , "" , "" ,"OFF", 1 , "09:00 上午");
                         ]]
                     --     INSERT INTO Diary VALUES( "" , "2017/11/05" , "1" , "" , "" , "" , "" , "" , "");
 

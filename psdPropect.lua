@@ -112,7 +112,8 @@ createBtn = function (  )
         width = W*0.7,
         height = H*0.1,
         cornerRadius = H*0.028,
-        fillColor = { default={0.12,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        fontColor = { default={0,0,0,1}, over={0,0,0,1} },
+        fillColor = { default={0.9,0.9,0.9,1}, over={0.3,0.3,0.3,1} },
         onEvent = buttonEvent 
     })
 
@@ -127,7 +128,8 @@ createBtn = function (  )
         width = W*0.7,
         height = H*0.1,
         cornerRadius = H*0.028,
-        fillColor = { default={0.12,0.12,0.45,1}, over={0.2,0.78,0.75,0.4} },
+        fontColor = { default={0,0,0,1}, over={0,0,0,1} },
+        fillColor = { default={0.9,0.9,0.9,1}, over={0.3,0.3,0.3,1} },
         onEvent = buttonEvent 
     })
 

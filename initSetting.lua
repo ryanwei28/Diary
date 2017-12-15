@@ -50,6 +50,7 @@ local y = tonumber(string.sub( os.date( "%Y" ) , 1 , 4 ))
 local m = string.format("%02d" , tonumber(os.date( "%m" )))
 local d = string.format("%02d" ,tonumber(os.date( "%d" )))
 local today = y.."/"..m.."/"..d
+local addNotifications 
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -94,6 +95,58 @@ init = function ( _parent )
         end
     end 
 
+    
+end
+
+
+addNotifications = function (  )
+    -- dbDate 
+    -- print(T.addDays( dbDate , -5 ) )
+    local duringNum
+    local recentStartDay3
+
+    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+        duringNum = row.During 
+    end
+   
+
+    for row in database:nrows([[SELECT * FROM Statistics ORDER BY Startday ASC ;]]) do
+        recentStartDay3 = row.StartDay
+    end
+
+    if recentStartDay3 and recentStartDay3 >= recentStartDay3 then
+        
+        for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+            if row.SetSwitch == 1 then 
+                avgDays2 = row.regularCycle
+            elseif row.SetSwitch == 2 then 
+                avgDays2 = row.Cycle
+            end 
+        end 
+        local predictDay = T.addDays(recentStartDay3 , avgDays2)
+        local ddd = T.caculateDays( predictDay , recentStartDay3 )
+
+        -- local tablesetup =  [[
+        --                         DELETE FROM Notifications WHERE NotifyDate >= ']]..T.addDays( dbDate , -7 )..[[' AND NotifyDate <= ']]..T.addDays( dbDate , ddd-9 )..[[' );
+        --                         ]]
+        database:exec([[DELETE FROM Notifications WHERE NotifyDate >= ']]..T.addDays( recentStartDay3 , -7 )..[[' AND NotifyDate <= ']]..T.addDays( recentStartDay3 , ddd-9 )..[[' ;]])
+        -- database:exec(tablesetup)   
+
+
+        notificationSet.loadPlan()
+        notificationSet.startNotify(T.addDays( recentStartDay3 , -7 ) ,notificationSet.alertContent[sexNoti][planNoti].pre7 ,"pre7")
+        notificationSet.startNotify(T.addDays( recentStartDay3 , -1 ) ,notificationSet.alertContent[sexNoti][planNoti].pre1 ,"pre1")
+        notificationSet.startNotify(T.addDays( recentStartDay3 , 0 ) ,notificationSet.alertContent[sexNoti][planNoti].first ,"first")
+        notificationSet.startNotify(T.addDays( recentStartDay3 , duringNum-1 ) ,notificationSet.alertContent[sexNoti][planNoti].last ,"last")
+
+        print(ddd.."DBDATEEEEE")
+        notificationSet.startNotify(T.addDays( recentStartDay3 , ddd-19 ) ,notificationSet.alertContent[sexNoti][planNoti].dg1 ,"dg1")
+        notificationSet.startNotify(T.addDays( recentStartDay3 , ddd-14 ) ,notificationSet.alertContent[sexNoti][planNoti].dg6 ,"dg6")
+        notificationSet.startNotify(T.addDays( recentStartDay3 , ddd-10 ) ,notificationSet.alertContent[sexNoti][planNoti].dgLast ,"dgLast")
+        notificationSet.startNotify(T.addDays( recentStartDay3 , ddd-9 ) ,notificationSet.alertContent[sexNoti][planNoti].safe ,"safe")
+
+        recentStartDay3 = nil
+    end
     
 end
 
@@ -498,7 +551,9 @@ btnEvent = function ( e )
 
                     statisticCount()
                 end 
-                composer.gotoScene( "enterPassword"  )
+
+                addNotifications()
+                composer.gotoScene( "statement" )
             end
             
         elseif e.target.id == "btn1" then 

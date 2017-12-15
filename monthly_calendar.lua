@@ -60,6 +60,7 @@ local periodTable1 = {}
 local periodTable2 = {}
 local periodTable3 = {}
 local periodTable4 = {}
+local whiteRectTable = {}
 local creatMonthlyCalendar 
 local mGroup
 local wd
@@ -87,6 +88,8 @@ local continuance
 local topBg
 local bottomBg
 local legend 
+local todayRect 
+-- local bg1Listener
 -- local bg 
 -- local titleBg
 composer.setVariable( "prevScene", "monthly_calendar" )
@@ -102,6 +105,7 @@ init = function ( _parent )
     -- bg.x , bg.y = X , Y*1.07
     bg1 = display.newRect( _parent, X , Y*0.27 , W, H*0.15 )
     bg1:setFillColor(145/255,215/255,215/255)
+    -- bg1:addEventListener( "touch", bg1Listener )
     -- bg1.x , bg1.y = X , Y*0.35
 
     bg2 = display.newRect( _parent, X , Y*1.487 , W, H*0.15 )
@@ -205,6 +209,7 @@ end
 
 handleButtonEvent = function ( e )
     if ( "ended" == e.phase ) then
+        display.getCurrentStage():setFocus( e.target )
         if e.target.id == "leftBtn" then 
              if removeSw == true  then
                 removeListener()
@@ -263,6 +268,7 @@ handleButtonEvent = function ( e )
 
                 creatMonthlyCalendar()
                 removeSw = true
+                display.getCurrentStage():setFocus( nil )
             end} )
             -- mGroup:removeSelf( )
             -- readMonthDb()
@@ -325,6 +331,7 @@ handleButtonEvent = function ( e )
 
                 creatMonthlyCalendar()
                 removeSw = true
+                display.getCurrentStage():setFocus( nil )
             end} )
             -- mGroup:removeSelf( )
             -- readMonthDb()
@@ -333,6 +340,8 @@ handleButtonEvent = function ( e )
 
         end
     end
+
+    return true 
 end
     
 judgeWeek = function (  )
@@ -521,6 +530,16 @@ setBtn = function (  )
     sceneGroup:insert(disclaimerBtn)
     sceneGroup:insert(statisticsBtn)
     sceneGroup:insert(setupBtn)
+end
+
+bg1Listener = function ( e )
+    if e.phase == "began" then
+        display.getCurrentStage():setFocus( e.target )
+    elseif e.phase == "ended" then
+        display.getCurrentStage():setFocus(nil)
+    end
+
+    return true
 end
 
 fourSqrare = function (  )
@@ -756,6 +775,13 @@ creatMonthlyCalendar = function (  )
                     -- periodTable[i*7+j-7] = display.newText( mGroup,"", -X*0.25 + (firstW + j  ) * W*0.15, H*0.25+ i * H*0.075, native.systemFontBold , H*0.032 )
                     -- periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)
 
+                    whiteRectTable[i*7+j-7] = display.newRect( mGroup, -X*0.185 + (firstW + j  ) * W*0.15, H*0.173 + i * H*0.0765, W*0.135 , H*0.065 )
+                    -- whiteRectTable[i*7+j-7]:setFillColor( 0.5 )
+                    whiteRectTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i*7+j-7)
+                    whiteRectTable[i*7+j-7].day = i*7+j-7
+                    whiteRectTable[i*7+j-7]:addEventListener( "tap", listener )
+
+
                     periodTable1[i*7+j-7] = display.newRect( mGroup , -X*0.18 + (firstW + j  ) * W*0.15, H*0.195+ i * H*0.075, W*0.155, H*0.0374 )
                     periodTable1[i*7+j-7]:setFillColor( 254/255,187/255,108/255 )
                     periodTable1[i*7+j-7].alpha = 0
@@ -781,11 +807,12 @@ creatMonthlyCalendar = function (  )
                     periodTable4[i*7+j-7].alpha = 0
 
                     mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , -X*0.25 + (firstW + j  ) * W*0.15, H*0.195 + i * H*0.0765, font , H*0.0224 )
+                    mCalendarTable[i*7+j-7]:setFillColor( 0 )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
-                    mCalendarTable[i*7+j-7]:setFillColor( 0 )
-                    mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
+                    -- mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
 
+                  
 
                     for l = 1 , #dTable +1  do 
                         -- local e = os.date(os.time{year=string.sub(mCalendarTable[i*7+j-7].id , 1 , 4) ,month=string.sub(mCalendarTable[i*7+j-7].id , 6 , 7),day=string.sub(mCalendarTable[i*7+j-7].id , 9 , 10)})
@@ -893,6 +920,15 @@ creatMonthlyCalendar = function (  )
                 end
 
                 if (firstW + j -1 ) > 6 then     
+                    whiteRectTable[i*7+j-7] = display.newRect( mGroup,  -X*2.29 +  (firstW + j  ) * W*0.15, H*0.17+ (i + 1) * H*0.0765, W*0.135 , H*0.065 )
+                    -- whiteRectTable[i*7+j-7]:setFillColor( 1 )
+                    whiteRectTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d",mNum) .."/"..string.format("%02d",i*7+j-7)
+                    whiteRectTable[i*7+j-7].day = i*7+j-7
+                    whiteRectTable[i*7+j-7]:addEventListener( "tap", listener )
+
+                    -- mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , -X*2.33 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.0765, font , H*0.0224 )
+
+
                     periodTable[i*7+j-7] = display.newText( mGroup, "" , -X*2.33 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.075, native.systemFontBold , H*0.032 )
                     periodTable[i*7+j-7]:setFillColor(0.15,0.41,0.3)    
                     periodTable1[i*7+j-7] = display.newRect( mGroup , -X*2.29 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.075, W*0.155, H*0.0374 )
@@ -920,10 +956,10 @@ creatMonthlyCalendar = function (  )
                     periodTable4[i*7+j-7].alpha = 0
 
                     mCalendarTable[i*7+j-7] = display.newText( mGroup, i*7+j-7 , -X*2.33 +  (firstW + j  ) * W*0.15, H*0.195+ (i + 1) * H*0.0765, font , H*0.0224 )
+                    mCalendarTable[i*7+j-7]:setFillColor( 0 )
                     mCalendarTable[i*7+j-7].id = c..yNum.."/"..string.format("%02d", mNum) .."/"..string.format("%02d",i*7+j-7)
                     mCalendarTable[i*7+j-7].day = i*7+j-7
-                    mCalendarTable[i*7+j-7]:setFillColor( 0 )
-                    mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
+                    -- mCalendarTable[i*7+j-7]:addEventListener( "tap", listener )
                     
                    
 
@@ -999,8 +1035,12 @@ creatMonthlyCalendar = function (  )
                     end 
 
                     if mCalendarTable[i*7+j-7].id == todayNum then
+                        -- todayRect = display.newRect( mGroup,mCalendarTable[i*7+j-7].x+X*0.045 , mCalendarTable[i*7+j-7].y-Y*0.04, W*0.15, H*0.08 )
+                        -- todayRect:setFillColor( 0.3,0.7,0.6,0.3 )
+                        -- todayRect.strokeWidth = H*0.006
+                        -- todayRect:setStrokeColor( 1,0,0 )
                         mCalendarTable[i*7+j-7]:setFillColor( 1,0,0 )
-                        mCalendarTable[i*7+j-7].size = H*0.05
+                        mCalendarTable[i*7+j-7].size = H*0.03
                         mCalendarTable[i*7+j-7].font = native.systemFontBold
                     end
 

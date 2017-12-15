@@ -19,13 +19,14 @@ local overlayOptions = {
             }
         }
 local tabFontSize = H*0.03
+local bg 
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-
+    T.bg(_parent)
     -- Configure the tab buttons to appear within the bar
     local tabButtons = {
         {

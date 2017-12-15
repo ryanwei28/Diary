@@ -38,6 +38,8 @@ local chkOff2
 local chkOn1 
 local chkOn2 
 local onKeyEvent 
+local w1 
+local w2 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -105,6 +107,9 @@ init = function ( _parent )
         indexCycle = row.regularCycle
         regularCycle = row.regularCycle
     end
+
+    w1 = display.newRect( sceneGroup, X*1.55, H*0.266, W*0.24, H*0.21 )
+    w2 = display.newRect( sceneGroup, X*1.55, H*0.665, W*0.24, H*0.21 )
 
     local columnData = 
     { 

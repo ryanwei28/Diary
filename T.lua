@@ -225,6 +225,206 @@ M.options = {
     -- time = 400,
 }
 
+
+adImgData = {
+    -- { defaultFile = "images/mailPackage.png"} , 
+    --  { defaultFile = "images/mailPackage.png"} , 
+}
+--產生廣告幻燈片 x , y 為廣告群組位置 , adImgData：廣告圖片table,table內有幾張圖片就會產生幾則廣告 , sceneGroup：指示器群組 , 滑動功能開啟
+function M.creatAdWall( x , y , adImgData , sceneGroup , openSlide)
+    local adGroup = display.newGroup( )
+    local adDisplacement = W*0.5  --廣告輪播位移量
+    local count = 0
+    local imgNum = 1 --目前顯示圖片編號
+    local tabBtn = {}
+    local indicateGrp = display.newGroup()
+    local img = {}
+    local beganStart = false
+    local adId
+    
+    -- local openSlide
+
+
+    local function requestCallback(event)
+        print("resquestCallBack")
+        if (event.isError) then
+            print("Network error")
+        else
+            print( "RESPONSE" .. event.response )
+            local data = json.decode(event.response)
+            --print(data)
+            if (data['RetCode'] == 1) then
+                --請求成功
+                print("點擊廣告" , adId)
+            else
+                --請求失敗
+                print( "Msg:" .. data["Msg"] )
+            end
+        end
+
+        return true
+    end
+
+    --計時位移涵式
+    local function adTimerStart(  )
+        print("adTimer")
+        adTimer = timer.performWithDelay( 6000 , function (  )
+            adDisplacement = adDisplacement - W
+            transition.to( adGroup , {time = 200 , x = adDisplacement} )
+             -- print( "ad:" , adGroup.x )
+             count = count + 1 
+             imgNum = imgNum + 1 
+            if count == 3 then
+                img[#img+1] = img[1] 
+                img[1].x = img[#img-1].x + W
+                table.remove( img , 1 )
+                count = 2
+            end             
+
+            if ( imgNum == #adImgData + 1 ) then
+                imgNum = 1
+            end
+
+            for i = 1 , #adImgData do 
+                tabBtn[i].alpha = 0.5 
+                tabBtn[imgNum].alpha = 1 
+            end
+        end , -1 )
+    end
+
+    --滑動圖片產生動作涵式
+    function adBottonListener( e )
+
+        local phase = e.phase
+        local obj = e.target
+        if (phase == "began") then 
+            beganStart = true
+            if (openSlide == true )then
+                obj.OldX = adGroup.x
+                -- if (adTimer) then
+                --     timer.cancel( adTimer )
+                -- end
+                display.getCurrentStage():setFocus( e.target )
+            end
+        elseif (phase == "moved") then 
+            if (beganStart == true ) then
+                dx = 0
+                dx = e.x - e.xStart
+                if (openSlide == true )then
+                    adGroup.x = obj.OldX + dx 
+                end
+            end
+        elseif  ( phase == "ended" or phase == "cancelled") then
+            if (beganStart == true) then
+                if (openSlide == true )then
+                    -- adTimerStart()
+                    display.getCurrentStage():setFocus( nil )
+                end
+                 --往右拉
+                if (dx ) and ( dx > 20 ) then 
+                    if (openSlide == true )then
+                        adDisplacement = adDisplacement + W
+                        transition.to( adGroup , {time = 200 , x = adDisplacement} )
+                        count = count - 1 
+                        imgNum = imgNum - 1 
+
+                        if count == -1 then
+                            table.insert( img , 1 , img[#img] ) 
+                            img[#img].x = img[2].x - W*1
+                            table.remove( img , #img )
+                            count = 0
+                        end  
+
+                        if ( imgNum == 0 ) then
+                            imgNum = #adImgData
+                        end
+
+                        for i = 1 , #adImgData do 
+                            tabBtn[i].alpha = 0.5 
+                            tabBtn[imgNum].alpha = 1
+                        end
+
+                        dx = 0
+                    end
+                --往佐拉
+                elseif ( dx ) and ( dx < -20 ) then 
+                    if (openSlide == true )then
+                        adDisplacement = adDisplacement - W
+                        transition.to( adGroup , {time = 200 , x = adDisplacement} )
+                         -- print( "ad:" , adGroup.x )
+                         count = count + 1 
+                         imgNum = imgNum + 1 
+                        if count == 3 then
+                            img[#img+1] = img[1] 
+                            img[1].x = img[#img-1].x + W*1
+                            table.remove( img , 1 )
+                            count = 2
+                        end             
+
+                        if ( imgNum == #adImgData + 1 ) then
+                            imgNum = 1
+                        end
+
+                        for i = 1 , #adImgData do 
+                            tabBtn[i].alpha = 0.5 
+                            tabBtn[imgNum].alpha = 1
+                        end
+
+                        dx = 0
+                    end
+                else
+                    -- composer.setVariable( "websiteName" , contentMI[e.target.id].title )
+                    -- composer.setVariable( "url" , contentMI[e.target.id].url )
+                    -- networkRequest("ad/click" , requestCallback , {ad_id = contentMI[e.target.id].id})
+                    -- composer.gotoScene( "webView" )
+                    -- adId = contentMI[e.target.id].id
+                end 
+                dx = 0
+                beganStart = false
+            end
+        end    
+    end
+
+    --從table取得廣告圖片
+    for i = 1 , #adImgData do 
+        img[i] = display.newImageRect( adGroup, adImgData[i], W, H*0.3 )
+        img[i].x , img[i].y =  i*W-W , H*0.5
+         
+    --              = widget.newButton( {
+    --         baseDir = system.DocumentsDirectory ,
+    --         defaultFile = adImgData[i].defaultFile , 
+    --         width = W , 
+    --         height = 370 * HEIGHT_RATIO ,
+    --         top = 115 * HEIGHT_RATIO , 
+    --         left = i * _SCREEN.W - _SCREEN.W ,
+    --         onEvent = adBottonListener ,
+    --         } )
+        
+        img[i].id = i
+        -- adGroup:insert( img[i] )
+        -- group:insert( adGroup )
+    end
+
+    --產生指示器
+    for i = 1 , #adImgData do 
+        tabBtn[i] = display.newCircle( indicateGrp , i * H*0.0749, y + H*0.674 , 15 )
+        tabBtn[i].alpha = 0.5
+        tabBtn[1].alpha = 1
+    end
+
+    indicateGrp.x = X
+    indicateGrp.y = y + H*0.674
+    indicateGrp.anchorChildren = true
+    sceneGroup:insert( indicateGrp )
+    adGroup.x , adGroup.y = x , y
+
+     -- adTimerStart(  )
+    adGroup:addEventListener( "touch", adBottonListener )
+
+    return adGroup
+end
+
+
 return M
 
 

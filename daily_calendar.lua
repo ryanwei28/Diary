@@ -87,6 +87,7 @@ local maskGroup = display.newGroup( )
 local helpImg
 local helpImgX
 local mask 
+local scrollView
 
 composer.setVariable( "prevScene", "daily_calendar" )
 
@@ -116,6 +117,20 @@ init = function ( _parent )
     whiteRect = display.newRoundedRect( _parent, X, Y*1.35, W*0.84, H*0.645, H*0.015 )
     -- bg = display.newRect( _parent, X, Y, W, H )
     -- bg.alpha = 0.01
+    scrollView = widget.newScrollView
+    {
+        x = X,
+        y = Y*1.62 ,
+        width = W*0.8,
+        height = H*0.2,
+        hideBackground = true , 
+        -- scrollWidth = 600,
+        -- scrollHeight = 800,
+        horizontalScrollDisabled = true
+    }
+
+    sceneGroup:insert(scrollView)
+
 
     -- title = display.newText( _parent, "日曆", X, Y*0.14, bold , H*0.032 )
 
@@ -161,9 +176,11 @@ init = function ( _parent )
     BMIText = display.newText( _parent , "請至設定頁設定身高", X*2*0.2026, bmiImg.y , bold , H*0.024 )
     BMIText:setFillColor(  170/255 )
     BMIText.anchorX = 0
-    noticText = display.newText( _parent , "尚無紀錄", X*2*0.2026, noteImg.y , bold , H*0.024 )
+    noticText = display.newText( _parent , "尚無紀錄", X*0.2, H*0.025 ,W*0.7 , 0 , bold , H*0.024 )
     noticText:setFillColor(  170/255 )
     noticText.anchorX = 0
+    noticText.anchorY = 0
+    scrollView:insert(noticText)
 
     statusText = display.newText( _parent , "今天是安全期", X, Y*0.79 , bold , H*0.024 )
     statusText:setFillColor( 254/255,118/255,118/255 )

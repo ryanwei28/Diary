@@ -118,12 +118,32 @@ local onKeyEvent
 local onKeyEvent2
 local pkwBg
 local pkwTitle
+local addNotifications 
+local deleteNotifications 
+local changeHoliday
+local holiday = "ss"
+local holidayTable = {
+    {"02/14" , "西洋情人節" } ,
+    {"08/17" , "七夕情人節" } ,
+     -- {"11/25" , "七夕情人節!!" } ,
+    {"12/24" , "聖誕夜" } ,
+    {"12/31" , "跨年夜" } ,
+}
+
+
+local alertContent = {}
+alertContent.Boy = {}
+alertContent.Girl = {}
+
+-- local A = {}
+
+-- A.holiday = ""
+-- return A
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 init = function ( _parent )
-
     -- title = display.newText( _parent, "紀錄", X, Y*0.2, font , H*0.045 )
     T.bg(_parent)
     T.title("紀錄" , sceneGroup)
@@ -251,11 +271,53 @@ init = function ( _parent )
     -- Runtime:removeEventListener( "key", onKeyEvent2 )
 end
 
+changeHoliday = function ( sex , plan , holiday , dayType )
+    
+    alertContent.Boy.Bi = { 
+        
+        holidaySafe = "今天是"..holiday.."，放鬆心情狂歡一下！雖為安全期，建議還是採取避孕措施" ,
+        holidayDg = "今天是"..holiday.."，恰好為她的易孕期，要記得採取避孕措施唷！" ,
+        holidayDg6 = "今天是"..holiday.."，恰好為她的預測排卵日，要記得採取避孕措施唷！" , 
+        holidayPre7 = "今天是"..holiday.."，她的經期預計7天後開始，要好好服侍可能陰晴不定的她" , 
+        holidayDuring = "今天是"..holiday.."，她的好朋友恰巧來訪，發揮你體貼的一面，與她溫馨共同度過"
+    }
+
+    alertContent.Boy.Huai = {
+       
+        holidaySafe = "今天是"..holiday.."，放鬆心情狂歡一下吧！" ,
+        holidayDg = "今天是"..holiday.."，恰好為她的易孕期，要好好把握努力做人！" ,
+        holidayDg6 = "今天是"..holiday.."，恰好為她的預測排卵日，好好把握唷！" , 
+        holidayPre7 = "今天是"..holiday.."，她的經期預計7天後開始，要好好服侍可能陰晴不定的她" , 
+        holidayDuring = "今天是"..holiday.."，她的好朋友恰巧來訪，發揮你體貼的一面，與她溫馨共同度過"
+    }
+
+    alertContent.Girl.Bi = {
+       
+        holidaySafe = "今天是"..holiday.."，放鬆心情狂歡一下！雖為安全期，建議還是採取避孕措施" ,
+        holidayDg = "今天是"..holiday.."，恰好為易孕期，要記得採取避孕措施唷！" ,
+        holidayDg6 = "今天是"..holiday.."，恰好為預測排卵日，要記得採取避孕措施唷！" , 
+        holidayPre7 = "今天"..holiday.."，為經期前一週，注意抑油控痘舒壓，可多泡熱水澡促進血液循環" , 
+        holidayDuring = "今天是"..holiday.."，雖然好朋友來訪，也要溫馨共同度過。"
+    }
+
+    alertContent.Girl.Huai = {
+       
+        holidaySafe = "今天是"..holiday.."，放鬆心情狂歡一下吧！" ,
+        holidayDg = "今天是"..holiday.."，恰好為易孕期，好好把握努力做人！" ,
+        holidayDg6 = "今天是"..holiday.."，恰好為預測排卵日，好好把握唷！" , 
+        holidayPre7 = "今天"..holiday.."，為經期前一週，注意抑油控痘舒壓，可多泡熱水澡促進血液循環" , 
+        holidayDuring = "今天是"..holiday.."，雖然好朋友來訪，也要溫馨共同度過。"
+
+    }
+
+    return alertContent[sex][plan][dayType]
+end
+
 onKeyEvent = function( event )
 
     -- Print which key was pressed down/up
     local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
-    print( message )
+    -- print( message )
  
     -- If the "back" key was pressed on Android, prevent it from backing out of the app
     if (event.phase == "down" and event.keyName == "back") then
@@ -269,6 +331,8 @@ onKeyEvent = function( event )
                 clearPickerWheelBtn:removeSelf( )
                 chkPickerWheelBtn:removeSelf( )
                 mask:removeSelf( )
+                pkwBg:removeSelf()
+                pkwTitle:removeSelf()
                 Runtime:removeEventListener( "key", onKeyEvent )
                 timer.performWithDelay( 1, function ( )
                     Runtime:addEventListener( "key", onKeyEvent2 )
@@ -288,7 +352,7 @@ onKeyEvent2 = function( event )
 
     -- Print which key was pressed down/up
     local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
-    print( message )
+    -- print( message )
  
     -- If the "back" key was pressed on Android, prevent it from backing out of the app
     if (event.phase == "down" and event.keyName == "back") then
@@ -371,10 +435,10 @@ handleButtonEvent = function ( e )
             -- dateText2.text = c..yNum.."  "..week
             checkDb()
             readDb()
-            print( c..y..m..d..":"..week )
+            -- print( c..y..m..d..":"..week )
         elseif e.target.id == "rightBtn" then 
             rightLeapYear()
-            print( daysTable[14] )
+            -- print( daysTable[14] )
             d = d + 1 
             if d > daysTable[m] then 
                 d = 1 
@@ -403,7 +467,7 @@ handleButtonEvent = function ( e )
             dateText1.text = c..yNum.."/"..mNum.."/"..d
             dbDate = c..yNum.."/"..string.format("%02d" ,mNum ).."/"..string.format("%02d" ,d )
             -- dateText2.text = c..yNum.."  "..week
-            print( c..y..m..d..":"..week )
+            -- print( c..y..m..d..":"..week )
             checkDb()
             readDb()
         end
@@ -922,7 +986,7 @@ readDb = function (  )
     else
         for row in database:nrows([[SELECT * FROM Statistics ORDER BY Startday ASC ;]]) do
             recentStartDay2 = row.StartDay
-            print(111111111111)
+            -- print(111111111111)
         end
 
         if recentStartDay2 then
@@ -936,7 +1000,7 @@ readDb = function (  )
 
             local predictDay = T.addDays(recentStartDay2 , avgDays2)
             local ddd = T.caculateDays( predictDay , dbDate)
-            print(ddd.."::::")
+            -- print(ddd.."::::")
             if ddd > 9 and ddd <= 19 then
                 statusText.text = "今天是預測危險期"
             end 
@@ -946,7 +1010,7 @@ readDb = function (  )
             end
 
             for row in database:nrows([[SELECT * FROM Setting ;]]) do
-                if ddd <= 0 and ddd > -row.During +1 then 
+                if ddd <= 0 and ddd >= -row.During +1 then 
                     statusText.text = "今天是預測經期"
                 end
             end 
@@ -1058,6 +1122,8 @@ checkBoxBtnEvent = function ( e )
                     end
                     addPeriodDay()
                     startStatisticalDays()
+
+                    addNotifications()
                 elseif judgeDayStart == "tooClose" then
                     print( judgeDayStart..":jjjday" )
                     T.alert("tooClose")
@@ -1091,9 +1157,11 @@ checkBoxBtnEvent = function ( e )
                             end
                             -- ch1Text.text = ""
                             checkbox_on1.alpha = 0
+                            deleteNotifications()
                             database:exec([[UPDATE Diary SET Start = "" , StartDays = "" WHERE date =']]..dbDate..[[';]])
                             database:exec([[DELETE FROM Statistics WHERE StartDay =']]..dbDate..[[';]])
                             readDb()
+                            
                             -- judgeDayEnd = "startDelete"
                         end
                     end
@@ -1134,8 +1202,170 @@ checkBoxBtnEvent = function ( e )
     -- newStatisticalDays()
     -- statisticalDays()
     readDb()
+    -- addNotifications()
 end
 
+addNotifications = function (  )
+    -- dbDate 
+    -- print(T.addDays( dbDate , -5 ) )
+    local duringNum
+    local recentStartDay3 = {}
+    local s = 0 
+
+    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+        duringNum = row.During 
+    end
+   
+
+    for row in database:nrows([[SELECT * FROM Statistics ORDER BY Startday ASC ;]]) do
+        s = s + 1
+        recentStartDay3[s] = row.StartDay
+    end
+
+  
+    if dbDate >= recentStartDay3[s] then
+        
+        for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+            if row.SetSwitch == 1 then 
+                avgDays2 = row.regularCycle
+            elseif row.SetSwitch == 2 then 
+                avgDays2 = row.Cycle
+            end 
+        end 
+        local predictDay = T.addDays(recentStartDay3[s] , avgDays2)
+        local ddd = T.caculateDays( predictDay , dbDate )
+
+        -- local tablesetup =  [[
+        --                         DELETE FROM Notifications WHERE NotifyDate >= ']]..T.addDays( dbDate , -7 )..[[' AND NotifyDate <= ']]..T.addDays( dbDate , ddd-9 )..[[' );
+        --                         ]]
+        local idTabel = {}
+        local index = 0 
+
+        for row in database:nrows([[SELECT * FROM Notifications WHERE NotifyDate >= ']]..T.addDays( recentStartDay3[s] , -7 )..[[' AND NotifyDate <= ']]..T.addDays( recentStartDay3[s] , 40 )..[[' ;]]) do
+            index = index + 1 
+            idTabel[index] = row.RandomId 
+        end
+
+        -- for i = 1 , #idTabel do 
+        --     -- print( idTabel[i] )
+        --     notifications.cancelNotification( notificationIDtable[idTabel[i]] )
+        -- end 
+
+        notifications.cancelNotification(  )
+
+
+        database:exec([[DELETE FROM Notifications WHERE NotifyDate >= ']]..T.addDays( recentStartDay3[s] , -7 )..[[' AND NotifyDate <= ']]..T.addDays( recentStartDay3[s] ,40 )..[[' ;]])  --T.addDays( recentStartDay3[s] ,41 )
+        print("DELETE:"..T.addDays( recentStartDay3[s] ,41 ))
+        -- database:exec(tablesetup)   
+
+        -- print(T.addDays( dbDate , -7 )..":"..T.addDays( dbDate , ddd-9 ))
+
+        notificationSet.loadPlan()
+        local holidayJudgePre7 = string.sub( T.addDays( dbDate , ddd-7 ) , 6,10 ) 
+        for i = 1 , #holidayTable do
+            if holidayJudgePre7 == holidayTable[i][1] then
+                                print("{}{}{}{}{}{}{}{}{}ASDSAD")
+
+                notificationSet.startNotify(T.addDays( dbDate , ddd-7 ) ,changeHoliday(sexNoti,planNoti,holidayTable[i][2],'holidayPre7') ,"holidayPre7")
+            end 
+        end
+
+        local holidayJudgeDg6 = string.sub( T.addDays( dbDate , ddd-14 ) , 6,10 ) 
+        for i = 1 , #holidayTable do
+            if holidayJudgeDg6 == holidayTable[i][1] then
+                -- holiday = holidayTable[i][2]
+                -- print(changeHoliday(sexNoti,planNoti,holidayTable[i][2],'holidayDg6') )
+                -- print(alertContent[sexNoti][planNoti].holidayDg6)
+                notificationSet.startNotify(T.addDays( dbDate , ddd-14 ) ,changeHoliday(sexNoti,planNoti,holidayTable[i][2],'holidayDg6') ,"holidayDg6")
+
+            end 
+        end
+       
+        notificationSet.startNotify(T.addDays( dbDate , ddd-7 ) ,notificationSet.alertContent[sexNoti][planNoti].Mpre7 ,"Mpre7")
+        notificationSet.startNotify(T.addDays( dbDate , 1 ) ,notificationSet.alertContent[sexNoti][planNoti].Mstart2 ,"Mstart2")
+        notificationSet.startNotify(T.addDays( dbDate , duringNum-1 ) ,notificationSet.alertContent[sexNoti][planNoti].Mlast ,"Mlast")
+        notificationSet.startNotify(T.addDays( dbDate , duringNum ) ,notificationSet.alertContent[sexNoti][planNoti].Mend1 ,"Mend1")
+        notificationSet.startNotify(T.addDays( dbDate , ddd-13 ) ,notificationSet.alertContent[sexNoti][planNoti].Mdg7 ,"Mdg7")
+
+
+        notificationSet.startNotify(T.addDays( dbDate , ddd-7 ) ,notificationSet.alertContent[sexNoti][planNoti].pre7 ,"pre7")
+        notificationSet.startNotify(T.addDays( dbDate , ddd-1 ) ,notificationSet.alertContent[sexNoti][planNoti].pre1 ,"pre1")
+        notificationSet.startNotify(T.addDays( dbDate , 0 ) ,notificationSet.alertContent[sexNoti][planNoti].first ,"first")
+        notificationSet.startNotify(T.addDays( dbDate , duringNum-1 ) ,notificationSet.alertContent[sexNoti][planNoti].last ,"last")
+
+        notificationSet.startNotify(T.addDays( dbDate , 40 ) ,notificationSet.alertContent[sexNoti][planNoti].Mno40 ,"Mno40")
+        -- print(ddd.."DBDATEEEEE")
+        notificationSet.startNotify(T.addDays( dbDate , ddd-19 ) ,notificationSet.alertContent[sexNoti][planNoti].dg1 ,"dg1")
+        notificationSet.startNotify(T.addDays( dbDate , ddd-14 ) ,notificationSet.alertContent[sexNoti][planNoti].dg6 ,"dg6")
+        notificationSet.startNotify(T.addDays( dbDate , ddd-10 ) ,notificationSet.alertContent[sexNoti][planNoti].dgLast ,"dgLast")
+        notificationSet.startNotify(T.addDays( dbDate , ddd-9 ) ,notificationSet.alertContent[sexNoti][planNoti].safe ,"safe")
+
+        for i = 1 , #holidayTable do
+            if holidayTable[i][1] >= string.sub( T.addDays( dbDate , ddd-19 ),6,10) and  holidayTable[i][1] < string.sub( T.addDays( dbDate , ddd-9 ) ,6,10) then 
+                print(holidayTable[i][2]..holidayTable[i][1])
+                -- print( string.sub(dbDate , 1,5).."/"..holidayTable[i][1].."PPPPPPPPP")
+                notificationSet.startNotify( string.sub(dbDate , 1,4).."/"..holidayTable[i][1] ,changeHoliday(sexNoti,planNoti,holidayTable[i][2],'holidayDg') ,"holidayDg")
+            elseif holidayTable[i][1] >= string.sub( T.addDays( dbDate , 0 ) , 6,10) and holidayTable[i][1] <= string.sub( T.addDays( dbDate , duringNum-1 ) , 6 , 10) then 
+                notificationSet.startNotify( string.sub(dbDate , 1,4).."/"..holidayTable[i][1] ,changeHoliday(sexNoti,planNoti,holidayTable[i][2],'holidayDuring' ),"holidayDuring")
+                -- print(holidayTable[i][2]..holidayTable[i][1].."危險")
+            elseif holidayTable[i][1] >= string.sub( T.addDays( dbDate , 0 ) , 6,10) and holidayTable[i][1] <= string.sub(T.addDays( dbDate , ddd-1 ) , 6 , 10 ) then
+                notificationSet.startNotify( string.sub(dbDate , 1,4).."/"..holidayTable[i][1] ,changeHoliday(sexNoti,planNoti,holidayTable[i][2],'holidaySafe' ) ,"holidaySafe")
+                -- print(holidayTable[i][2]..holidayTable[i][1])
+                print( T.addDays( dbDate , ddd-1 ).."SADSADSADSA" )
+            end 
+        end
+        recentStartDay3 = nil
+    end
+end
+
+deleteNotifications = function (  )
+    local duringNum
+    local recentStartDay3 = {}
+    local s = 0 
+
+    for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+        duringNum = row.During 
+    end
+   
+
+    for row in database:nrows([[SELECT * FROM Statistics ORDER BY Startday ASC ;]]) do
+        s = s + 1
+        recentStartDay3[s] = row.StartDay
+    end
+
+    print(dbDate)
+    print(recentStartDay3[s])
+    print(recentStartDay3[s]==dbDate)
+  
+    if dbDate == recentStartDay3[s] then
+        
+        for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
+            if row.SetSwitch == 1 then 
+                avgDays2 = row.regularCycle
+            elseif row.SetSwitch == 2 then 
+                avgDays2 = row.Cycle
+            end 
+        end 
+        local predictDay = T.addDays(recentStartDay3[s] , avgDays2)
+        local ddd = T.caculateDays( predictDay , dbDate )
+
+        local idTabel = {}
+        local index = 0 
+
+        for row in database:nrows([[SELECT * FROM Notifications WHERE NotifyDate >= ']]..T.addDays( recentStartDay3[s] , -7 )..[[' AND NotifyDate <= ']]..T.addDays( recentStartDay3[s] , 40 )..[[' ;]]) do
+            index = index + 1 
+            idTabel[index] = row.RandomId 
+        end
+
+        -- for i = 1 , #idTabel do 
+        --     -- print( idTabel[i] )
+        --     notifications.cancelNotification( notificationIDtable[idTabel[i]] )
+        -- end 
+        notifications.cancelNotification( )
+
+        database:exec([[DELETE FROM Notifications WHERE NotifyDate >= ']]..T.addDays( recentStartDay3[s] , -7 )..[[' AND NotifyDate <= ']]..T.addDays( recentStartDay3[s] , 40 )..[[' ;]])
+    end
+end
 
 addPeriodDay = function (  )
     --找出前面日期
@@ -1146,7 +1376,7 @@ addPeriodDay = function (  )
     local sYear = os.date( "%Y" , s )
     local sMonth = os.date( "%m" , s )
     local sDay = os.date( "%d", s )
-    print( sYear..sMonth..sDay.."&&&&&&&" )
+    -- print( sYear..sMonth..sDay.."&&&&&&&" )
     --=======================================================================
 
     --加入period編號
@@ -1218,7 +1448,7 @@ continuanceCount = function (  )
             local e = os.date(os.time({year = string.sub( continuTable[i+1] , 1 , 4 ), month = string.sub( continuTable[i+1] , 6 , 7) , day = string.sub( continuTable[i+1] , 9 , 10)}))
             local n = (24*60*60)
             local d = (e-s)/n
-            print( d.."qq"..i )
+            -- print( d.."qq"..i )
             -- print( continuTable[i] )
             database:exec([[UPDATE Statistics SET Padding = ']]..d..[[' WHERE StartDay =']]..continuTable[i+1]..[[';]])
         end
@@ -1359,6 +1589,7 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
+        Runtime:removeEventListener( "key", onKeyEvent )
         Runtime:removeEventListener( "key", onKeyEvent2 )
         composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then

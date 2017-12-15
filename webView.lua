@@ -11,16 +11,8 @@ local init
 local sceneGroup
 local month
 local banner
-local listener 
-
-local imgs = {
-   "1.jpg"  ,
-   -- "2.jpg"  ,
-   -- "3.jpg"  ,
-   -- "4.jpg"  ,
-   -- "5.jpg"  ,
-}
-
+local preScene = composer.getVariable( "preScene" )
+local webView
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -29,13 +21,14 @@ local imgs = {
 init = function ( _parent )
     bg = display.newRect( _parent, X, Y*1.07, W, H )
     bg:setFillColor( 145/255,215/255,215/255 )
-    T.title("Hot News" , sceneGroup)
+    -- T.title("Hot News" , sceneGroup)
 
     -- T.creatAdWall( X , H*0.1 , imgs , sceneGroup , true)
+    T.backBtn(sceneGroup , preScene)
 
-    banner = display.newImageRect( sceneGroup, "ad.jpg", W, H*0.079 )
-    banner.x , banner.y =  X, H*0.884 
-    banner:addEventListener("tap" , listener)
+    webView = native.newWebView( X, Y, W, H*0.8 )
+    webView:request( "http://www.ppc-life.com.tw" )
+  
     -- month = native.newTextField( X*0.9, Y*0.7, W*0.7, H*0.1 )
     -- _parent:insert(month)
   
@@ -48,10 +41,6 @@ init = function ( _parent )
     -- notificationSet.closeNotify()
 end
 
-listener = function ( e )
-    composer.setVariable( "preScene", "hotNews" )
-    composer.showOverlay( "webView" )
-end
 
     
  
@@ -91,7 +80,7 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        
+        webView:removeSelf( )
         composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
