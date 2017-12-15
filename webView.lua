@@ -13,7 +13,15 @@ local month
 local banner
 local preScene = composer.getVariable( "preScene" )
 local webView
-
+local pink 
+local backBtn 
+local listener 
+local black 
+local preBtn 
+local nextBtn 
+local reloadBtn 
+local stopBtn 
+local openNewBtn 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -24,11 +32,55 @@ init = function ( _parent )
     -- T.title("Hot News" , sceneGroup)
 
     -- T.creatAdWall( X , H*0.1 , imgs , sceneGroup , true)
-    T.backBtn(sceneGroup , preScene)
 
-    webView = native.newWebView( X, Y, W, H*0.8 )
+
+
+
+    webView = native.newWebView( X, Y*0.07+H*0.066, W, H*0.76 )
+    webView.anchorY = 0 
+    _parent:insert(webView)
     webView:request( "http://www.ppc-life.com.tw" )
-  
+    
+    pink = display.newImageRect( _parent, "images/web_navbar@3x.png", W, H*0.066 )
+    pink.anchorY = 0 
+    pink.x , pink.y = X , Y*0.07
+
+    backBtn = widget.newButton( {
+        x = W*0.08,
+        y = H*0.067, 
+        width = W*0.133 ,
+        height = H*0.045 ,
+        defaultFile = "images/web_back@3x.png",
+        overFile = "images/web_back_press@3x.png", 
+        onEvent = listener ,
+
+        } )
+
+    _parent:insert(backBtn)
+
+    black =  display.newImageRect( _parent, "images/web_tabbar@3x.png", W, H*0.0764 )
+    black.anchorY = 0 
+    black.x , black.y = X , H*0.85
+
+    preBtn =  display.newImageRect( _parent, "images/web_prev@3x.png",  H*0.045, H*0.045 )
+    preBtn.anchorY = 0 
+    preBtn.x , preBtn.y = W*0.07 , H*0.865
+
+    nextBtn =  display.newImageRect( _parent, "images/web_next@3x.png",  H*0.045, H*0.045 )
+    nextBtn.anchorY = 0 
+    nextBtn.x , nextBtn.y = W*0.2 , H*0.865
+
+    stopBtn =  display.newImageRect( _parent, "images/web_stop@3x.png", H*0.045, H*0.045 )
+    stopBtn.anchorY = 0 
+    stopBtn.x , stopBtn.y = W*0.4 , H*0.865
+
+    reloadBtn =  display.newImageRect( _parent, "images/web_reload@3x.png", H*0.045, H*0.045 )
+    reloadBtn.anchorY = 0 
+    reloadBtn.x , reloadBtn.y = W*0.78 , H*0.865
+
+    openNewBtn =  display.newImageRect( _parent, "images/web_share@3x.png", H*0.045, H*0.045 )
+    openNewBtn.anchorY = 0 
+    openNewBtn.x , openNewBtn.y = W*0.92 ,  H*0.865
     -- month = native.newTextField( X*0.9, Y*0.7, W*0.7, H*0.1 )
     -- _parent:insert(month)
   
@@ -41,7 +93,11 @@ init = function ( _parent )
     -- notificationSet.closeNotify()
 end
 
-
+listener = function ( e )
+    if e.phase == "ended" then 
+        composer.showOverlay( preScene )
+    end 
+end
     
  
       
@@ -80,7 +136,7 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        webView:removeSelf( )
+        -- webView:removeSelf( )
         composer.recycleOnSceneChange = true
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
