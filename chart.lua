@@ -96,10 +96,15 @@ init = function ( _parent )
     -- end
 
     -- printPlot()
-    printTemperaturePlot()
     createBtn()
     -- end
-     T.title("圖表" , sceneGroup)
+    T.title("圖表" , sceneGroup)
+
+    timer.performWithDelay( 1, function (  )
+        printTemperaturePlot()
+
+    end  )
+
 end
 
 

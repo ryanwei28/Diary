@@ -90,7 +90,7 @@ init = function ( _parent )
         {
             top = H-H*0.078,
             left = 0 , 
-            width = W,
+            width = W+1,
             height =  H*0.078 , 
             buttons = tabButtons ,
             labelColor = { default={ 0.95, 1, 1 }, over={ 0.12, 0, 0, 0.5 } } ,
