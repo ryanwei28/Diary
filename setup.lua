@@ -245,6 +245,8 @@ init = function ( _parent )
    timer.performWithDelay( 1, function (  )
        Runtime:addEventListener( "key", onKeyEvent )
    end )
+
+
 end
 
 notifyTimeBtnListener = function ( e )
@@ -384,6 +386,13 @@ createPickerWheelBtn = function (  )
                 --     local v3 = values[3].value
                 --     database:exec([[UPDATE Diary SET Weight =']]..v1..v2..v3..[[' WHERE date =']]..dbDate..[[';]])
                 -- end
+
+                if v1 == "下午" then 
+                    v2 = v2 + 12 
+                end 
+
+                print(v2..":"..v3)
+                database:exec([[UPDATE Notifications SET UTCTime = ']]..v2..":"..v3..[[' ;]])
                 notificationSet.closeNotify()
                 notificationSet.reOpenNotify()
             end
@@ -533,11 +542,12 @@ createSwitch = function ( sPadding , sX , sY ,t1 , t2 , id , gr , sWidth )
                                 transition.to( e.target , {time = 200 , x =- W*0.157} )
                                 transition.to( cTable[2] , {time = 200 , x = X*1.4} )
                                 notificationSet.closeNotify()
+                                database:exec([[DELETE FROM Notifications ;]])
                             end
                         end
                     end
                   
-                    local alert = native.showAlert( "","將此通知功能關閉，日後將無法在收到任何本APP「個人化通知」中自動排程的貼心提醒，已排程的提醒亦會全數刪除。\n \n是否確定關閉？", { "NO","YES" }, onCompleteNoti )
+                    local alert = native.showAlert( "","將此通知功能關閉，日後將無法再收到任何本APP「個人化通知」中自動排程的貼心提醒，已排程的提醒亦會全數刪除。\n \n是否確定關閉？", { "NO","YES" }, onCompleteNoti )
 
                 else
                     database:exec([[UPDATE Setting SET Notification = "ON" WHERE id = 1 ;]])
@@ -723,8 +733,8 @@ tallSet = function (  )
     textField = native.newTextField( X, H*0.33, W*0.3, H*0.05 )
     textField.placeholder = tt
     textField.hasBackground = false
-    native.setKeyboardFocus( textField )
     textField.inputType = "number"
+    native.setKeyboardFocus( textField )
     textField:addEventListener( "userInput", talltextListener )
     textField:setTextColor(226/255,68/255,61/255)
     setGroup:insert(textField)

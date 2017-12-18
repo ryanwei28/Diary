@@ -287,7 +287,7 @@ function M.startNotify ( notiDate , alertContent , type )
 
 		local options = {
 		   alert = alertContent ,
-		   badge = 0,
+		   badge = 1,
 		   -- sound = "notification.wav",
 		   custom = { id = randomId }
 		}		
@@ -517,7 +517,7 @@ function M.reOpenNotify(  )
 
 				local options = {
 				   alert = alertCont ,
-				   badge = 0,
+				   -- badge = 1,
 				   -- sound = "notification.wav",
 				   custom = { id = idTabel[i] }
 				}

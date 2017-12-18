@@ -26,7 +26,7 @@ sqlite3 = require "sqlite3"
 path = system.pathForFile("data.db", system.DocumentsDirectory)
 database = sqlite3.open( path )
 display.setStatusBar( display.LightTransparentStatusBar )
-bold = "cwTeXHei-zhonly"
+bold = "NotoSansCJKtc-Medium"
 
 local main 
 local writeDb
@@ -34,30 +34,8 @@ local checkDb
 local ttt 
 local launchArgs = ...
 local opendoor
-
--- local options = {
---     frames =
---     {
---         { x=28, y=28, width=40, height=40 },
---         { x=68, y=28, width=240, height=40 },
---         { x=308, y=28, width=40, height=40 },
---         { x=28, y=68, width=40, height=240 },
---         { x=308, y=68, width=40, height=240 },
---         { x=28, y=308, width=40, height=40 },
---         { x=68, y=308, width=240, height=40 },
---         { x=308, y=308, width=40, height=40 },
---         { x=68, y=68, width=64, height=80 },
---         { x=68, y=228, width=64, height=80 },
---         { x=580, y=28, width=64, height=40 },
---         { x=580, y=148, width=64, height=40 },
---         { x=580, y=228, width=24, height=68 }
---     },
---     sheetContentWidth = 662,  --606
---     sheetContentHeight = 376,  --320
--- }
-
--- -- display.newRoundedRect( [parent,], x, y, width, height, cornerRadius )
--- pickerWheelSheet = graphics.newImageSheet( "images/picker.png", options )
+local downloadImg 
+local networkListener
 
 main = function (  )
     
@@ -120,7 +98,7 @@ main = function (  )
 
         end
 
-        native.setProperty( "applicationIconBadgeNumber", 0 )
+        -- native.setProperty( "applicationIconBadgeNumber", 0 )
 
     end
     
@@ -129,7 +107,7 @@ main = function (  )
 
      if launchArgs and launchArgs.notification then
         
-        native.showAlert( "LaunchArgs Found", launchArgs.notification.alert, { "OK" } )
+        native.showAlert( "Girl's Diary", launchArgs.notification.alert, { "OK" } )
         
         -- Need to call the notification listener since it won't get called if the
         -- the app was already closed.
@@ -138,6 +116,9 @@ main = function (  )
 
     Runtime:addEventListener( "key", onKeyEvent )
 
+    downloadImg("banner.jpg","http://design.unidyna.com/ryan/banner.jpg")
+    downloadImg("hotnews1.jpg","http://design.unidyna.com/ryan/hotnews1.jpg")
+    downloadImg("hotnews2.jpg","http://design.unidyna.com/ryan/hotnews2.jpg")
 
     opendoor = display.newImageRect( "images/opendoor.png", W, H ) 
     opendoor.x , opendoor.y = X , Y 
@@ -152,6 +133,49 @@ main = function (  )
 
 
 end
+
+downloadImg = function ( filename , url )
+    local params = {}
+     
+    -- Tell network.request() that we want the "began" and "progress" events:
+    params.progress = "download"
+     
+    -- Tell network.request() that we want the output to go to a file:
+    params.response = {
+        filename = filename,
+        baseDirectory = system.DocumentsDirectory
+    }
+      
+    network.request( url , "GET", networkListener,  params )
+end
+
+
+networkListener = function( event )
+    if ( event.isError ) then
+        print( "Network error: ", event.response )
+ 
+    elseif ( event.phase == "began" ) then
+        if ( event.bytesEstimated <= 0 ) then
+            print( "Download starting, size unknown" )
+        else
+            print( "Download starting, estimated size: " .. event.bytesEstimated )
+        end
+ 
+    elseif ( event.phase == "progress" ) then
+        if ( event.bytesEstimated <= 0 ) then
+            print( "Download progress: " .. event.bytesTransferred )
+        else
+            print( "Download progress: " .. event.bytesTransferred .. " of estimated: " .. event.bytesEstimated )
+        end
+         
+    elseif ( event.phase == "ended" ) then
+       
+        print( "Download complete, total bytes transferred: " .. event.bytesTransferred )
+
+        -- display.newImageRect( sceneGroup, "corona.jpg", system.DocumentsDirectory , W, H*0.3 )
+    end
+end
+
 
 writeDb = function (  )
     local tablesetup =  [[

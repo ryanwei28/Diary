@@ -46,11 +46,19 @@ init = function ( _parent )
 
     -- display.newText( _parent, "DIY", X, Y, font , 50 )
     -- banner = display.newRect( sceneGroup, X, H*0.884, W, H*0.079 )
-    -- banner:setFillColor( 0.5 )
-    banner = display.newImageRect( sceneGroup, "ad.jpg", W, H*0.079 )
-    banner.x , banner.y =  X, H*0.884 
-    banner:addEventListener("tap" , listener)
+    -- -- banner:setFillColor( 0.5 )
+    -- banner = display.newImageRect( sceneGroup, "ad.jpg", W, H*0.079 )
+    -- banner.x , banner.y =  X, H*0.884 
+    -- banner:addEventListener("tap" , listener)
 
+
+    banner = display.newImageRect( sceneGroup, "banner.jpg", system.DocumentsDirectory ,  W, H*0.079 )
+   
+    if banner then 
+        banner.x , banner.y =  X, H*0.884 
+        banner:addEventListener("tap" , listener)
+    end 
+    
     tableView = widget.newTableView(
     {
         left = W*0.025,

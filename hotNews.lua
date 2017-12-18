@@ -12,8 +12,10 @@ local sceneGroup
 local month
 local banner
 local listener 
+local networkListener 
 local img1 
 local img2 
+ local i = 0  
 
 local imgs = {
    "1.jpg"  ,
@@ -35,17 +37,8 @@ init = function ( _parent )
 
     -- T.creatAdWall( X , H*0.1 , imgs , sceneGroup , true)
 
-    banner = display.newImageRect( sceneGroup, "ad.jpg", W, H*0.079 )
-    banner.x , banner.y =  X, H*0.884 
-    banner:addEventListener("tap" , listener)
-    -- month = native.newTextField( X*0.9, Y*0.7, W*0.7, H*0.1 )
-    -- _parent:insert(month)
-    img1 = display.newRect( _parent, X, Y*0.6, W*0.9, H*0.338 )
-    img1.strokeWidth = 2
-    img1:setStrokeColor(0.8)
-    img2 = display.newRect( _parent, X, Y*1.33, W*0.9, H*0.338 )
-    img2.strokeWidth = 2
-    img2:setStrokeColor(0.8)
+    -- img2.strokeWidth = 2
+    -- img2:setStrokeColor(0.8)
     -- notificationSet.startNotify("2017/11/15" ,notificationSet.alertContent['Boy']["Bi"].pre1 )
     -- notificationSet.startNotify("2017/11/18" ,notificationSet.alertContent['Girl']["Bi"].pre1 )
     -- notificationSet.startNotify("2017/12/11" ,notificationSet.alertContent['Boy']["Huai"].dg6 )
@@ -53,14 +46,40 @@ init = function ( _parent )
     -- notificationSet.startNotify("2017/12/13" ,notificationSet.alertContent[sexNoti][planNoti].holidaySafe ,"holidaySafe")
 
     -- notificationSet.closeNotify()
+    
+
+
+    banner = display.newImageRect( sceneGroup, "banner.jpg", system.DocumentsDirectory ,  W, H*0.079 )
+   
+    if banner then 
+        banner.x , banner.y =  X, H*0.884 
+        banner:addEventListener("tap" , listener)
+    end 
+
+    -- img1 = display.newRect( _parent, X, Y*0.6, W*0.9, H*0.338 )
+    img1 = display.newImageRect( sceneGroup, "hotnews1.jpg",  system.DocumentsDirectory  , W*0.9 ,  H*0.338  )
+    
+    if img1 then 
+        img1.x , img1.y =  X, Y*0.6
+    end
+        -- img1.strokeWidth = 2
+        -- img1:setStrokeColor(0.8)
+    -- img2 = display.newRect( _parent, X, Y*1.33, W*0.9, H*0.338 )
+    img2 = display.newImageRect( sceneGroup, "hotnews2.jpg",  system.DocumentsDirectory  , W*0.9 ,  H*0.338  )
+
+    if img2 then 
+        img2.x , img2.y =  X, Y*1.33       
+    end 
+   
 end
+
+
 
 listener = function ( e )
     composer.setVariable( "preScene", "hotNews" )
     composer.showOverlay( "webView" )
 end
 
-    
  
       
 

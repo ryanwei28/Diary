@@ -22,6 +22,7 @@ local nextBtn
 local reloadBtn 
 local stopBtn 
 local openNewBtn 
+local btnListener 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -64,23 +65,33 @@ init = function ( _parent )
 
     preBtn =  display.newImageRect( _parent, "images/web_prev@3x.png",  H*0.045, H*0.045 )
     preBtn.anchorY = 0 
-    preBtn.x , preBtn.y = W*0.07 , H*0.865
+    preBtn.x , preBtn.y = W*0.07 , H*0.872
+    preBtn.id = "preBtn" 
+    preBtn:addEventListener( "tap", btnListener )
 
     nextBtn =  display.newImageRect( _parent, "images/web_next@3x.png",  H*0.045, H*0.045 )
     nextBtn.anchorY = 0 
-    nextBtn.x , nextBtn.y = W*0.2 , H*0.865
+    nextBtn.x , nextBtn.y = W*0.2 ,H*0.872
+    nextBtn.id = "nextBtn"
+    nextBtn:addEventListener( "tap", btnListener )
 
     stopBtn =  display.newImageRect( _parent, "images/web_stop@3x.png", H*0.045, H*0.045 )
     stopBtn.anchorY = 0 
-    stopBtn.x , stopBtn.y = W*0.4 , H*0.865
+    stopBtn.x , stopBtn.y = W*0.4 , H*0.872
+    stopBtn.id = "stopBtn" 
+    stopBtn:addEventListener( "tap", btnListener ) 
 
     reloadBtn =  display.newImageRect( _parent, "images/web_reload@3x.png", H*0.045, H*0.045 )
     reloadBtn.anchorY = 0 
-    reloadBtn.x , reloadBtn.y = W*0.78 , H*0.865
+    reloadBtn.x , reloadBtn.y = W*0.78 ,H*0.872
+    reloadBtn.id = "reloadBtn"
+    reloadBtn:addEventListener( "tap", btnListener )
 
     openNewBtn =  display.newImageRect( _parent, "images/web_share@3x.png", H*0.045, H*0.045 )
     openNewBtn.anchorY = 0 
-    openNewBtn.x , openNewBtn.y = W*0.92 ,  H*0.865
+    openNewBtn.x , openNewBtn.y = W*0.92 , H*0.872
+    openNewBtn.id = "openNewBtn"
+    openNewBtn:addEventListener( "tap", btnListener )
     -- month = native.newTextField( X*0.9, Y*0.7, W*0.7, H*0.1 )
     -- _parent:insert(month)
   
@@ -99,7 +110,23 @@ listener = function ( e )
     end 
 end
     
- 
+btnListener = function ( e )
+    if e.target.id == "preBtn" then 
+        webView:back( )
+    elseif e.target.id == "nextBtn" then 
+        webView:forward( )
+    elseif e.target.id == "stopBtn" then 
+        webView:stop( )
+    elseif e.target.id == "reloadBtn" then 
+        webView:reload( )
+    elseif e.target.id == "openNewBtn" then 
+        -- native.showWebPopup("http://www.ppc-life.com.tw" )
+        system.openURL( "http://www.ppc-life.com.tw" )
+    end 
+
+
+
+end
       
 
 

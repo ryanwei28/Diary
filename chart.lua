@@ -105,10 +105,13 @@ init = function ( _parent )
 
     end  )
 
+    -- native.setActivityIndicator( true )
 end
 
 
 printWeightPlot = function (  )
+    
+
     vGroup = display.newGroup( ) 
     frontGroup = display.newGroup( )
     midGroup = display.newGroup( )
@@ -272,6 +275,10 @@ printWeightPlot = function (  )
                 end
                 prePointNum = i
             end
+
+            if i == #wPointTable then
+                -- native.setActivityIndicator( false )
+            end 
         end
 
 
@@ -298,7 +305,9 @@ printWeightPlot = function (  )
     else
         noDataText = display.newText( vGroup, "尚無紀錄", X, Y , bold , H*0.03 )
         noDataText:setFillColor(0.67)
+        -- native.setActivityIndicator( false )
     end
+
 
 
 end
