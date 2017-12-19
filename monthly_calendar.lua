@@ -89,6 +89,7 @@ local topBg
 local bottomBg
 local legend 
 local todayRect 
+local sunmon
 -- local bg1Listener
 -- local bg 
 -- local titleBg
@@ -130,9 +131,11 @@ init = function ( _parent )
 
     judgeWeek()
     judge1stWeek()
-    dateText1 = display.newText( _parent, c..y.." 年 "..m.." 月" , X , Y*0.28 , bold ,  H*0.029 )
+    dateText1 = display.newText( _parent, c..y.." 年 "..m.." 月" , X , Y*0.25 , bold ,  H*0.029 )
     dateText1:setFillColor( 226/255,68/255,61/255 )
-    wd = display.newText( _parent, "SUN           MON           TUE           WED           THU           FRI           SAT", X, H*0.183 , bold , H*0.015 )
+    sunmon = display.newImageRect( _parent, "images/week@3x.png", W*1.03,  H*0.015 )
+    sunmon.x , sunmon.y = X , H*0.183
+    -- wd = display.newText( _parent, "SUN           MON           TUE           WED           THU           FRI           SAT", X, H*0.183 , bold , H*0.015 )
     -- dateText2 = display.newText( _parent, c..y.."  "..week , X, Y*0.4, font , 30 )
     if m == 1 then 
         m = 13

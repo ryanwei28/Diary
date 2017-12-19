@@ -103,33 +103,37 @@ createBtn = function (  )
 
     psdSwitchBtn = widget.newButton({ 
         x = X*1,
-        y = Y*0.4,
+        y = Y*0.35,
         id = "psdSwitchBtn",
         label = "開啟密碼保護",
         fontSize = H*0.03 ,
-        shape = "roundedRect",
+        -- shape = "roundedRect",
         font = bold , 
-        width = W*0.7,
-        height = H*0.1,
-        cornerRadius = H*0.028,
-        fontColor = { default={0,0,0,1}, over={0,0,0,1} },
-        fillColor = { default={0.9,0.9,0.9,1}, over={0.3,0.3,0.3,1} },
+        width = W*0.9445,
+        height = H*0.0674,
+        -- cornerRadius = H*0.028,
+        fontColor = { default={0.5,0.5,0.5,1}, over={1,1,1,1} },
+        -- fillColor = { default={0.9,0.9,0.9,1}, over={0.3,0.3,0.3,1} },
+        defaultFile = "images/btn_pw_top@3x.png" , 
+        overFile = "images/btn_pw_top_press@3x.png" , 
         onEvent = buttonEvent 
     })
 
     changePsdBtn = widget.newButton({ 
         x = X*1,
-        y = Y*0.7,
+        y = Y*0.50,
         id = "changePsdBtn",
         label = "變更密碼保護",
         fontSize = H*0.03 ,
-        shape = "roundedRect",
+        -- shape = "roundedRect",
         font = bold , 
-        width = W*0.7,
-        height = H*0.1,
-        cornerRadius = H*0.028,
-        fontColor = { default={0,0,0,1}, over={0,0,0,1} },
-        fillColor = { default={0.9,0.9,0.9,1}, over={0.3,0.3,0.3,1} },
+         width = W*0.9445,
+        height = H*0.0674,
+        -- cornerRadius = H*0.028,
+        fontColor = { default={0.5,0.5,0.5,1}, over={1,1,1,1} },
+        -- fillColor = { default={0.9,0.9,0.9,1}, over={0.3,0.3,0.3,1} },
+        defaultFile = "images/btn_pw_bottom@3x.png" , 
+        overFile = "images/btn_pw_bottom_press@3x.png" , 
         onEvent = buttonEvent 
     })
 
