@@ -124,6 +124,7 @@ init = function ( _parent )
         width = W*0.8,
         height = H*0.2,
         hideBackground = true , 
+        -- isBounceEnabled = false , 
         -- scrollWidth = 600,
         -- scrollHeight = 800,
         horizontalScrollDisabled = true
@@ -176,7 +177,7 @@ init = function ( _parent )
     BMIText = display.newText( _parent , "請至設定頁設定身高", X*2*0.2026, bmiImg.y , bold , H*0.024 )
     BMIText:setFillColor(  170/255 )
     BMIText.anchorX = 0
-    noticText = display.newText( _parent , "尚無紀錄", X*0.2, H*0.025 ,W*0.7 , 0 , bold , H*0.024 )
+    noticText = display.newText( _parent , "尚無紀錄", X*0.2, H*0.008 ,W*0.7 , 0 , bold , H*0.024 )
     noticText:setFillColor(  170/255 )
     noticText.anchorX = 0
     noticText.anchorY = 0
@@ -185,7 +186,7 @@ init = function ( _parent )
     statusText = display.newText( _parent , "今天是安全期", X, Y*0.79 , bold , H*0.024 )
     statusText:setFillColor( 254/255,118/255,118/255 )
 
-    dateText1 = display.newText( _parent, m.."/"..d , X , Y*0.4 , native.systemFontBold , H*0.135 )
+    dateText1 = display.newText( _parent, m.."/"..d , X , Y*0.37 , native.systemFontBold , H*0.135 )
     dateText1:setFillColor( 226/255,68/255,61/255 )
     
     if m == 1 then 
@@ -354,7 +355,7 @@ sceneGroupListener = function ( e )
     elseif e.phase == "ended" then
         if ex then
             print( sx..":"..ex )
-            if sx < ex then 
+            if sx < ex - 20 then 
                 rightLeapYear()
                 print( daysTable[14] )
                 d = d + 1 
@@ -388,7 +389,7 @@ sceneGroupListener = function ( e )
                 checkDb()
                 readDb()
                 print( dbDate..":dddddd" )
-            elseif sx > ex then 
+            elseif sx > ex + 20 then 
                 leftLeapYear()
 
                 -- print( daysTable[14] )

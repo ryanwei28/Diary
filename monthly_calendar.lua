@@ -90,6 +90,7 @@ local bottomBg
 local legend 
 local todayRect 
 local sunmon
+local sceneGroupListener 
 -- local bg1Listener
 -- local bg 
 -- local titleBg
@@ -131,7 +132,7 @@ init = function ( _parent )
 
     judgeWeek()
     judge1stWeek()
-    dateText1 = display.newText( _parent, c..y.." 年 "..m.." 月" , X , Y*0.25 , bold ,  H*0.029 )
+    dateText1 = display.newText( _parent, c..y.." 年 "..m.." 月" , X , Y*0.28 , bold ,  H*0.029 )
     dateText1:setFillColor( 226/255,68/255,61/255 )
     sunmon = display.newImageRect( _parent, "images/week@3x.png", W*1.03,  H*0.015 )
     sunmon.x , sunmon.y = X , H*0.183
@@ -191,6 +192,8 @@ init = function ( _parent )
 
 
     readOvulation()
+
+    sceneGroup:addEventListener("touch" , sceneGroupListener )
 end
 
 
@@ -210,11 +213,152 @@ textListener = function( event )
     end     
 end
 
+
+sceneGroupListener = function ( e )
+    if e.phase == "began" then 
+        sx = e.x 
+    elseif e.phase == "moved" then 
+        ex = e.x 
+    elseif e.phase == "ended" then
+        if ex then
+            if sx > ex + 20 then 
+                 if removeSw == true  then
+                    removeListener()
+                end
+
+                removeSw = false
+                leftLeapYear()
+
+                print( daysTable[14] )
+                -- d = d - 1
+                -- if d < 1 then 
+                --     m = m - 1
+                --     if m < 3 then
+                --         m = 14
+                --         y = y - 1 
+                --     end
+                --     d = daysTable[m]
+                    
+                -- end
+
+                -- judgeWeek()
+                m = m - 1
+
+                if m < 3 then
+                    m = 14
+                    y = y - 1 
+                end
+                
+                yNum = y 
+                if m == 12 and d == 31 then 
+                    yNum = y 
+                elseif m > 12 then 
+                    yNum = y + 1 
+                end
+
+                mNum = m 
+                if m == 13 then
+                    mNum = 1 
+                elseif m == 14 then 
+                    mNum = 2 
+                end 
+
+                dateText1.text = c..yNum.." 年 "..mNum.." 月"
+                -- dateText2.text = c..yNum.."  "..week
+                dbDate = c..yNum.."/"..string.format("%02d" ,mNum ).."/"..string.format("%02d" ,d )
+                checkDb()
+                -- readDb()
+                print( dbDate..":dddd" )
+                judge1stWeek()
+                print( daysTable[m]..":mDays" )
+                print( firstW..":firstW" )
+                mGroup.y = mGroup.y - H*0.2
+                transition.to( mGroup, {time = 150 , y = H*0.005 , onComplete = function (  )
+                    mGroup:removeSelf( )
+                    readMonthDb()
+
+                    creatMonthlyCalendar()
+                    removeSw = true
+                    display.getCurrentStage():setFocus( nil )
+                end} )
+                -- mGroup:removeSelf( )
+                -- readMonthDb()
+                -- creatMonthlyCalendar()
+                
+            elseif sx < ex - 20 then 
+                 if removeSw == true  then
+                    removeListener()
+                end
+
+                removeSw = false
+                rightLeapYear()
+                print( daysTable[14] )
+                -- d = d + 1 
+                -- if d > daysTable[m] then 
+                --     d = 1 
+                --     print( daysTable[m] )
+                --     m = m + 1 
+                --     if m > 14 then 
+                --         m = 3 
+                --         y = y + 1 
+                --     end
+                -- end
+
+                judgeWeek()
+
+                m = m + 1 
+                
+                if m > 14 then 
+                    m = 3 
+                    y = y + 1 
+                end
+
+                yNum = y 
+                if m > 12 then 
+                    yNum = y + 1
+                end
+
+                mNum = m 
+                if m == 13 then
+                    mNum = 1 
+                elseif m == 14 then 
+                    mNum = 2 
+                end 
+
+                dateText1.text = c..yNum.." 年 "..mNum.." 月"
+                dbDate = c..yNum.."/"..string.format("%02d" ,mNum ).."/"..string.format("%02d" ,d )
+                -- dbDate = tostring(c..yNum.."/"..mNum.."/"..d)
+                checkDb()
+                -- readDb()
+                print( dbDate..":dddddd" )
+                judge1stWeek()
+                print( daysTable[m]..":mDays" )
+                print( firstW..":firstW" )
+                mGroup.y = mGroup.y + H*0.2
+                transition.to( mGroup, {time = 150 , y = -H*0.0005 , onComplete = function (  )
+                    mGroup:removeSelf( )
+                    readMonthDb()
+
+                    creatMonthlyCalendar()
+                    removeSw = true
+                    display.getCurrentStage():setFocus( nil )
+                end} )
+                -- mGroup:removeSelf( )
+                -- readMonthDb()
+
+                -- creatMonthlyCalendar()
+            end
+
+            sx , ex = nil ,nil
+        end
+    end
+end
+
 handleButtonEvent = function ( e )
     if ( "ended" == e.phase ) then
         display.getCurrentStage():setFocus( e.target )
         if e.target.id == "leftBtn" then 
-             if removeSw == true  then
+            if removeSw == true  then
                 removeListener()
             end
 

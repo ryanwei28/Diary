@@ -91,7 +91,7 @@ createBtn = function (  )
                         if alertText then
                             alertText:removeSelf( )
                         end
-                        alertText = display.newText( sceneGroup, "請先設置密碼", X, Y*0.85, bold , H*0.028 )
+                        alertText = display.newText( sceneGroup, "請先設置密碼", X, Y*0.65, bold , H*0.028 )
                         alertText:setFillColor( 0 )
                     end
                 end
@@ -112,7 +112,7 @@ createBtn = function (  )
         width = W*0.9445,
         height = H*0.0674,
         -- cornerRadius = H*0.028,
-        fontColor = { default={0.5,0.5,0.5,1}, over={1,1,1,1} },
+        labelColor = { default={0.5,0.5,0.5,1}, over={1,1,1,1} },
         -- fillColor = { default={0.9,0.9,0.9,1}, over={0.3,0.3,0.3,1} },
         defaultFile = "images/btn_pw_top@3x.png" , 
         overFile = "images/btn_pw_top_press@3x.png" , 
@@ -121,7 +121,7 @@ createBtn = function (  )
 
     changePsdBtn = widget.newButton({ 
         x = X*1,
-        y = Y*0.50,
+        y = Y*0.48,
         id = "changePsdBtn",
         label = "變更密碼保護",
         fontSize = H*0.03 ,
@@ -130,7 +130,7 @@ createBtn = function (  )
          width = W*0.9445,
         height = H*0.0674,
         -- cornerRadius = H*0.028,
-        fontColor = { default={0.5,0.5,0.5,1}, over={1,1,1,1} },
+        labelColor = { default={0.5,0.5,0.5,1}, over={1,1,1,1} },
         -- fillColor = { default={0.9,0.9,0.9,1}, over={0.3,0.3,0.3,1} },
         defaultFile = "images/btn_pw_bottom@3x.png" , 
         overFile = "images/btn_pw_bottom_press@3x.png" , 
