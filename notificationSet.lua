@@ -501,6 +501,11 @@ function M.reOpenNotify(  )
 		    local s = os.date(os.time{year=string.sub(now , 1 , 4) ,month=string.sub(now , 5 , 6),day=string.sub(now , 7 , 8) , hour=string.sub(now , 9 , 10) , min=string.sub(now , 11 , 12)})
 
 		    local time = e-s
+
+
+
+
+		    
 			
 			if time >= 0 then   	
 				
