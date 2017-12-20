@@ -96,12 +96,12 @@ init = function ( _parent )
     -- end
     T.title("圖表" , sceneGroup)
 
-    timer.performWithDelay( 1, function (  )
+    timer.performWithDelay( 200, function (  )
         printTemperaturePlot()
 
     end  )
 
-    -- native.setActivityIndicator( true )
+    native.setActivityIndicator( true )
 end
 
 
@@ -231,6 +231,10 @@ printWeightPlot = function (  )
                 statisticCount()
             -- end 
             chkDb()
+
+            if i == 132 then 
+                native.setActivityIndicator( false )
+            end
         end
 
         --點
@@ -272,9 +276,7 @@ printWeightPlot = function (  )
                 prePointNum = i
             end
 
-            if i == #wPointTable then
-                -- native.setActivityIndicator( false )
-            end 
+            
         end
 
 
@@ -301,7 +303,7 @@ printWeightPlot = function (  )
     else
         noDataText = display.newText( vGroup, "尚無紀錄", X, Y , bold , H*0.03 )
         noDataText:setFillColor(0.67)
-        -- native.setActivityIndicator( false )
+        native.setActivityIndicator( false )
     end
 
 
@@ -433,6 +435,10 @@ printTemperaturePlot = function (  )
                 statisticCount()
             -- end 
             chkDb()
+
+            if i == 132 then 
+                native.setActivityIndicator( false )
+            end
         end
 
         -- display.newCircle( scrollView , dateTable[130].x + 50, Y, 50 )
@@ -500,6 +506,7 @@ printTemperaturePlot = function (  )
     else
         noDataText = display.newText( vGroup, "尚無紀錄", X, Y , bold , H*0.03 )
         noDataText:setFillColor(0.67)
+        native.setActivityIndicator( false )
     end
 
 
