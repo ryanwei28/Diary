@@ -151,7 +151,7 @@ printWeightPlot = function (  )
     labelTable = {}
     labelTable2 = {}
 
-    for row in database:nrows([[SELECT * FROM Diary ORDER BY Temperature ASC ;]]) do
+    for row in database:nrows([[SELECT * FROM Diary ORDER BY Weight ASC ;]]) do
         if row.Weight ~= "" then
             wNum = wNum + 1
             wTable[wNum] = row.Weight
@@ -198,13 +198,13 @@ printWeightPlot = function (  )
         chartBg.x , chartBg.y = W*0.54 ,Y
         print( "??????????????????" )
         --下限
-        small = tonumber(string.sub( wTable[1], 1 , -5 )) - tonumber(string.sub( wTable[1], 1 , -5 ))*0.02
+        small = tonumber(string.sub( wTable[1], 1 , -3 )) - tonumber(string.sub( wTable[1], 1 , -3 ))*0.02
         --上限
-        big = tonumber( string.sub( wTable[wNum], 1 , -5 )) + tonumber( string.sub( wTable[wNum], 1 , -5 ))*0.02
+        big = tonumber( string.sub( wTable[wNum], 1 , -3 )) + tonumber( string.sub( wTable[wNum], 1 , -3 ))*0.02
 
         --Y軸數值
         for i = 1 , 7 do 
-            vTable[i] = display.newText( vGroup, string.format( "%.1f", small + (big-small)*(i-1)/6  )  , X*0.16 , Y*1.78 - i*Y*0.195 , font , H*0.024 )
+            vTable[i] = display.newText( vGroup, string.format( "%.1f", small + ((big-small)/6)*(i-1)  )  , X*0.16 , Y*1.78 - i*Y*0.195 , font , H*0.024 )
             vTable[i]:setFillColor( 234/255,87/255,73/255 )
         end
 
@@ -250,11 +250,11 @@ printWeightPlot = function (  )
                 -- scrollView:insert(pointTable[i])
             -- vTable[i] = display.newText( vGroup, string.format( "%.1f", small + (big-small)*(i-1)/6  )  , X*0.16 , Y*1.78 - i*Y*0.195 , font , H*0.024 )
 
-                pointTable[i] = display.newCircle( backGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -5 )-small)/(big-small)*Y*1.23), H*0.006 )
+                pointTable[i] = display.newCircle( backGroup, lineTable[i+1].x ,  Y*1.2 - ((string.sub( wPointTable[i], 1 , -3 )-small)/(big-small)*Y*1.23), H*0.006 )
                 pointTable[i]:setFillColor( 145/255, 215/255, 215/255 )
                 labelTable[i] = display.newRect( backGroup, pointTable[i].x , pointTable[i].y + Y*0.06, W*0.0933, H*0.024 )
                 labelTable[i]:setFillColor( 254/255 , 187/255 , 108/255 )
-                labelTable2[i] = display.newText( backGroup , string.sub( wPointTable[i], 1 , -5 ) , pointTable[i].x, pointTable[i].y + Y*0.065, bold , H*0.018 )
+                labelTable2[i] = display.newText( backGroup , string.sub( wPointTable[i], 1 , -3 ) , pointTable[i].x, pointTable[i].y + Y*0.065, bold , H*0.018 )
                 labelTable2[i]:setFillColor( 1 )
                 -- scrollView:insert(pointTable[i])
                 -- scrollView:insert(labelTable[i])
@@ -406,7 +406,7 @@ printTemperaturePlot = function (  )
 
         --Y軸數值
         for i = 1 , 7 do 
-            vTable[i] = display.newText( vGroup, string.format( "%.1f", small + (big-small)*(i-1)/6  )  , X*0.16 , Y*1.78 - i*Y*0.195 , font , H*0.024 )
+            vTable[i] = display.newText( vGroup, string.format( "%.1f", small + ((big-small)/6)*(i-1)  )  , X*0.16 , Y*1.78 - i*Y*0.195 , font , H*0.024 )
             vTable[i]:setFillColor( 234/255,87/255,73/255 )
         end
 

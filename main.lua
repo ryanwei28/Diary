@@ -36,6 +36,8 @@ local launchArgs = ...
 local opendoor
 local downloadImg 
 local networkListener
+platform = system.getInfo( "platform" )
+
 
 main = function (  )
     

@@ -88,6 +88,7 @@ local helpImg
 local helpImgX
 local mask 
 local scrollView
+local noticTextH 
 
 composer.setVariable( "prevScene", "daily_calendar" )
 
@@ -177,7 +178,12 @@ init = function ( _parent )
     BMIText = display.newText( _parent , "請至設定頁設定身高", X*2*0.2026, bmiImg.y , bold , H*0.024 )
     BMIText:setFillColor(  170/255 )
     BMIText.anchorX = 0
-    noticText = display.newText( _parent , "尚無紀錄", X*0.2, H*0.008 ,W*0.7 , 0 , bold , H*0.024 )
+
+    noticTextH = -H*0.008
+    if platform == "ios" then 
+        noticTextH = H*0.008
+    end
+    noticText = display.newText( _parent , "尚無紀錄", X*0.2, noticTextH ,W*0.7 , 0 , bold , H*0.024 )
     noticText:setFillColor(  170/255 )
     noticText.anchorX = 0
     noticText.anchorY = 0

@@ -266,7 +266,7 @@ end
 
 createRows = function (  )
     for i = 1 , rows do 
-        rowTable[i] = display.newText( sceneGroup , dbData[i].StartDay.."               "..dbData[i].Continuance.."                "..dbData[i].Padding , X*0.0133, Y*-0.07 + i*Y*0.16, bold , H*0.0254 )
+        rowTable[i] = display.newText( sceneGroup , dbData[i].StartDay.."                    "..dbData[i].Continuance.."                        "..dbData[i].Padding , X*0.0133, Y*-0.07 + i*Y*0.16, bold , H*0.0254 )
         rowTable[i]:setFillColor( 0.18 )
         rowTable[i].anchorX = 0
         lineTable[i] = display.newImageRect( sceneGroup , "images/line_dashed@3x.png" ,W*0.9 , H*0.001499 )
