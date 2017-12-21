@@ -132,7 +132,6 @@ main = function (  )
 
  
     -- Set up a system event listener
-    Runtime:addEventListener( "system", onSystemEvent2 )
 
         
     if launchArgs and launchArgs.notification then
@@ -146,16 +145,6 @@ main = function (  )
 end
 
 
-onSystemEvent2 = function( event )
-    if ( event.type == "applicationResume" ) then
-        for row in database:nrows([[SELECT * FROM Setting WHERE id = 1]]) do
-            if row.Password ~= "" then 
-                composer.gotoScene( "enterPassword" )
-            end
-        end 
-        -- T.alert("noDay")
-    end
-end
 
 downloadImg = function ( filename , url )
     local params = {}

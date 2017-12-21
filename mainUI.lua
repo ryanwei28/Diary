@@ -10,6 +10,7 @@ local date = os.date( "*t" )
 local init 
 local sceneGroup
 local handleTabBarEvent 
+local onSystemEvent2 
 local overlayOptions = {
             isModal = true,
             effect = "fade",
@@ -103,6 +104,8 @@ init = function ( _parent )
        
 
     -- T.tabBar()
+    Runtime:addEventListener( "system", onSystemEvent2 )
+
 end
 
 handleTabBarEvent = function( event )
@@ -127,7 +130,16 @@ handleTabBarEvent = function( event )
     end
 end 
 
-
+onSystemEvent2 = function( event )
+    if ( event.type == "applicationResume" ) then
+        for row in database:nrows([[SELECT * FROM Setting WHERE id = 1]]) do
+            if row.Password ~= "" then 
+                composer.gotoScene( "enterPassword" )
+            end
+        end 
+        -- T.alert("noDay")
+    end
+end
 
 
     
