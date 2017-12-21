@@ -20,6 +20,7 @@ local overlayOptions = {
         }
 local tabFontSize = H*0.03
 local bg 
+-- local tabBar
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -86,7 +87,7 @@ init = function ( _parent )
     }
      
     -- Create the widget
-    local tabBar = widget.newTabBar(
+    tabBar = widget.newTabBar(
         {
             top = H-H*0.078,
             left = 0 , 
@@ -96,8 +97,12 @@ init = function ( _parent )
             labelColor = { default={ 0.95, 1, 1 }, over={ 0.12, 0, 0, 0.5 } } ,
             fillColor = { default={ 0.852, 0.2, 0.5, 0.7 }, over={ 0.14, 0.2, 0.5, 1 } }
         }
-)
+    )
+
+    -- sceneGroup:insert(tabBar)
        
+
+    -- T.tabBar()
 end
 
 handleTabBarEvent = function( event )
@@ -151,6 +156,9 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
         -- composer.showOverlay( "daily_calendar", overlayOptions )
+        if not tabBar then 
+            T.tabBar()
+        end 
         timer.performWithDelay( 1, function (  )
         composer.showOverlay( "daily_calendar", overlayOptions )
     end  )

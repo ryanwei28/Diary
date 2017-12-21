@@ -17,6 +17,9 @@ X = display.contentCenterX
 Y = display.contentCenterY
 H = display.contentHeight
 W = display.contentWidth 
+
+local launchArgs = ...
+
 notifications = require( "plugin.notifications" )
 widget = require("widget")
 T = require("T")
@@ -32,7 +35,6 @@ local main
 local writeDb
 local checkDb
 local ttt 
-local launchArgs = ...
 local opendoor
 local downloadImg 
 local networkListener
@@ -95,7 +97,7 @@ main = function (  )
 
         if ( event.custom ) then
             print( event.custom.id )
-
+            -- native.showAlert( "Girl's Diary", launchArgs.notification.alert, { "OK" } )
             -- notifications.cancelNotification( notificationIDtable[event.custom.id] )
             -- system.cancelNotification( notificationIDtable[event.custom.id] )
 
@@ -108,14 +110,7 @@ main = function (  )
 
     Runtime:addEventListener( "notification", notificationListener )
 
-     if launchArgs and launchArgs.notification then
-        
-        native.showAlert( "Girl's Diary", launchArgs.notification.alert, { "OK" } )
-        
-        -- Need to call the notification listener since it won't get called if the
-        -- the app was already closed.
-        notificationListener( launchArgs.notification )
-    end
+     
 
     Runtime:addEventListener( "key", onKeyEvent )
 
@@ -139,7 +134,15 @@ main = function (  )
     -- Set up a system event listener
     Runtime:addEventListener( "system", onSystemEvent2 )
 
-
+        
+    if launchArgs and launchArgs.notification then
+            
+        native.showAlert( "Girl's Diary", launchArgs.notification.alert, { "OK" } )
+        
+        -- Need to call the notification listener since it won't get called if the
+        -- the app was already closed.
+        notificationListener( launchArgs.notification )
+    end
 end
 
 

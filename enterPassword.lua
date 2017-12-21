@@ -52,24 +52,28 @@ init = function ( _parent )
 
     inputPsw = display.newImageRect( sceneGroup, "images/input_pw@3x.png", W*0.16 , H*0.078 )
     inputPsw.x , inputPsw.y = W*0.221 ,H*0.25
+    inputPsw:addEventListener( "tap", listener )
     c1 = display.newCircle( sceneGroup, W*0.221 , H*0.25, H*0.015 )
     c1:setFillColor( 0 ) 
     c1.alpha = 0
 
     inputPsw2 = display.newImageRect( sceneGroup, "images/input_pw@3x.png", W*0.16 , H*0.078 )
     inputPsw2.x , inputPsw2.y = W*0.408 ,H*0.25
+    inputPsw2:addEventListener( "tap", listener )
     c2 = display.newCircle( sceneGroup,  W*0.408 ,H*0.25 , H*0.015 )
     c2:setFillColor( 0 ) 
     c2.alpha = 0
 
     inputPsw3 = display.newImageRect( sceneGroup, "images/input_pw@3x.png", W*0.16 , H*0.078 )
     inputPsw3.x , inputPsw3.y = W*0.595 ,H*0.25
+    inputPsw3:addEventListener( "tap", listener )
     c3 = display.newCircle( sceneGroup, W*0.595 ,H*0.25 , H*0.015 )
     c3:setFillColor( 0 ) 
     c3.alpha = 0
 
     inputPsw4 = display.newImageRect( sceneGroup, "images/input_pw@3x.png", W*0.16 , H*0.078 )
     inputPsw4.x , inputPsw4.y = W*0.782 ,H*0.25
+    inputPsw4:addEventListener( "tap", listener )
     c4 = display.newCircle( sceneGroup, W*0.782 ,H*0.25 , H*0.015 )
     c4:setFillColor( 0 ) 
     c4.alpha = 0
@@ -77,11 +81,19 @@ init = function ( _parent )
     alertText = display.newText( sceneGroup, "", X, Y*0.65, bold , H*0.023 )
     alertText:setFillColor( 77/255,77/255,102/255 )
 
+    if tabBar then
+        tabBar:removeSelf()
+    end
+
     for row in database:nrows([[SELECT * FROM Setting WHERE id = 1 ;]]) do
         if row.Protect ~= "ON" then
             composer.gotoScene( "mainUI" )
         end
     end
+end
+
+listener = function (  )
+    native.setKeyboardFocus( textField )
 end
 
 enterBtn = function (  )

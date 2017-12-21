@@ -4,6 +4,108 @@ function M.init()
 	print("MMMMMMMMMMM")
 end
 
+function M.tabBar(  )
+
+    local function handleTabBarEvent ( event )
+        composer.hideOverlay()
+        if event.target.id == "daily_calendar" then
+            composer.showOverlay( "daily_calendar", overlayOptions )
+            print(1 )  -- Reference to button's 'id' parameter
+        elseif event.target.id == "monthly_calendar" then
+            composer.showOverlay( "monthly_calendar", overlayOptions )
+            print(2 )
+        elseif event.target.id == "chart" then
+            composer.showOverlay( "chart", overlayOptions )
+            print(3 )
+        elseif event.target.id == "hotNews" then
+            -- composer.hideOverlay( "DrDIY")
+            composer.showOverlay( "hotNews", overlayOptions )
+
+            print(4 )
+        elseif event.target.id == "DrDIY" then
+            composer.showOverlay( "DrDIY", overlayOptions )
+            print(5 )
+        end
+    end 
+
+
+    local tabButtons = {
+        {
+            label = "",
+            id = "daily_calendar",
+            defaultFile = "images/tab_day@3x.png" , 
+            overFile = "images/tab_day_press@3x.png" , 
+            width = W*0.2, 
+            height = H*0.078,
+            selected = true,
+            size = tabFontSize,
+            onPress = handleTabBarEvent
+        },
+        {
+            label = "",
+            id = "monthly_calendar",
+            defaultFile = "images/tab_month@3x.png" , 
+            overFile = "images/tab_month_press@3x.png" , 
+            width = W*0.2, 
+            height = H*0.078,
+            size = tabFontSize,
+            onPress = handleTabBarEvent
+        },
+        {
+            label = "",
+            id = "chart",
+            defaultFile = "images/tab_chart@3x.png" , 
+            overFile = "images/tab_chart_press@3x.png" , 
+            width = W*0.2, 
+            height = H*0.078,
+            size = tabFontSize,
+            onPress = handleTabBarEvent
+        },
+         {
+            label = "",
+            id = "hotNews",
+            defaultFile = "images/tab_news@3x.png" , 
+            overFile = "images/tab_news_press@3x.png" , 
+            width = W*0.2, 
+            height = H*0.078,
+            size = tabFontSize,
+            onPress = handleTabBarEvent
+        },
+         {
+            label = "",
+            id = "DrDIY",
+            defaultFile = "images/tab_diy@3x.png" , 
+            overFile = "images/tab_diy_press@3x.png" , 
+            width = W*0.2, 
+            height = H*0.078,
+            size = tabFontSize,
+            onPress = handleTabBarEvent ,
+            -- labelColor = { default={ 0.95, 1, 1 }, over={ 0.12, 0, 0, 0.5 } } ,
+             fillColor = { default={ 0.852, 0.2, 0.5, 0.7 }, over={ 0.14, 0.2, 0.5, 1 } }
+
+        },
+    }
+     
+    -- Create the widget
+    local tabBar = widget.newTabBar(
+        {
+            top = H-H*0.078,
+            left = 0 , 
+            width = W+1,
+            height =  H*0.078 , 
+            buttons = tabButtons ,
+            labelColor = { default={ 0.95, 1, 1 }, over={ 0.12, 0, 0, 0.5 } } ,
+            fillColor = { default={ 0.852, 0.2, 0.5, 0.7 }, over={ 0.14, 0.2, 0.5, 1 } }
+        }
+    )
+
+    -- sceneGroup:insert(tabBar)
+       
+
+end
+
+
+
 function M.backBtn( sceneGroup , prevScene )
     
     function backBtnListener( e )
