@@ -35,7 +35,6 @@ init = function ( _parent )
     
     T.bg(sceneGroup) 
     T.title("輸入密碼" , sceneGroup)
-    -- native.setKeyboardFocus( nil )
 
 
     alertText = display.newText( _parent, "", X, Y*0.5 , font , 30 )
@@ -43,9 +42,7 @@ init = function ( _parent )
     textField.placeholder = "請輸入密碼"
     textField.inputType = "number"
     -- textField.isSecure = true
-    timer.performWithDelay( 200, function (  )
-        native.setKeyboardFocus( textField )
-    end  )
+    native.setKeyboardFocus( textField )
     textField:addEventListener( "userInput", textListener )
     _parent:insert(textField)
     -- enterBtn()
@@ -165,7 +162,8 @@ function scene:show( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-        
+        native.setKeyboardFocus( textField )
+
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
  
