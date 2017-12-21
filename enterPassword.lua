@@ -35,7 +35,7 @@ init = function ( _parent )
     
     T.bg(sceneGroup) 
     T.title("輸入密碼" , sceneGroup)
-    native.setKeyboardFocus( nil )
+    -- native.setKeyboardFocus( nil )
 
 
     alertText = display.newText( _parent, "", X, Y*0.5 , font , 30 )
@@ -43,7 +43,7 @@ init = function ( _parent )
     textField.placeholder = "請輸入密碼"
     textField.inputType = "number"
     -- textField.isSecure = true
-    timer.performWithDelay( 10, function (  )
+    timer.performWithDelay( 200, function (  )
         native.setKeyboardFocus( textField )
     end  )
     textField:addEventListener( "userInput", textListener )
