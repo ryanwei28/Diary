@@ -36,6 +36,7 @@ local launchArgs = ...
 local opendoor
 local downloadImg 
 local networkListener
+local onSystemEvent2
 platform = system.getInfo( "platform" )
 
 
@@ -134,6 +135,23 @@ main = function (  )
     
 
 
+ 
+    -- Set up a system event listener
+    Runtime:addEventListener( "system", onSystemEvent2 )
+
+
+end
+
+
+onSystemEvent2 = function( event )
+    if ( event.type == "applicationResume" ) then
+        for row in database:nrows([[SELECT * FROM Setting WHERE id = 1]]) do
+            if row.Password ~= "" then 
+                composer.gotoScene( "enterPassword" )
+            end
+        end 
+        -- T.alert("noDay")
+    end
 end
 
 downloadImg = function ( filename , url )
