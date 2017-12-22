@@ -534,8 +534,8 @@ end
     
 judgeWeek = function (  )
   
-    w = math.fmod( ( y + math.modf(y/4) + math.modf(c/4) - 2*c +  math.modf(26*(m+1)/10) + d - 1 ) , 7 )
-    
+    w = math.fmod( ( y + math.modf(y/4) + math.modf(c/4) - 2*c +  math.modf(26*(m+1)/10) + d - 1 ) + 7 , 7 )
+    print( w.."%%%%" )
     if w == 1 then
         week = "星期一"
     elseif w == 2 then
