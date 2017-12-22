@@ -135,6 +135,15 @@ onSystemEvent2 = function( event )
         for row in database:nrows([[SELECT * FROM Setting WHERE id = 1]]) do
             if row.Password ~= "" then 
                 composer.gotoScene( "enterPassword" )
+
+                if launchArgs and launchArgs.notification then
+            
+                    native.showAlert( "Girl's Diary", launchArgs.notification.alert, { "OK" } )
+                    
+                    -- Need to call the notification listener since it won't get called if the
+                    -- the app was already closed.
+                    notificationListener( launchArgs.notification )
+                end
             end
         end 
         -- T.alert("noDay")

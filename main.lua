@@ -134,14 +134,14 @@ main = function (  )
     -- Set up a system event listener
 
         
-    if launchArgs and launchArgs.notification then
+    -- if launchArgs and launchArgs.notification then
             
-        native.showAlert( "Girl's Diary", launchArgs.notification.alert, { "OK" } )
+    --     native.showAlert( "Girl's Diary", launchArgs.notification.alert, { "OK" } )
         
-        -- Need to call the notification listener since it won't get called if the
-        -- the app was already closed.
-        notificationListener( launchArgs.notification )
-    end
+    --     -- Need to call the notification listener since it won't get called if the
+    --     -- the app was already closed.
+    --     notificationListener( launchArgs.notification )
+    -- end
 end
 
 
