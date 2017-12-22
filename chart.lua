@@ -198,9 +198,9 @@ printWeightPlot = function (  )
         chartBg.x , chartBg.y = W*0.54 ,Y
         print( "??????????????????" )
         --下限
-        small = tonumber(string.sub( wTable[1], 1 , -3 )) - tonumber(string.sub( wTable[1], 1 , -3 ))*0.02
+        small = tonumber(string.sub( wTable[1], 1 , -3 )) - tonumber(string.sub( wTable[1], 1 , -3 ))*0.08
         --上限
-        big = tonumber( string.sub( wTable[wNum], 1 , -3 )) + tonumber( string.sub( wTable[wNum], 1 , -3 ))*0.02
+        big = tonumber( string.sub( wTable[wNum], 1 , -3 )) + tonumber( string.sub( wTable[wNum], 1 , -3 ))*0.08
 
         --Y軸數值
         for i = 1 , 7 do 
