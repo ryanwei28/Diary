@@ -222,6 +222,7 @@ sceneGroupListener = function ( e )
     elseif e.phase == "ended" then
         if ex then
             if sx > ex + 20 then 
+                display.getCurrentStage():setFocus( e.target )
                  if removeSw == true  then
                     removeListener()
                 end
@@ -286,6 +287,7 @@ sceneGroupListener = function ( e )
                 -- creatMonthlyCalendar()
                 
             elseif sx < ex - 20 then 
+                display.getCurrentStage():setFocus( e.target )
                  if removeSw == true  then
                     removeListener()
                 end
