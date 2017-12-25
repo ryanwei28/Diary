@@ -45,6 +45,7 @@ local tAddress = [[105台北市松山區東興路8號7樓 ]]
 local tCompany = [[統一藥品股份有限公司]]
 local taplistener 
 local onKeyEvent
+local newMap 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -178,10 +179,23 @@ taplistener = function ( e )
        native.showAlert( "", "+886227488299 ext.323" , {"取消","通話"} , alertListener )
        print( "phone" )
    elseif e.target.id == "address" then
-       print( "address" )
+        system.openURL( "https://www.google.com.tw/maps/place/105%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E6%9D%B1%E8%88%88%E8%B7%AF8%E8%99%9F%E7%B5%B1%E4%B8%80%E8%AD%89%E5%88%B8%E9%9B%86%E5%9C%98%E5%A4%A7%E6%A8%93/@25.0497963,121.5633896,17.25z/data=!4m13!1m7!3m6!1s0x3442ab942daef5ff:0xf05c9bd0cc7d9c22!2zMTA15Y-w5YyX5biC5p2-5bGx5Y2A5p2x6IiI6LevOOiZn-e1seS4gOitieWIuOmbhuWcmOWkp-aokw!3b1!8m2!3d25.0503028!4d121.5649604!3m4!1s0x3442ab942daef5ff:0xf05c9bd0cc7d9c22!8m2!3d25.0503028!4d121.5649604?hl=zh-TW" )
+        print( "address" )
    end
 end
 
+newMap = function (  )
+    local myMap = native.newMapView( 20, 20, 280, 360 )
+    myMap.x = display.contentCenterX
+    myMap.y = display.contentCenterY
+     
+    -- Display map as vector drawings of streets (other options are "satellite" and "hybrid")
+    myMap.mapType = "standard"
+     
+    -- Initialize map to a real location
+    myMap:setCenter( 37.331692, -122.030456 )
+
+end
 -- listener = function ( e )
 --     composer.showOverlay( prevScene )
 -- end

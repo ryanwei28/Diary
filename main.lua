@@ -39,6 +39,7 @@ local opendoor
 local downloadImg 
 local networkListener
 local onSystemEvent2
+local onSystemEvent3 
 platform = system.getInfo( "platform" )
 
 
@@ -142,6 +143,23 @@ main = function (  )
     --     -- the app was already closed.
     --     notificationListener( launchArgs.notification )
     -- end
+
+    -- Runtime:addEventListener("system", onSystemEvent3)
+
+end
+
+onSystemEvent3 = function ( event )
+    if ( event.type == "applicationResume" ) then
+    
+        if launchArgs and launchArgs.notification then
+        
+            native.showAlert( "Girl's Diary", launchArgs.notification.alert, { "OK" } )
+            
+            -- Need to call the notification listener since it won't get called if the
+            -- the app was already closed.
+            notificationListener( launchArgs.notification )
+        end
+    end 
 end
 
 

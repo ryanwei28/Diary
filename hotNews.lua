@@ -60,7 +60,7 @@ init = function ( _parent )
     img1 = display.newImageRect( sceneGroup, "hotnews1.jpg",  system.DocumentsDirectory  , W*0.9 ,  H*0.338  )
     
     if img1 then 
-        img1.x , img1.y =  X, Y*0.6
+        img1.x , img1.y =  X, Y*0.58
     end
         -- img1.strokeWidth = 2
         -- img1:setStrokeColor(0.8)
@@ -68,7 +68,7 @@ init = function ( _parent )
     img2 = display.newImageRect( sceneGroup, "hotnews2.jpg",  system.DocumentsDirectory  , W*0.9 ,  H*0.338  )
 
     if img2 then 
-        img2.x , img2.y =  X, Y*1.33       
+        img2.x , img2.y =  X, Y*1.31       
     end 
    
 end
