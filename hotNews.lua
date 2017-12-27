@@ -15,8 +15,12 @@ local listener
 local networkListener 
 local img1 
 local img2 
- local i = 0  
-
+local readFile 
+local i = 0  
+local urlTable = {}
+local urlNum = 0 
+local img1Listener 
+local img2Listener
 local imgs = {
    "1.jpg"  ,
    -- "2.jpg"  ,
@@ -71,18 +75,54 @@ init = function ( _parent )
         img2.x , img2.y =  X, Y*1.31       
     end 
    
+   readFile()
+
 end
-
-
 
 listener = function ( e )
     composer.setVariable( "preScene", "hotNews" )
     composer.showOverlay( "webView" )
 end
 
- 
-      
+readFile = function (  )
+    -- Path for the file to read
+    local path = system.pathForFile( "url.txt", system.DocumentsDirectory )
+     
+    -- Open the file handle
+    local file, errorString = io.open( path, "r" )
+     
+    if not file then
+        -- Error occurred; output the cause
+        print( "File error: " .. errorString )
+    else
+        -- Output lines
+        for line in file:lines() do
+            urlNum = urlNum + 1 
+            urlTable[urlNum] = line 
+            print( line )
+        end
 
+        if img1 then 
+            img1:addEventListener( "tap", img1Listener )
+        end 
+
+        if img2 then 
+            img2:addEventListener( "tap", img2Listener )
+        end
+        -- Close the file handle
+        io.close( file )
+    end
+     
+    file = nil
+end
+      
+img1Listener = function (  )
+    system.openURL( urlTable[1] )
+end
+
+img2Listener = function (  )
+    system.openURL( urlTable[2] )
+end
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions

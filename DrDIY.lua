@@ -19,11 +19,13 @@ local networkListener
 local request 
 
 local title = { 
-                "孕氣，運氣?"  ,
-                "懷孕就結婚?"  ,
+                "Dr. DIY 美麗問診室"  ,
+                "DIY驗孕知識全攻略"  ,
                 "不可不知驗孕快狠準關\n鍵字"  ,
-                "快又準！DIY驗孕知識\n全攻略"  ,
-                "聰明快捷驗孕一試就\n準"  ,
+                "帶妳精準掌握DIY自我\n檢測驗孕要訣"  ,
+
+                "沒有月經還會排卵嗎?"  ,
+
          }
 
 local imgs = {
