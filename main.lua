@@ -118,7 +118,7 @@ main = function (  )
     downloadImg("banner.jpg","http://design.unidyna.com/ryan/banner.jpg")
     downloadImg("hotnews1.jpg","http://design.unidyna.com/ryan/hotnews1.jpg")
     downloadImg("hotnews2.jpg","http://design.unidyna.com/ryan/hotnews2.jpg")
-    downloadImg("url.txt","http://design.unidyna.com/ryan/url.txt")
+    -- downloadImg("url.txt","http://design.unidyna.com/ryan/url.txt")
 
     opendoor = display.newImageRect( "images/opendoor.png", W, H ) 
     opendoor.x , opendoor.y = X , Y 

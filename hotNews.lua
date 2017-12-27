@@ -117,11 +117,14 @@ readFile = function (  )
 end
       
 img1Listener = function (  )
+    print(  urlTable[1]  )
     system.openURL( urlTable[1] )
 end
 
 img2Listener = function (  )
-    system.openURL( urlTable[2] )
+
+    print( urlTable[2] )
+    -- system.openURL( urlTable[2] )
 end
 
 -- -----------------------------------------------------------------------------------
