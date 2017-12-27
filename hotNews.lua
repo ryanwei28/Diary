@@ -7,6 +7,7 @@
 local sqlite3 = require "sqlite3"
 local scene = composer.newScene()
 local date = os.date( "*t" ) 
+local json = require("json")
 local init 
 local sceneGroup
 local month
@@ -21,6 +22,7 @@ local urlTable = {}
 local urlNum = 0 
 local img1Listener 
 local img2Listener
+local contents 
 local imgs = {
    "1.jpg"  ,
    -- "2.jpg"  ,
@@ -86,7 +88,7 @@ end
 
 readFile = function (  )
     -- Path for the file to read
-    local path = system.pathForFile( "url.txt", system.DocumentsDirectory )
+    local path = system.pathForFile( "url.json", system.DocumentsDirectory )
      
     -- Open the file handle
     local file, errorString = io.open( path, "r" )
@@ -95,12 +97,6 @@ readFile = function (  )
         -- Error occurred; output the cause
         print( "File error: " .. errorString )
     else
-        -- Output lines
-        for line in file:lines() do
-            urlNum = urlNum + 1 
-            urlTable[urlNum] = line 
-            print( line )
-        end
 
         if img1 then 
             img1:addEventListener( "tap", img1Listener )
@@ -117,11 +113,29 @@ readFile = function (  )
 end
       
 img1Listener = function (  )
-    system.openURL( urlTable[1] )
+    local filename = system.pathForFile( "url.json", system.DocumentsDirectory )
+    local decoded, pos, msg = json.decodeFile( filename )
+     
+    if not decoded then
+        print( "Decode failed at "..tostring(pos)..": "..tostring(msg) )
+    else
+        print( decoded.url1 )
+    end
+    
+    system.openURL( decoded.url1 )
 end
 
 img2Listener = function (  )
-    system.openURL( urlTable[2] )
+    local filename = system.pathForFile( "url.json", system.DocumentsDirectory )
+    local decoded, pos, msg = json.decodeFile( filename )
+     
+    if not decoded then
+        print( "Decode failed at "..tostring(pos)..": "..tostring(msg) )
+    else
+        print( decoded.url2 )
+    end
+
+    system.openURL( decoded.url2 )
 end
 
 -- -----------------------------------------------------------------------------------
