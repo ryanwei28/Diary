@@ -113,7 +113,6 @@ readFile = function (  )
 end
       
 img1Listener = function (  )
-
     local filename = system.pathForFile( "url.json", system.DocumentsDirectory )
     local decoded, pos, msg = json.decodeFile( filename )
      
