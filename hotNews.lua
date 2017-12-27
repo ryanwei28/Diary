@@ -113,16 +113,7 @@ readFile = function (  )
 end
       
 img1Listener = function (  )
-<<<<<<< HEAD
-    print(  urlTable[1]  )
-    system.openURL( urlTable[1] )
-end
 
-img2Listener = function (  )
-
-    print( urlTable[2] )
-    -- system.openURL( urlTable[2] )
-=======
     local filename = system.pathForFile( "url.json", system.DocumentsDirectory )
     local decoded, pos, msg = json.decodeFile( filename )
      
@@ -146,7 +137,6 @@ img2Listener = function (  )
     end
 
     system.openURL( decoded.url2 )
->>>>>>> 2e40caf0ca48c447644a451cd43f5b02a55ae917
 end
 
 -- -----------------------------------------------------------------------------------
