@@ -91,6 +91,7 @@ local legend
 local todayRect 
 local sunmon
 local sceneGroupListener 
+local start1month 
 -- local bg1Listener
 -- local bg 
 -- local titleBg
@@ -194,6 +195,39 @@ init = function ( _parent )
     readOvulation()
 
     sceneGroup:addEventListener("touch" , sceneGroupListener )
+
+    -- backToday()
+    start1month()
+end
+
+start1month = function (  )
+    mGroup:removeSelf( )
+            
+    c = tonumber(string.sub( os.date( "%Y" ) , 1 , 2 ))
+    y = tonumber(string.sub( os.date( "%Y" ) , 3 , 4 ))
+    m = tonumber(os.date( "%m" ))
+    d = tonumber(os.date( "%d" ))
+    -- w = tonumber(os.date( "%w" )) 
+    yNum = y 
+    mNum = m
+
+    if m == 1 then 
+        m = 13
+        y = y - 1
+    elseif m == 2 then 
+        m = 14 
+        y = y - 1
+    end
+
+    judgeWeek()
+    judge1stWeek()
+    -- dateText1.text =  c..y.." 年 "..m.." 月"
+    dateText1.text = c..yNum.." 年 "..mNum.." 月"
+    dbDate = tostring(c..yNum.."/"..string.format("%02d",mNum).."/"..string.format("%02d",d))
+    -- dateText2.text = c..y.."  "..week
+    
+
+    creatMonthlyCalendar()
 end
 
 
@@ -910,7 +944,7 @@ creatMonthlyCalendar = function (  )
             -- local lineV = display.newLine( backGroup ,  -X*0.035+X*0.3*(j-1),  H*0.22 , -X*0.035+X*0.3*(j-1),  H*0.73 )
             -- lineV:setStrokeColor( 145/255, 215/255, 215/255 )
             -- lineV.strokeWidth = H*0.0045
-
+            print(daysTable[m] .."MMMMMMMMMMMMMMMMMMMMMMM")
             if k <= daysTable[m] then 
 
                 -- local lineH = display.newLine( mGroup , X*0, H*0.21 + i * H*0.07646, X*2,  H*0.21 + i * H*0.07646 )
