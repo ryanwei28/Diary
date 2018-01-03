@@ -29,10 +29,10 @@ local dCalendarY = composer.getVariable( "dCalendarY" )
 local dCalendarM = composer.getVariable( "dCalendarM" )
 local dCalendarD = composer.getVariable( "dCalendarD" )
 if dCalendarY then
-    c = tonumber(string.sub( dCalendarY , 1 , 2 ))
-    y = tonumber(string.sub( dCalendarY , 3 , 4 ))
-    m = dCalendarM
-    d = dCalendarD
+    -- c = tonumber(string.sub( dCalendarY , 1 , 2 ))
+    -- y = tonumber(string.sub( dCalendarY , 3 , 4 ))
+    -- m = dCalendarM
+    -- d = dCalendarD
 end
 local mNum = m
 local yNum = y
@@ -195,6 +195,8 @@ init = function ( _parent )
     dateText1 = display.newText( _parent, m.."/"..d , X , Y*0.37 , native.systemFontBold , H*0.135 )
     dateText1:setFillColor( 226/255,68/255,61/255 )
     
+    local date2y = y 
+
     if m == 1 then 
         m = 13
         y = y - 1
@@ -204,8 +206,9 @@ init = function ( _parent )
     end
     
     judgeWeek()
-    dateText2 = display.newText( _parent, c..y.."  "..week , X, Y*0.55, bold , H*0.03 )
+    dateText2 = display.newText( _parent, c..date2y.."  "..week , X, Y*0.55, bold , H*0.03 )
     dateText2:setFillColor(  226/255,68/255,61/255  )
+
     leftBtn = widget.newButton({ 
         x = X*0.07,
         y = Y*0.38,
@@ -281,6 +284,39 @@ init = function ( _parent )
 
     -- print(a2 == a5)
     sceneGroup:addEventListener("touch" , sceneGroupListener)
+end
+
+reloadDate = function (  )
+    c = tonumber(string.sub( os.date( "%Y" ) , 1 , 2 ))
+    y = tonumber(string.sub( os.date( "%Y" ) , 3 , 4 ))
+    m = tonumber(os.date( "%m" ))
+    d = tonumber(os.date( "%d" ))
+    w = tonumber(os.date( "%w" )) 
+    dCalendarY = composer.getVariable( "dCalendarY" )
+    dCalendarM = composer.getVariable( "dCalendarM" )
+    dCalendarD = composer.getVariable( "dCalendarD" )
+    if dCalendarY then
+        c = tonumber(string.sub( dCalendarY , 1 , 2 ))
+        y = tonumber(string.sub( dCalendarY , 3 , 4 ))
+        m = dCalendarM
+        d = dCalendarD
+    end
+
+    local date2y = y 
+    dateText1.text = m.."/"..d 
+
+
+    if m == 1 then 
+        m = 13
+        y = y - 1
+    elseif m == 2 then 
+        m = 14 
+        y = y - 1
+    end
+    
+    judgeWeek()
+
+    dateText2.text = c..date2y.."  "..week 
 end
 
 maskListener = function ( e )
@@ -934,7 +970,7 @@ function scene:show( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-      
+        -- reloadDate()
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
  
