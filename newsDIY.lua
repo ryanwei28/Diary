@@ -219,6 +219,10 @@ init = function ( _parent )
     contentText.anchorY = 0 
     contentText:setFillColor( 0 )
 
+    if H > 1000 then 
+        contentText.y = Y*1.5
+    end
+
     contentText2 = display.newText( sceneGroup, content2[rowIndex], X, H*0.62+contentText.height , W*0.85, 0 , bold, W*0.0453 )
     contentText2.anchorY = 0 
     contentText2:setFillColor( 0 )
